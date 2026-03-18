@@ -1,0 +1,600 @@
+﻿// src/app/enfermeria/page.tsx
+'use client';
+import { useRouter } from 'next/navigation';
+
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Activity, Heart, Thermometer, Wind, Weight,
+  AlertTriangle, CheckCircle, Clock, RefreshCw, User
+} from 'lucide-react';
+
+const API = 'http://localhost:3001';
+
+function getToken() {
+  return typeof window !== 'undefined' ? (localStorage.getItem('auth_token') ?? '') : '';
+}
+
+function authFetch(url: string, options: RequestInit = {}) {
+  return fetch(`${API}${url}`, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) },
+  });
+}
+
+type FlowStatus = 'waiting_vitals' | 'ready' | 'in_progress' | 'completed';
+
+interface Appointment {
+  id: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  status: string;
+  flowStatus: FlowStatus;
+  reason: string;
+  isUrgent: boolean;
+  patient?: { id: string; nombre: string; edad: number; ci: string; condicionesCronicas?: string[] };
+  doctor?: { user?: { first_name: string; last_name: string }; specialty?: string };
+  vitalSigns?: VitalSigns;
+}
+
+interface VitalSigns {
+  presionArterial: string;
+  frecuenciaCardiaca: number | string;
+  frecuenciaRespiratoria: number | string;
+  temperatura: number | string;
+  peso: number | string;
+  saturacionOxigeno: number | string;
+}
+
+const EMPTY_VITALS: VitalSigns = {
+  presionArterial: '',
+  frecuenciaCardiaca: '',
+  frecuenciaRespiratoria: '',
+  temperatura: '',
+  peso: '',
+  saturacionOxigeno: '',
+};
+
+function paStatus(val: string): 'ok' | 'warn' | 'danger' | 'neutral' {
+  if (!val) return 'neutral';
+  const sys = parseInt(val.split('/')[0]);
+  if (sys >= 160) return 'danger';
+  if (sys >= 140) return 'warn';
+  return 'ok';
+}
+
+function numStatus(val: number | string, low: number, high: number): 'ok' | 'warn' | 'danger' | 'neutral' {
+  if (val === '' || val === undefined) return 'neutral';
+  const n = Number(val);
+  if (n > high * 1.1 || n < low * 0.9) return 'danger';
+  if (n > high || n < low) return 'warn';
+  return 'ok';
+}
+
+const STATUS_CLASS = { ok: 'text-green-600', warn: 'text-amber-600', danger: 'text-red-600', neutral: 'text-gray-400' };
+const STATUS_BG = { ok: 'bg-green-50 border-green-200', warn: 'bg-amber-50 border-amber-200', danger: 'bg-red-50 border-red-200', neutral: 'bg-gray-50 border-gray-200' };
+
+function FlowBadge({ status }: { status: FlowStatus }) {
+  const cfg = {
+    waiting_vitals: { label: 'Esperando vitales', cls: 'bg-amber-100 text-amber-800' },
+    ready:          { label: 'Listo p/ consulta', cls: 'bg-green-100 text-green-800' },
+    in_progress:    { label: 'En consulta',        cls: 'bg-blue-100 text-blue-800' },
+    completed:      { label: 'Completado',          cls: 'bg-gray-100 text-gray-600' },
+  }[status];
+  return <span className={`px-2 py-1 rounded-full text-xs font-semibold ${cfg.cls}`}>{cfg.label}</span>;
+}
+
+export default function EnfermeriaDashboard() {
+  const router = useRouter();
+  const handleLogout = () => { localStorage.clear(); router.push('/login'); };
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [selected, setSelected] = useState<Appointment | null>(null);
+  const [vitals, setVitals] = useState<VitalSigns>(EMPTY_VITALS);
+  const [saving, setSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'pending' | 'done'>('pending');
+  const [vitalsHistory, setVitalsHistory] = useState<any[]>([]);
+  const [enfermeraInfo, setEnfermeraInfo] = useState({ nombre: "Enfermeria", especialidad: "", fechaHoy: "" });
+  useEffect(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem("user_data") ?? "{}");
+      const firstName = u.nombre ?? u.firstName ?? u.first_name ?? "";
+      const lastName  = u.apellido ?? u.lastName ?? u.last_name ?? "";
+      const fullName  = [firstName, lastName].filter(Boolean).join(" ");
+      const email = u.email ?? "";
+      const espMap: Record<string,string> = { "ENF-CAR": "Cardiologia", "ENF-TRA": "Traumatologia", "ENF-NEU": "Neurologia", "ENF-OTO": "Otorrinolaringologia", "ENF-GAS": "Gastroenterologia" };
+      const prefix = Object.keys(espMap).find(k => email.startsWith(k));
+      const ahora = new Date(new Date().toLocaleString("en-US", { timeZone: "America/La_Paz" }));
+      const fechaHoy = ahora.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      setEnfermeraInfo({ nombre: fullName ? `Enf. ${fullName}` : "Enfermeria", especialidad: prefix ? espMap[prefix] : "", fechaHoy });
+    } catch {}
+  }, []);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Obtener especialidad de la enfermera logueada
+      let enfermeraEsp = "";
+      try {
+        const userData = JSON.parse(localStorage.getItem("user_data") ?? "{}");
+        const email = userData.email ?? "";
+        const espMap: Record<string, string> = {
+          "ENF-CAR": "Cardiologia",
+          "ENF-TRA": "Traumatologia",
+          "ENF-NEU": "Neurologia",
+          "ENF-OTO": "Otorrinolaringologia",
+          "ENF-GAS": "Gastroenterologia",
+        };
+        const prefix = Object.keys(espMap).find(k => email.startsWith(k));
+        if (prefix) enfermeraEsp = espMap[prefix];
+      } catch {}
+      const res = await authFetch("/api/appointments");
+      const all: any[] = await res.json();
+      const today = new Date().toISOString().split("T")[0];
+      const todayAppts = all
+        .filter(a => (a.appointmentDate ?? "").split("T")[0] === today)
+        .filter(a => {
+          if (!enfermeraEsp) return true;
+          const esp = a.doctor?.specialty ?? a.especialidad ?? a.doctor?.especialidad ?? "";
+          return esp.toLowerCase() === enfermeraEsp.toLowerCase();
+        })
+        .map(a => ({
+          ...a,
+          flowStatus: deriveFlow(a),
+        }));
+      setAppointments(todayAppts);
+      try {
+        const vsRes = await authFetch("/api/vital-signs");
+        const allVs = vsRes.ok ? await vsRes.json() : [];
+        const todayVs = Array.isArray(allVs) ? allVs.filter((v: any) => {
+          const d = new Date(v.registradoEn ?? v.registrado_en ?? v.createdAt);
+          return d.toISOString().split("T")[0] === today;
+        }) : [];
+        setVitalsHistory(todayVs);
+      } catch {}
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  function deriveFlow(a: any): FlowStatus {
+    if (a.status === 'COMPLETADA') return 'completed';
+    if (a.status === 'EN_CONSULTA') return 'in_progress';
+    if (a.vitalSignsRegistered) return 'ready';
+    return 'waiting_vitals';
+  }
+
+  function selectAppointment(a: Appointment) {
+    setSelected(a);
+    setVitals(a.vitalSigns ?? EMPTY_VITALS);
+    setSavedMsg('');
+  }
+
+  async function saveVitals() {
+    if (!selected) return;
+    setSaving(true);
+    try {
+      // Guardar vitales en medical record o endpoint de vitales
+      await authFetch(`/api/vital-signs`, {
+        method: 'POST',
+        body: JSON.stringify({
+          patientId: selected.patient?.id,
+          presionArterial: vitals.presionArterial,
+          frecuenciaCardiaca: Number(vitals.frecuenciaCardiaca) || null,
+          frecuenciaRespiratoria: Number(vitals.frecuenciaRespiratoria) || null,
+          temperatura: Number(vitals.temperatura) || null,
+          peso: Number(vitals.peso) || null,
+          saturacionOxigeno: Number(vitals.saturacionOxigeno) || null,
+        }),
+      });
+      // Actualizar estado a EN_ESPERA si estaba AGENDADA
+      if (selected.status === 'AGENDADA') {
+        await authFetch(`/api/appointments/${selected.id}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'EN_ESPERA' }),
+        });
+      }
+      setSavedMsg('Signos vitales registrados correctamente');
+      load();
+      setTimeout(() => { setSavedMsg(''); setSelected(null); }, 3000);
+    } catch (e: any) {
+      setSavedMsg('Error al guardar: ' + (e.message ?? 'intenta de nuevo'));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const filtered = appointments.filter(a =>
+    filter === 'pending' ? a.status !== 'COMPLETADA' && a.status !== 'ANULADA' :
+    filter === 'done' ? a.status === 'COMPLETADA' : true
+  ).sort((a, b) => (a.appointmentTime ?? '').localeCompare(b.appointmentTime ?? ''));
+
+  const stats = {
+    total: appointments.length,
+    pending: appointments.filter(a => a.flowStatus === 'waiting_vitals').length,
+    ready: appointments.filter(a => a.flowStatus === 'ready').length,
+    inProgress: appointments.filter(a => a.flowStatus === 'in_progress').length,
+    completed: appointments.filter(a => a.flowStatus === 'completed').length,
+  };
+
+  function getVitalAlerts(v: VitalSigns): string[] {
+    const alerts: string[] = [];
+    if (v.presionArterial) {
+      const sys = parseInt(v.presionArterial.split('/')[0]);
+      if (sys >= 160) alerts.push('Hipertension severa');
+      else if (sys >= 140) alerts.push('Presion arterial elevada');
+    }
+    if (Number(v.saturacionOxigeno) < 94 && v.saturacionOxigeno !== '') alerts.push('Saturacion O2 baja');
+    if (Number(v.temperatura) >= 38.5) alerts.push('Fiebre alta');
+    if (Number(v.frecuenciaCardiaca) > 120) alerts.push('Taquicardia');
+    if (Number(v.frecuenciaCardiaca) < 50 && v.frecuenciaCardiaca !== '') alerts.push('Bradicardia');
+    return alerts;
+  }
+
+  const vitalAlerts = getVitalAlerts(vitals);
+
+  return (
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center">
+            <Activity size={18} className="text-teal-600" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-800">{enfermeraInfo.nombre}</p>
+            <p className="text-xs text-gray-500" suppressHydrationWarning>
+              {enfermeraInfo.especialidad && `${enfermeraInfo.especialidad} - `}{new Date(new Date().toLocaleString("en-US", { timeZone: "America/La_Paz" })).toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+            </p>
+          </div>
+        </div>
+        <button onClick={load} className="flex items-center gap-2 px-3 py-2 border border-gray-300 text-sm rounded-lg hover:bg-gray-50 transition">
+          <RefreshCw size={14} /> Actualizar
+        </button>
+          <button onClick={handleLogout} className="flex items-center gap-2 px-3 py-1.5 text-xs text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            Cerrar sesion
+          </button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-5 gap-3 px-6 py-3 bg-white border-b border-gray-200 flex-shrink-0">
+        {[
+          { label: 'Total hoy', value: stats.total, color: 'text-gray-700' },
+          { label: 'Sin vitales', value: stats.pending, color: 'text-amber-600' },
+          { label: 'Listos', value: stats.ready, color: 'text-green-600' },
+          { label: 'En consulta', value: stats.inProgress, color: 'text-blue-600' },
+          { label: 'Completados', value: stats.completed, color: 'text-gray-500' },
+        ].map(s => (
+          <div key={s.label} className="text-center">
+            <div className={`text-2xl font-semibold ${s.color}`}>{s.value}</div>
+            <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Lista de pacientes */}
+        <div className="w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+          <div className="flex gap-1 p-3 border-b border-gray-100">
+            {([['pending','Pendientes'],['all','Todos'],['done','Completados']] as const).map(([k,l]) => (
+              <button key={k} onClick={() => setFilter(k)}
+                className={`flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition ${filter===k?'bg-teal-600 text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                {l}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            {loading ? (
+              <div className="text-center py-8 text-gray-400 text-sm">Cargando...</div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                <User size={32} className="mx-auto mb-2 opacity-30" />
+                <p className="text-sm">Sin pacientes</p>
+              </div>
+            ) : (
+              filtered.map(a => (
+                <div key={a.id}
+                  onClick={() => selectAppointment(a)}
+                  className={[
+                    'border rounded-xl p-3 cursor-pointer transition-all',
+                    selected?.id === a.id ? 'border-teal-500 border-2 bg-teal-50' : 'border-gray-200 hover:border-gray-300 hover:shadow-sm',
+                    a.isUrgent ? 'border-l-4 border-l-red-500 rounded-l-none' : '',
+                  ].join(' ')}
+                >
+                  <div className="flex items-start justify-between mb-1.5">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{a.patient?.nombre ?? 'Paciente'}</p>
+                      <p className="text-xs text-gray-500">{a.patient?.edad ? `${a.patient.edad} anos` : ''}{a.patient?.ci ? ` - CI: ${a.patient.ci}` : ''}</p>
+                    </div>
+                    
+                  </div>
+                  {a.reason && <p className="text-xs text-gray-400 italic mb-1.5 truncate">{a.reason}</p>}
+                  <div className="flex items-center justify-between">
+                    <FlowBadge status={a.flowStatus} />
+                    {a.isUrgent && <span className="text-xs text-red-600 font-semibold flex items-center gap-1"><AlertTriangle size={10} />Urgente</span>}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Panel de vitales */}
+        <div className="flex-1 overflow-auto p-6">
+          {!selected ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+              <Activity size={48} className="mb-4 opacity-20" />
+              <p className="text-lg font-medium">Selecciona un paciente</p>
+              <p className="text-sm mt-1">para registrar sus signos vitales</p>
+            </div>
+          ) : (
+            <div className="max-w-2xl">
+              {/* Info paciente */}
+              <div className="bg-white border border-gray-200 rounded-xl p-4 mb-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800">{selected.patient?.nombre}</h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {selected.patient?.edad ? `${selected.patient.edad} anos` : ''}
+                      {selected.patient?.ci ? ` - CI: ${selected.patient.ci}` : ''}
+                      {selected.patient?.condicionesCronicas?.length ? ` - ${selected.patient.condicionesCronicas.join(', ')}` : ''}
+                    </p>
+                    {selected.reason && <p className="text-xs text-gray-400 italic mt-1">Motivo: {selected.reason}</p>}
+                  </div>
+                  <div className="text-right">
+                    <FlowBadge status={selected.flowStatus} />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {selected.doctor?.user ? `Dr. ${selected.doctor.user.first_name} ${selected.doctor.user.last_name}` : ''}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vitales previos del paciente */}
+              {vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id).length > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5">
+                  <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-3 flex items-center gap-2">
+                    <Activity size={12} /> Vitales previos registrados hoy
+                  </p>
+                  <div className="space-y-2">
+                    {vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id).map((v: any, i: number) => (
+                      <div key={i} className="bg-white rounded-lg px-3 py-2 grid grid-cols-3 gap-2">
+                        <div className="text-center">
+                          <p className={`text-sm font-semibold ${paStatus(v.presionArterial ?? '') === 'danger' ? 'text-red-600' : paStatus(v.presionArterial ?? '') === 'warn' ? 'text-amber-600' : 'text-blue-700'}`}>{v.presionArterial ?? '-'}</p>
+                          <p className="text-xs text-gray-400">PA mmHg</p>
+                        </div>
+                        <div className="text-center">
+                          <p className={`text-sm font-semibold ${STATUS_CLASS[numStatus(v.frecuenciaCardiaca ?? '', 60, 100)]}`}>{v.frecuenciaCardiaca ? Math.round(Number(v.frecuenciaCardiaca)) : '-'}</p>
+                          <p className="text-xs text-gray-400">FC bpm</p>
+                        </div>
+                        <div className="text-center">
+                          <p className={`text-sm font-semibold ${STATUS_CLASS[numStatus(v.temperatura ?? '', 36, 37.5)]}`}>{v.temperatura ? Number(v.temperatura).toFixed(1) : '-'}</p>
+                          <p className="text-xs text-gray-400">Temp C</p>
+                        </div>
+                        <div className="text-center">
+                          <p className={`text-sm font-semibold ${STATUS_CLASS[numStatus(v.saturacionOxigeno ?? '', 94, 100)]}`}>{v.saturacionOxigeno ? Math.round(Number(v.saturacionOxigeno)) : '-'}</p>
+                          <p className="text-xs text-gray-400">SpO2 %</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-semibold text-gray-700">{v.frecuenciaRespiratoria ?? '-'}</p>
+                          <p className="text-xs text-gray-400">FR rpm</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-semibold text-gray-700">{v.peso ?? '-'}</p>
+                          <p className="text-xs text-gray-400">Peso kg</p>
+                        </div>
+                        <div className="col-span-3 text-right">
+                          <p className="text-xs text-gray-400">Registrado a las {new Date(v.registradoEn ?? v.registrado_en ?? v.createdAt).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', timeZone: 'America/La_Paz' })}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Alertas de vitales */}
+              {vitalAlerts.length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-5">
+                  <p className="text-sm font-semibold text-red-700 mb-2 flex items-center gap-2">
+                    <AlertTriangle size={14} /> Alertas clinicas
+                  </p>
+                  {vitalAlerts.map((a, i) => (
+                    <p key={i} className="text-xs text-red-600">â€¢ {a}</p>
+                  ))}
+                </div>
+              )}
+
+              {/* Formulario vitales */}
+              <div className="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Registro de signos vitales</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* PA */}
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block flex items-center gap-1">
+                      <Heart size={11} className="text-red-500" /> Presion Arterial (mmHg)
+                    </label>
+                    <input
+                      value={vitals.presionArterial}
+                      onChange={e => setVitals(v => ({ ...v, presionArterial: e.target.value }))}
+                      placeholder="120/80"
+                      className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 ${STATUS_BG[paStatus(vitals.presionArterial)]}`}
+                    />
+                  </div>
+                  {/* FC */}
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block flex items-center gap-1">
+                      <Activity size={11} className="text-blue-500" /> Frec. Cardiaca (bpm)
+                    </label>
+                    <input
+                      type="number" value={vitals.frecuenciaCardiaca}
+                      onChange={e => setVitals(v => ({ ...v, frecuenciaCardiaca: e.target.value }))}
+                      placeholder="72"
+                      className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 ${STATUS_BG[numStatus(vitals.frecuenciaCardiaca, 60, 100)]}`}
+                    />
+                  </div>
+                  {/* Temp */}
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block flex items-center gap-1">
+                      <Thermometer size={11} className="text-orange-500" /> Temperatura (C)
+                    </label>
+                    <input
+                      type="number" step="0.1" value={vitals.temperatura}
+                      onChange={e => setVitals(v => ({ ...v, temperatura: e.target.value }))}
+                      placeholder="36.5"
+                      className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 ${STATUS_BG[numStatus(vitals.temperatura, 36, 37.5)]}`}
+                    />
+                  </div>
+                  {/* SpO2 */}
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block flex items-center gap-1">
+                      <Wind size={11} className="text-cyan-500" /> Saturacion O2 (%)
+                    </label>
+                    <input
+                      type="number" value={vitals.saturacionOxigeno}
+                      onChange={e => setVitals(v => ({ ...v, saturacionOxigeno: e.target.value }))}
+                      placeholder="98"
+                      className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 ${STATUS_BG[numStatus(vitals.saturacionOxigeno, 94, 100)]}`}
+                    />
+                  </div>
+                  {/* FR */}
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block flex items-center gap-1">
+                      <Wind size={11} className="text-gray-400" /> Frec. Respiratoria (rpm)
+                    </label>
+                    <input
+                      type="number" value={vitals.frecuenciaRespiratoria}
+                      onChange={e => setVitals(v => ({ ...v, frecuenciaRespiratoria: e.target.value }))}
+                      placeholder="16"
+                      className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 ${STATUS_BG[numStatus(vitals.frecuenciaRespiratoria, 12, 20)]}`}
+                    />
+                  </div>
+                  {/* Peso */}
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block flex items-center gap-1">
+                      <Weight size={11} className="text-gray-400" /> Peso (kg)
+                    </label>
+                    <input
+                      type="number" step="0.1" value={vitals.peso}
+                      onChange={e => setVitals(v => ({ ...v, peso: e.target.value }))}
+                      placeholder="70"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-gray-50"
+                    />
+                  </div>
+                </div>
+
+                {/* Preview coloreado */}
+                {(vitals.presionArterial || vitals.frecuenciaCardiaca || vitals.temperatura) && (
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    {[
+                      { label: 'PA', val: vitals.presionArterial, unit: 'mmHg', st: paStatus(vitals.presionArterial) },
+                      { label: 'FC', val: vitals.frecuenciaCardiaca, unit: 'bpm', st: numStatus(vitals.frecuenciaCardiaca, 60, 100) },
+                      { label: 'Temp', val: vitals.temperatura, unit: 'C', st: numStatus(vitals.temperatura, 36, 37.5) },
+                      { label: 'SpO2', val: vitals.saturacionOxigeno, unit: '%', st: numStatus(vitals.saturacionOxigeno, 94, 100) },
+                      { label: 'FR', val: vitals.frecuenciaRespiratoria, unit: 'rpm', st: numStatus(vitals.frecuenciaRespiratoria, 12, 20) },
+                      { label: 'Peso', val: vitals.peso, unit: 'kg', st: 'neutral' as const },
+                    ].map(item => item.val !== '' && (
+                      <div key={item.label} className="bg-gray-50 rounded-lg p-2 text-center">
+                        <div className={`text-base font-semibold ${STATUS_CLASS[item.st as keyof typeof STATUS_CLASS]}`}>{item.val}</div>
+                        <div className="text-xs text-gray-500">{item.label} {item.unit}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {savedMsg && (
+                <div className={`rounded-xl px-4 py-3 text-sm mb-4 flex items-center gap-2 ${savedMsg.startsWith('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                  {savedMsg.startsWith('Error') ? <AlertTriangle size={14} /> : <CheckCircle size={14} />}
+                  {savedMsg}
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={saveVitals}
+                  disabled={saving || selected.flowStatus === 'completed'}
+                  className="flex-1 px-4 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 disabled:opacity-50 transition font-semibold text-sm"
+                >
+                  {saving ? 'Guardando...' : 'Registrar y marcar listo para consulta'}
+                </button>
+                <button
+                  onClick={() => setSelected(null)}
+                  className="px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition text-sm"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Tabla resumen vitales del dia */}
+        <div className="w-96 bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
+          <div className="px-4 py-3 border-b border-gray-100">
+            <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Vitales registrados hoy</p>
+            <p className="text-xs text-gray-400 mt-0.5">{vitalsHistory.length} registro(s)</p>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {vitalsHistory.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                <Activity size={28} className="mx-auto mb-2 opacity-20" />
+                <p className="text-xs">Sin registros aun</p>
+              </div>
+            ) : (
+              <table className="w-full text-xs">
+                <thead className="bg-gray-50 sticky top-0">
+                  <tr>
+                    <th className="px-3 py-2 text-left text-gray-500 font-medium">Paciente</th>
+                    <th className="px-2 py-2 text-center text-gray-500 font-medium">PA</th>
+                    <th className="px-2 py-2 text-center text-gray-500 font-medium">FC</th>
+                    <th className="px-2 py-2 text-center text-gray-500 font-medium">TÂ°</th>
+                    <th className="px-2 py-2 text-center text-gray-500 font-medium">SpO2</th>
+                    <th className="px-2 py-2 text-center text-gray-500 font-medium">Hora</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {vitalsHistory.map((v: any, i: number) => {
+                    const appt = appointments.find(a => a.patient?.id === v.patientId);
+                    const nombre = appt?.patient?.nombre ?? 'Paciente';
+                    const hora = new Date(v.registradoEn ?? v.registrado_en ?? v.createdAt).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', timeZone: 'America/La_Paz' });
+                    const fcSt = numStatus(v.frecuenciaCardiaca ?? '', 60, 100);
+                    const tSt = numStatus(v.temperatura ?? '', 36, 37.5);
+                    const spSt = numStatus(v.saturacionOxigeno ?? '', 94, 100);
+                    return (
+                      <tr key={i} className="border-b border-gray-50 hover:bg-gray-50 transition">
+                        <td className="px-3 py-2">
+                          <p className="font-medium text-gray-700 text-xs leading-tight">{nombre.split(' ').slice(0,3).join(' ')}</p>
+                        </td>
+                        <td className={`px-2 py-2 text-center font-medium ${paStatus(v.presionArterial ?? '') === 'danger' ? 'text-red-600' : paStatus(v.presionArterial ?? '') === 'warn' ? 'text-amber-600' : 'text-gray-700'}`}>
+                          {v.presionArterial ?? '-'}
+                        </td>
+                        <td className={`px-2 py-2 text-center font-medium ${STATUS_CLASS[fcSt]}`}>
+                          {v.frecuenciaCardiaca ? Math.round(Number(v.frecuenciaCardiaca)) : '-'}
+                        </td>
+                        <td className={`px-2 py-2 text-center font-medium ${STATUS_CLASS[tSt]}`}>
+                          {v.temperatura ? Number(v.temperatura).toFixed(1) : '-'}
+                        </td>
+                        <td className={`px-2 py-2 text-center font-medium ${STATUS_CLASS[spSt]}`}>
+                          {v.saturacionOxigeno ? Math.round(Number(v.saturacionOxigeno)) : '-'}
+                        </td>
+                        <td className="px-2 py-2 text-center text-gray-400">{hora}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+

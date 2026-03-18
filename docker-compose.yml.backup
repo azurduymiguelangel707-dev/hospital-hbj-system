@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: hospital_db
+    environment:
+      POSTGRES_DB: hospital_db
+      POSTGRES_USER: hospital_admin
+      POSTGRES_PASSWORD: hospital_secure_2024
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - hospital_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hospital_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: hospital_keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
+      KC_DB_USERNAME: hospital_admin
+      KC_DB_PASSWORD: hospital_secure_2024
+      KC_HOSTNAME: localhost
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    command: start-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - hospital_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hospital_backend
+    environment:
+      NODE_ENV: development
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: hospital_db
+      DATABASE_USER: hospital_admin
+      DATABASE_PASSWORD: hospital_secure_2024
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    #volumes:
+     # - ./backend:/app
+      #- /app/node_modules
+      #- /app/dist 
+    depends_on:
+      - postgres
+    networks:
+      - hospital_network
+    #command: sh -c "npm run build && npm run start:prod"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hospital_frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - hospital_network
+    command: npm run start:dev
+
+  redis:
+    image: redis:7-alpine
+    container_name: hospital_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - hospital_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  hospital_network:
+    driver: bridge
