@@ -1,9 +1,9 @@
-﻿// src/app/superadmin/components/GlobalUserManager.tsx
+// src/app/superadmin/components/GlobalUserManager.tsx
 'use client';
 import { useState } from 'react';
 import { Power, Key, Trash2, Edit2, X, Check, AlertTriangle, Shield } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });

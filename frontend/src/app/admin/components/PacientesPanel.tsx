@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, User, FileText, Activity, Calendar, Folder, ChevronRight, ArrowLeft, Phone, AlertCircle } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });
@@ -85,7 +85,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                 <User size={28} className="text-blue-500" />
               </div>
               <h2 className="font-bold text-gray-900 text-center text-lg leading-tight">{paciente.nombre}</h2>
-              <span className="text-xs text-gray-400 mt-1">N° Historial: {paciente.numeroHistorial}</span>
+              <span className="text-xs text-gray-400 mt-1">NÂ° Historial: {paciente.numeroHistorial}</span>
             </div>
 
             {ultimaConsulta && (
@@ -149,7 +149,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                               </div>
                               <div className="flex-1">
                                 <p className="text-sm font-semibold text-gray-800">{c.especialidad || 'Especialidad'}</p>
-                                <p className="text-xs text-gray-400">{formatFecha(c.appointmentDate)} · {c.appointmentTime?.substring(0,5) ?? ''} · Ficha {c.numeroFicha}/{c.totalFichasTurno}</p>
+                                <p className="text-xs text-gray-400">{formatFecha(c.appointmentDate)} Â· {c.appointmentTime?.substring(0,5) ?? ''} Â· Ficha {c.numeroFicha}/{c.totalFichasTurno}</p>
                               </div>
                               <span className={`text-xs px-2 py-1 rounded-full font-medium ${est.cls}`}>{est.label}</span>
                             </div>
@@ -211,11 +211,11 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                             </div>
                             <div className="flex-1">
                               <p className="text-sm font-medium text-gray-800">{d.descripcion || d.fileName}</p>
-                              <p className="text-xs text-gray-400">{d.tipo} · {formatFecha(d.creadoEn)}</p>
+                              <p className="text-xs text-gray-400">{d.tipo} Â· {formatFecha(d.creadoEn)}</p>
                             </div>
                             {(d.fileUrl || d.file_url) && (
                               <button
-                                onClick={() => window.open('http://localhost:3001' + (d.fileUrl ?? d.file_url), '_blank')}
+                                onClick={() => window.open('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'' + (d.fileUrl ?? d.file_url), '_blank')}
                                 className="flex items-center gap-1 px-3 py-1.5 text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition font-medium">
                                 Ver
                               </button>
@@ -280,7 +280,7 @@ export function PacientesPanel() {
 
       <div className="relative mb-5">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input type="text" placeholder="Buscar por nombre, CI o N° historial..."
+        <input type="text" placeholder="Buscar por nombre, CI o NÂ° historial..."
           value={busqueda} onChange={e => setBusqueda(e.target.value)}
           className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100" />
       </div>

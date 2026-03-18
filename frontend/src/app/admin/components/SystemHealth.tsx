@@ -1,9 +1,9 @@
-﻿// src/app/admin/components/SystemHealth.tsx
+// src/app/admin/components/SystemHealth.tsx
 'use client';
 import { useEffect, useState } from 'react';
 import { CheckCircle, XCircle, AlertTriangle, Server, Database, Shield, Activity } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 
 interface ServiceStatus { name: string; status: 'ok' | 'warn' | 'error'; latency?: number; detail?: string; icon: any; }
 

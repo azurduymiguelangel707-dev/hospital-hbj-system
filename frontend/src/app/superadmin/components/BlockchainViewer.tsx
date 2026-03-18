@@ -1,9 +1,9 @@
-﻿// src/app/superadmin/components/BlockchainViewer.tsx
+// src/app/superadmin/components/BlockchainViewer.tsx
 'use client';
 import { useState, useEffect } from 'react';
 import { Shield, CheckCircle, XCircle, ChevronDown, ChevronUp, Download, RefreshCw, AlertTriangle } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string) {
   return fetch(`${API}${url}`, { headers: { Authorization: `Bearer ${getToken()}` } });

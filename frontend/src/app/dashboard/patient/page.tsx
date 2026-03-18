@@ -50,14 +50,14 @@ export default function PatientDashboard() {
   const fetchData = async () => {
     try {
       const [appsRes, doctorsRes] = await Promise.all([
-        fetch('http://localhost:3001/api/appointments'),
-        fetch('http://localhost:3001/api/doctors')
+        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/appointments'),
+        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/doctors')
       ]);
       
       const appsData = await appsRes.json();
       const doctorsData = await doctorsRes.json();
       
-      // En producción, esto filtraría por el ID del paciente autenticado
+      // En producciÃ³n, esto filtrarÃ­a por el ID del paciente autenticado
       setAppointments(appsData);
       setDoctors(doctorsData);
     } catch (error) {
@@ -69,8 +69,8 @@ export default function PatientDashboard() {
 
   const handleBookAppointment = async () => {
     try {
-      // En producción, obtendría el patientId del usuario autenticado
-      const patients = await fetch('http://localhost:3001/api/patients').then(r => r.json());
+      // En producciÃ³n, obtendrÃ­a el patientId del usuario autenticado
+      const patients = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients').then(r => r.json());
       const patientId = patients[0]?.id;
 
       if (!patientId) {
@@ -78,7 +78,7 @@ export default function PatientDashboard() {
         return;
       }
 
-      const response = await fetch('http://localhost:3001/api/appointments', {
+      const response = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -92,7 +92,7 @@ export default function PatientDashboard() {
       if (response.ok) {
         await fetchData();
         closeModal();
-        alert('¡Cita agendada exitosamente!');
+        alert('Â¡Cita agendada exitosamente!');
       }
     } catch (error) {
       console.error('Error booking appointment:', error);
@@ -101,10 +101,10 @@ export default function PatientDashboard() {
   };
 
   const handleCancelAppointment = async (id: string) => {
-    if (!confirm('¿Estás seguro de cancelar esta cita?')) return;
+    if (!confirm('Â¿EstÃ¡s seguro de cancelar esta cita?')) return;
     
     try {
-      const response = await fetch(`http://localhost:3001/api/appointments/${id}/cancel`, {
+      const response = await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/appointments/${id}/cancel`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cancellationReason: 'Cancelada por el paciente' })
@@ -155,7 +155,7 @@ export default function PatientDashboard() {
     }
   };
 
-  // Separar citas próximas y pasadas
+  // Separar citas prÃ³ximas y pasadas
   const today = new Date().toISOString().split('T')[0];
   const upcomingAppointments = appointments
     .filter(app => app.appointmentDate.split('T')[0] >= today && app.status !== 'ANULADA' && app.status !== 'COMPLETADA')
@@ -172,7 +172,7 @@ export default function PatientDashboard() {
       if (dateCompare !== 0) return dateCompare;
       return b.appointmentTime.localeCompare(a.appointmentTime);
     })
-    .slice(0, 10); // Solo las últimas 10
+    .slice(0, 10); // Solo las Ãºltimas 10
 
   if (loading) {
     return (
@@ -188,14 +188,14 @@ export default function PatientDashboard() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Mi Portal de Paciente</h1>
-          <p className="text-gray-600 mt-1">Gestiona tus citas médicas</p>
+          <p className="text-gray-600 mt-1">Gestiona tus citas mÃ©dicas</p>
         </div>
 
         {/* Quick Action */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 mb-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold mb-2">¿Necesitas una consulta médica?</h2>
+              <h2 className="text-2xl font-bold mb-2">Â¿Necesitas una consulta mÃ©dica?</h2>
               <p className="text-blue-100">Agenda tu cita con nuestros especialistas</p>
             </div>
             <button
@@ -213,7 +213,7 @@ export default function PatientDashboard() {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Próximas Citas</p>
+                <p className="text-sm text-gray-600 mb-1">PrÃ³ximas Citas</p>
                 <p className="text-3xl font-bold text-blue-600">{upcomingAppointments.length}</p>
               </div>
               <Calendar className="text-blue-600" size={40} />
@@ -243,9 +243,9 @@ export default function PatientDashboard() {
           </div>
         </div>
 
-        {/* Próximas Citas */}
+        {/* PrÃ³ximas Citas */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Mis Próximas Citas</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Mis PrÃ³ximas Citas</h2>
           
           {upcomingAppointments.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
@@ -291,7 +291,7 @@ export default function PatientDashboard() {
                             <span className="font-semibold">
                               {app.doctor?.user 
                                 ? `Dr(a). ${app.doctor.user.first_name} ${app.doctor.user.last_name}` 
-                                : 'Médico no asignado'}
+                                : 'MÃ©dico no asignado'}
                             </span>
                           </div>
                           
@@ -344,7 +344,7 @@ export default function PatientDashboard() {
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hora</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Médico</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">MÃ©dico</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Especialidad</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
                   </tr>
@@ -393,13 +393,13 @@ export default function PatientDashboard() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Selecciona un Médico</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Selecciona un MÃ©dico</label>
                   <select
                     value={formData.doctorId}
                     onChange={(e) => setFormData({...formData, doctorId: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Seleccionar médico...</option>
+                    <option value="">Seleccionar mÃ©dico...</option>
                     {doctors.map(d => (
                       <option key={d.id} value={d.id}>
                         {d.user ? `Dr(a). ${d.user.first_name} ${d.user.last_name}` : 'Sin nombre'} - {d.specialty} (Bs. {d.consultation_fee})
@@ -449,7 +449,7 @@ export default function PatientDashboard() {
                     onChange={(e) => setFormData({...formData, notes: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     rows={3}
-                    placeholder="Información adicional que el médico deba saber..."
+                    placeholder="InformaciÃ³n adicional que el mÃ©dico deba saber..."
                   />
                 </div>
               </div>

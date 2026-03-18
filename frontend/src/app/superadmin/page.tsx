@@ -9,7 +9,7 @@ import { BackupPanel } from './components/BackupPanel';
 import { ReportesPanel } from './components/ReportesPanel';
 import { CerrarDiaButton } from '../admin/components/CerrarDiaButton';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });
@@ -91,7 +91,7 @@ export default function SuperAdminPage() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-950 overflow-hidden">
-      {/* Top bar — dark theme para distinguir del admin */}
+      {/* Top bar â€” dark theme para distinguir del admin */}
       <div className="flex items-center justify-between px-6 py-3 bg-gray-900 border-b border-gray-800 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center">
@@ -147,7 +147,7 @@ export default function SuperAdminPage() {
           </div>
         </aside>
 
-        {/* Main content — light */}
+        {/* Main content â€” light */}
         <main className="flex-1 overflow-auto bg-gray-50 p-6">
 
           {/* DASHBOARD */}
@@ -189,7 +189,7 @@ export default function SuperAdminPage() {
             <div>
               <div className="mb-5">
                 <h2 className="text-xl font-semibold text-gray-800">Gestion global de usuarios</h2>
-                <p className="text-sm text-gray-500">{users.length} usuarios en el sistema — acceso completo</p>
+                <p className="text-sm text-gray-500">{users.length} usuarios en el sistema â€” acceso completo</p>
               </div>
               <div className="bg-white border border-gray-200 rounded-xl p-5">
                 <GlobalUserManager users={users} onRefresh={loadAll} />
@@ -202,7 +202,7 @@ export default function SuperAdminPage() {
             <div>
               <div className="mb-5">
                 <h2 className="text-xl font-semibold text-gray-800">Blockchain Audit Log</h2>
-                <p className="text-sm text-gray-500">{blockchainCount} bloques registrados — SHA-256 CryptoJS</p>
+                <p className="text-sm text-gray-500">{blockchainCount} bloques registrados â€” SHA-256 CryptoJS</p>
               </div>
               <div className="bg-white border border-gray-200 rounded-xl p-5">
                 <BlockchainViewer />

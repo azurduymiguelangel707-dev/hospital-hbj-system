@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Clock, Activity, UserCheck, TrendingUp, AlertTriangle, RefreshCw } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() {
   return typeof window !== 'undefined' ? (localStorage.getItem('auth_token') ?? '') : '';
 }

@@ -82,9 +82,9 @@ export default function MedicalRecordsPage() {
   const fetchData = async () => {
     try {
       const [recordsRes, patientsRes, doctorsRes] = await Promise.all([
-        fetch('http://localhost:3001/api/medical-records'),
-        fetch('http://localhost:3001/api/patients'),
-        fetch('http://localhost:3001/api/doctors')
+        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/medical-records'),
+        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients'),
+        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/doctors')
       ]);
       
       setRecords(await recordsRes.json());
@@ -106,7 +106,7 @@ export default function MedicalRecordsPage() {
       if (formData.weight) vitalSigns.weight = parseFloat(formData.weight);
       if (formData.height) vitalSigns.height = parseFloat(formData.height);
 
-      const response = await fetch('http://localhost:3001/api/medical-records', {
+      const response = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/medical-records', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -126,7 +126,7 @@ export default function MedicalRecordsPage() {
       if (response.ok) {
         await fetchData();
         closeModal();
-        alert('Historial médico registrado exitosamente');
+        alert('Historial mÃ©dico registrado exitosamente');
       }
     } catch (error) {
       console.error('Error creating record:', error);
@@ -182,7 +182,7 @@ export default function MedicalRecordsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-xl text-gray-600">Cargando registros médicos...</div>
+        <div className="text-xl text-gray-600">Cargando registros mÃ©dicos...</div>
       </div>
     );
   }
@@ -196,9 +196,9 @@ export default function MedicalRecordsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center">
                 <FileText className="mr-3 text-blue-600" size={32} />
-                Historial Clínico Electrónico
+                Historial ClÃ­nico ElectrÃ³nico
               </h1>
-              <p className="text-gray-600 mt-1">Total: {records.length} registros médicos</p>
+              <p className="text-gray-600 mt-1">Total: {records.length} registros mÃ©dicos</p>
             </div>
             <button
               onClick={openCreateModal}
@@ -215,7 +215,7 @@ export default function MedicalRecordsPage() {
               <Search className="absolute left-3 top-3 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Buscar por paciente, médico o diagnóstico..."
+                placeholder="Buscar por paciente, mÃ©dico o diagnÃ³stico..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -289,12 +289,12 @@ export default function MedicalRecordsPage() {
 
         {/* Records List */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Registros Médicos</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Registros MÃ©dicos</h2>
           
           {filteredRecords.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               <FileText className="mx-auto mb-4 text-gray-400" size={48} />
-              <p>No se encontraron registros médicos</p>
+              <p>No se encontraron registros mÃ©dicos</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -336,7 +336,7 @@ export default function MedicalRecordsPage() {
                       </div>
                       
                       <div className="text-sm text-gray-600 mb-2">
-                        <span className="font-semibold">Diagnóstico:</span> {record.diagnosis}
+                        <span className="font-semibold">DiagnÃ³stico:</span> {record.diagnosis}
                       </div>
                       
                       {record.vitalSigns && (
@@ -351,7 +351,7 @@ export default function MedicalRecordsPage() {
                             <span>FC: {record.vitalSigns.heart_rate} bpm</span>
                           )}
                           {record.vitalSigns.temperature && (
-                            <span>Temp: {record.vitalSigns.temperature}°C</span>
+                            <span>Temp: {record.vitalSigns.temperature}Â°C</span>
                           )}
                         </div>
                       )}
@@ -369,7 +369,7 @@ export default function MedicalRecordsPage() {
             <div className="bg-white rounded-lg p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">
-                  {viewingRecord ? 'Ver Registro Médico' : 'Nuevo Registro Médico'}
+                  {viewingRecord ? 'Ver Registro MÃ©dico' : 'Nuevo Registro MÃ©dico'}
                 </h2>
                 <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
                   <X size={24} />
@@ -411,20 +411,20 @@ export default function MedicalRecordsPage() {
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {viewingRecord.vitalSigns.blood_pressure && (
                           <div>
-                            <span className="text-xs text-gray-600">Presión Arterial</span>
+                            <span className="text-xs text-gray-600">PresiÃ³n Arterial</span>
                             <p className="font-semibold">{viewingRecord.vitalSigns.blood_pressure}</p>
                           </div>
                         )}
                         {viewingRecord.vitalSigns.heart_rate && (
                           <div>
-                            <span className="text-xs text-gray-600">Frecuencia Cardíaca</span>
+                            <span className="text-xs text-gray-600">Frecuencia CardÃ­aca</span>
                             <p className="font-semibold">{viewingRecord.vitalSigns.heart_rate} bpm</p>
                           </div>
                         )}
                         {viewingRecord.vitalSigns.temperature && (
                           <div>
                             <span className="text-xs text-gray-600">Temperatura</span>
-                            <p className="font-semibold">{viewingRecord.vitalSigns.temperature}°C</p>
+                            <p className="font-semibold">{viewingRecord.vitalSigns.temperature}Â°C</p>
                           </div>
                         )}
                         {viewingRecord.vitalSigns.weight && (
@@ -444,12 +444,12 @@ export default function MedicalRecordsPage() {
                   )}
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-600">Síntomas</label>
+                    <label className="text-sm font-semibold text-gray-600">SÃ­ntomas</label>
                     <p className="text-gray-800 mt-1">{viewingRecord.symptoms}</p>
                   </div>
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-600">Diagnóstico</label>
+                    <label className="text-sm font-semibold text-gray-600">DiagnÃ³stico</label>
                     <p className="text-gray-800 mt-1">{viewingRecord.diagnosis}</p>
                   </div>
 
@@ -502,14 +502,14 @@ export default function MedicalRecordsPage() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Médico *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">MÃ©dico *</label>
                     <select
                       value={formData.doctorId}
                       onChange={(e) => setFormData({...formData, doctorId: e.target.value})}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       required
                     >
-                      <option value="">Seleccionar médico...</option>
+                      <option value="">Seleccionar mÃ©dico...</option>
                       {doctors.map(d => (
                         <option key={d.id} value={d.id}>
                           {d.user ? `Dr(a). ${d.user.first_name} ${d.user.last_name}` : 'Sin nombre'} - {d.specialty}
@@ -543,7 +543,7 @@ export default function MedicalRecordsPage() {
                     <h3 className="font-semibold text-gray-800 mb-3">Signos Vitales</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-xs text-gray-600 mb-1">Presión Arterial</label>
+                        <label className="block text-xs text-gray-600 mb-1">PresiÃ³n Arterial</label>
                         <input
                           type="text"
                           value={formData.bloodPressure}
@@ -553,7 +553,7 @@ export default function MedicalRecordsPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-600 mb-1">Frecuencia Cardíaca (bpm)</label>
+                        <label className="block text-xs text-gray-600 mb-1">Frecuencia CardÃ­aca (bpm)</label>
                         <input
                           type="number"
                           value={formData.heartRate}
@@ -563,7 +563,7 @@ export default function MedicalRecordsPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-600 mb-1">Temperatura (°C)</label>
+                        <label className="block text-xs text-gray-600 mb-1">Temperatura (Â°C)</label>
                         <input
                           type="number"
                           step="0.1"
@@ -598,25 +598,25 @@ export default function MedicalRecordsPage() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Síntomas *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">SÃ­ntomas *</label>
                     <textarea
                       value={formData.symptoms}
                       onChange={(e) => setFormData({...formData, symptoms: e.target.value})}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       rows={3}
-                      placeholder="Describa los síntomas del paciente..."
+                      placeholder="Describa los sÃ­ntomas del paciente..."
                       required
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Diagnóstico *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">DiagnÃ³stico *</label>
                     <textarea
                       value={formData.diagnosis}
                       onChange={(e) => setFormData({...formData, diagnosis: e.target.value})}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       rows={3}
-                      placeholder="Diagnóstico médico..."
+                      placeholder="DiagnÃ³stico mÃ©dico..."
                       required
                     />
                   </div>

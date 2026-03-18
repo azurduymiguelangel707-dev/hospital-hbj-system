@@ -1,10 +1,10 @@
-﻿// src/app/superadmin/components/ReportesPanel.tsx
+// src/app/superadmin/components/ReportesPanel.tsx
 'use client';
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Download, Calendar, Stethoscope, Users, FileText } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string) {
   return fetch(`${API}${url}`, { headers: { Authorization: `Bearer ${getToken()}` } });

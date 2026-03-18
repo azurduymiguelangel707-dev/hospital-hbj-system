@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Database, Download, Trash2, RefreshCw, Plus, Shield, Clock, HardDrive, Table, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, {

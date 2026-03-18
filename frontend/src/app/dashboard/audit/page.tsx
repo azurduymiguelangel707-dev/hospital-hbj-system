@@ -60,7 +60,7 @@ export default function AuditDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const blocksRes = await fetch('http://localhost:3001/api/audit');
+      const blocksRes = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/audit');
       const blocksData = await blocksRes.json();
       setBlocks(blocksData.data || []);
 
@@ -71,11 +71,11 @@ export default function AuditDashboard() {
       }
       setPreviousBlockCount(blocksData.data?.length || 0);
 
-      const statsRes = await fetch('http://localhost:3001/api/audit/statistics');
+      const statsRes = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/audit/statistics');
       const statsData = await statsRes.json();
       setStatistics(statsData);
 
-      const verifyRes = await fetch('http://localhost:3001/api/audit/verify');
+      const verifyRes = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/audit/verify');
       const verifyData = await verifyRes.json();
       setVerification(verifyData);
 
@@ -115,12 +115,12 @@ export default function AuditDashboard() {
 
   const getEventIcon = (eventType: string) => {
     const icons: { [key: string]: string } = {
-      'CREATE': '➕',
-      'ACCESS': '👁️',
-      'UPDATE': '✏️',
-      'DELETE': '🗑️'
+      'CREATE': 'âž•',
+      'ACCESS': 'ðŸ‘ï¸',
+      'UPDATE': 'âœï¸',
+      'DELETE': 'ðŸ—‘ï¸'
     };
-    return icons[eventType] || '📝';
+    return icons[eventType] || 'ðŸ“';
   };
 
   const exportToJSON = () => {
@@ -150,7 +150,7 @@ export default function AuditDashboard() {
   };
 
   const exportToCSV = () => {
-    const headers = ['Bloque', 'Marca de Tiempo', 'Evento', 'Recurso', 'Usuario', 'Hash', 'Hash Anterior', 'Nonce', 'Válido'];
+    const headers = ['Bloque', 'Marca de Tiempo', 'Evento', 'Recurso', 'Usuario', 'Hash', 'Hash Anterior', 'Nonce', 'VÃ¡lido'];
     const rows = blocks.map(b => [
       b.blockIndex,
       formatTimestamp(b.timestamp),
@@ -160,7 +160,7 @@ export default function AuditDashboard() {
       b.currentHash,
       b.previousHash,
       b.nonce,
-      b.isValid ? 'SÍ' : 'NO'
+      b.isValid ? 'SÃ' : 'NO'
     ]);
     
     const csvContent = [
@@ -183,13 +183,13 @@ export default function AuditDashboard() {
     }
     
     try {
-      const response = await fetch(`http://localhost:3001/api/audit/trail/${trailResourceType}/${trailResourceId}`);
+      const response = await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/audit/trail/${trailResourceType}/${trailResourceId}`);
       const data = await response.json();
       setTrailResults(data);
       setShowTrailResults(true);
     } catch (error) {
       console.error('Error searching audit trail:', error);
-      alert('Error al buscar rastro de auditoría');
+      alert('Error al buscar rastro de auditorÃ­a');
     }
   };
 
@@ -222,14 +222,14 @@ export default function AuditDashboard() {
         <div className="flex items-center gap-3 mb-2">
           <Shield className="text-blue-600" size={36} />
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Seguridad y Auditoría Blockchain</h1>
+            <h1 className="text-3xl font-bold text-gray-800">Seguridad y AuditorÃ­a Blockchain</h1>
             <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
               <Clock size={16} />
-              Última actualización: {lastUpdate.toLocaleTimeString('es-BO')}
+              Ãšltima actualizaciÃ³n: {lastUpdate.toLocaleTimeString('es-BO')}
             </div>
           </div>
         </div>
-        <p className="text-gray-600">Sistema de auditoría inmutable con Prueba de Trabajo</p>
+        <p className="text-gray-600">Sistema de auditorÃ­a inmutable con Prueba de Trabajo</p>
       </div>
 
       {/* New Block Notification */}
@@ -238,7 +238,7 @@ export default function AuditDashboard() {
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
             <div>
-              <p className="font-bold text-green-800">🎉 ¡Nuevo bloque generado!</p>
+              <p className="font-bold text-green-800">ðŸŽ‰ Â¡Nuevo bloque generado!</p>
               <p className="text-sm text-green-600">Un nuevo evento ha sido registrado en la cadena de bloques</p>
             </div>
           </div>
@@ -287,7 +287,7 @@ export default function AuditDashboard() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-gray-600 font-medium">Creaciones</h3>
-            <span className="text-2xl">➕</span>
+            <span className="text-2xl">âž•</span>
           </div>
           <p className="text-3xl font-bold text-green-600">
             {statistics?.byEventType.find(e => e.eventType === 'CREATE')?.count || 0}
@@ -298,7 +298,7 @@ export default function AuditDashboard() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-gray-600 font-medium">Accesos</h3>
-            <span className="text-2xl">👁️</span>
+            <span className="text-2xl">ðŸ‘ï¸</span>
           </div>
           <p className="text-3xl font-bold text-blue-600">
             {statistics?.byEventType.find(e => e.eventType === 'ACCESS')?.count || 0}
@@ -314,7 +314,7 @@ export default function AuditDashboard() {
           <p className="text-3xl font-bold text-green-600">
             {verification?.isValid ? '100%' : '0%'}
           </p>
-          <p className="text-sm text-gray-500 mt-1">Cadena válida</p>
+          <p className="text-sm text-gray-500 mt-1">Cadena vÃ¡lida</p>
         </div>
       </div>
 
@@ -337,7 +337,7 @@ export default function AuditDashboard() {
             <p className="text-xs opacity-80 mt-1">Hash debe empezar con "00"</p>
           </div>
           <div>
-            <h3 className="text-sm opacity-80 mb-1">Último Bloque</h3>
+            <h3 className="text-sm opacity-80 mb-1">Ãšltimo Bloque</h3>
             <p className="text-3xl font-bold">
               {blocks.length > 0 
                 ? `#${blocks[0].blockIndex}`
@@ -357,7 +357,7 @@ export default function AuditDashboard() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Distribución por Tipo de Evento</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">DistribuciÃ³n por Tipo de Evento</h2>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -442,7 +442,7 @@ export default function AuditDashboard() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="bloques" stroke="#3b82f6" name="Bloques por día" />
+            <Line type="monotone" dataKey="bloques" stroke="#3b82f6" name="Bloques por dÃ­a" />
             <Line type="monotone" dataKey="acumulado" stroke="#10b981" name="Total acumulado" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
@@ -450,7 +450,7 @@ export default function AuditDashboard() {
 
       {/* Audit Trail Search */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">🔍 Buscar Rastro de Auditoría de Recurso</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">ðŸ” Buscar Rastro de AuditorÃ­a de Recurso</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <select 
             value={trailResourceType}
@@ -476,7 +476,7 @@ export default function AuditDashboard() {
           </button>
         </div>
         <div className="text-sm text-gray-600">
-          💡 Ingresa el ID de un historial médico, paciente o cita para ver todos los eventos relacionados
+          ðŸ’¡ Ingresa el ID de un historial mÃ©dico, paciente o cita para ver todos los eventos relacionados
         </div>
         
         {/* Trail Results */}
@@ -490,7 +490,7 @@ export default function AuditDashboard() {
                 onClick={() => setShowTrailResults(false)}
                 className="text-sm text-gray-500 hover:text-gray-700"
               >
-                ✕ Cerrar
+                âœ• Cerrar
               </button>
             </div>
             {trailResults.length > 0 ? (
@@ -569,13 +569,13 @@ export default function AuditDashboard() {
                   onClick={exportToJSON}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-t-lg"
                 >
-                  📄 Exportar JSON
+                  ðŸ“„ Exportar JSON
                 </button>
                 <button
                   onClick={exportToCSV}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-b-lg"
                 >
-                  📊 Exportar CSV
+                  ðŸ“Š Exportar CSV
                 </button>
               </div>
             </div>
@@ -603,7 +603,7 @@ export default function AuditDashboard() {
                   </div>
                 </div>
                 {index < 9 && blocks.length > index + 1 && (
-                  <div className="text-blue-600 text-2xl mx-2">→</div>
+                  <div className="text-blue-600 text-2xl mx-2">â†’</div>
                 )}
               </div>
             ))}
@@ -620,10 +620,10 @@ export default function AuditDashboard() {
           <h2 className="text-xl font-bold text-gray-800 mb-4">Detalles del Bloque #{selectedBlock.blockIndex}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-gray-700 mb-2">Información General</h3>
+              <h3 className="font-semibold text-gray-700 mb-2">InformaciÃ³n General</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Índice de Bloque:</span>
+                  <span className="text-gray-600">Ãndice de Bloque:</span>
                   <span className="font-mono font-bold">#{selectedBlock.blockIndex}</span>
                 </div>
                 <div className="flex justify-between">
@@ -671,7 +671,7 @@ export default function AuditDashboard() {
                   <span className="text-gray-600">Estado:</span>
                   <span className={`flex items-center gap-1 ${selectedBlock.isValid ? 'text-green-600' : 'text-red-600'}`}>
                     {selectedBlock.isValid ? <CheckCircle size={16} /> : <AlertTriangle size={16} />}
-                    {selectedBlock.isValid ? 'Válido' : 'Inválido'}
+                    {selectedBlock.isValid ? 'VÃ¡lido' : 'InvÃ¡lido'}
                   </span>
                 </div>
               </div>
@@ -680,7 +680,7 @@ export default function AuditDashboard() {
 
           {selectedBlock.actionDetails && (
             <div className="mt-4 pt-4 border-t">
-              <h3 className="font-semibold text-gray-700 mb-2">Detalles de la Acción</h3>
+              <h3 className="font-semibold text-gray-700 mb-2">Detalles de la AcciÃ³n</h3>
               <pre className="bg-gray-100 p-3 rounded text-xs overflow-auto">
                 {JSON.stringify(selectedBlock.actionDetails, null, 2)}
               </pre>
@@ -691,7 +691,7 @@ export default function AuditDashboard() {
 
       {/* Blocks List */}
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Registro Completo de Auditoría</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Registro Completo de AuditorÃ­a</h2>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

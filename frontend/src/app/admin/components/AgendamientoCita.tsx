@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, Clock, User, Stethoscope, CheckCircle, ChevronLeft, AlertTriangle } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });
@@ -96,8 +96,8 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Comprobante de cita</p>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: 'N° Ficha', value: `${saved.numeroFicha} / ${saved.totalFichasTurno}`, highlight: true },
-              { label: 'N° Historial', value: patient.numeroHistorial, highlight: true },
+              { label: 'NÂ° Ficha', value: `${saved.numeroFicha} / ${saved.totalFichasTurno}`, highlight: true },
+              { label: 'NÂ° Historial', value: patient.numeroHistorial, highlight: true },
               { label: 'Paciente', value: patient.nombre },
               { label: 'Medico', value: selectedDoctor ? `Dr. ${selectedDoctor.user?.first_name ?? ''} ${selectedDoctor.user?.last_name ?? ''}` : '-' },
               { label: 'Especialidad', value: saved.especialidad },
@@ -183,7 +183,7 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
             ) : slots.fichasDisponibles > 0 ? (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-green-700">Ficha N° {slots.proximaFicha} / {slots.totalFichas}</p>
+                  <p className="font-semibold text-green-700">Ficha NÂ° {slots.proximaFicha} / {slots.totalFichas}</p>
                   <p className="text-xs text-green-600">{slots.fichasDisponibles} fichas disponibles</p>
                 </div>
                 <div className="flex gap-1">
@@ -193,7 +193,7 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
                 </div>
               </div>
             ) : (
-              <p className="text-red-700 font-medium">Turno completo — sin fichas disponibles</p>
+              <p className="text-red-700 font-medium">Turno completo â€” sin fichas disponibles</p>
             )}
           </div>
         )}
@@ -208,7 +208,7 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white">
               {doctors.map(d => (
                 <option key={d.id} value={d.id}>
-                  Dr. {d.user?.first_name ?? ''} {d.user?.last_name ?? ''} — {d.specialty}
+                  Dr. {d.user?.first_name ?? ''} {d.user?.last_name ?? ''} â€” {d.specialty}
                 </option>
               ))}
             </select>

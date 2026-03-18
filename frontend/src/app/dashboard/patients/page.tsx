@@ -1,4 +1,4 @@
-﻿// frontend/src/app/dashboard/patients/page.tsx
+// frontend/src/app/dashboard/patients/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -49,7 +49,7 @@ export default function PatientsPage() {
 
   const fetchPatients = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/patients');
+      const response = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients');
       const data = await response.json();
       setPatients(data);
     } catch (error) {
@@ -61,7 +61,7 @@ export default function PatientsPage() {
 
   const handleCreate = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/patients', {
+      const response = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ export default function PatientsPage() {
     if (!editingPatient) return;
     
     try {
-      const response = await fetch(`http://localhost:3001/api/patients/${editingPatient.id}`, {
+      const response = await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients/${editingPatient.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -105,7 +105,7 @@ export default function PatientsPage() {
     if (!confirm('¿Estás seguro de eliminar este paciente?')) return;
     
     try {
-      const response = await fetch(`http://localhost:3001/api/patients/${id}`, {
+      const response = await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients/${id}`, {
         method: 'DELETE'
       });
       

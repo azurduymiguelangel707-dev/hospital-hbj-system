@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { TrendingUp, Clock, Users, Target, RefreshCw, ChevronUp, ChevronDown, Minus } from 'lucide-react';
 
-const API = 'http://localhost:3001';
+const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string) { return fetch(`${API}${url}`, { headers: { Authorization: `Bearer ${getToken()}` } }); }
 
@@ -166,7 +166,7 @@ export function ProductividadPanel() {
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-400">Tiempo prom: {m.tiempoPromedio} min/paciente</span>
                   <span className={`text-xs font-medium ${m.proyeccionCierre === 'Completado' ? 'text-green-600' : 'text-blue-600'}`}>
-                    {m.proyeccionCierre === 'Completado' ? '✓ Completado' : `Cierre aprox: ${m.proyeccionCierre}`}
+                    {m.proyeccionCierre === 'Completado' ? 'âœ“ Completado' : `Cierre aprox: ${m.proyeccionCierre}`}
                   </span>
                 </div>
               </div>
