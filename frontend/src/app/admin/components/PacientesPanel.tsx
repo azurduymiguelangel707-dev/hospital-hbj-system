@@ -150,15 +150,21 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
               {tab === 'documentos' && (
                 documentos.length === 0 ? <p className="text-center text-gray-400 py-8 text-sm">Sin documentos</p> :
                 <div className="space-y-2">
-                  {documentos.map((d: any) => (
-                    <div key={d.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <FileText size={14} className="text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">{d.fileName ?? d.descripcion ?? 'Documento'}</p>
-                        <p className="text-xs text-gray-400">{formatFecha(d.creadoEn)}</p>
-                      </div>
+                  {documentos.map((d: any) => {
+                    const isImg = d.mimeType?.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(d.fileName ?? '');
+                    const url = d.fileUrl ? (d.fileUrl.startsWith('http') ? d.fileUrl : `http://localhost:3001${d.fileUrl}`) : null;
+                    return (
+                    <div key={d.id} className="p-3 bg-gray-50 rounded-lg">
+                      {isImg && url ? (
+                        <img src={url} alt={d.fileName} className="w-full max-h-48 object-contain rounded mb-2 border" />
+                      ) : (
+                        <div className="flex items-center gap-2 mb-1"><FileText size={14} className="text-gray-400" /></div>
+                      )}
+                      <p className="text-sm font-medium text-gray-700">{d.fileName ?? d.descripcion ?? 'Documento'}</p>
+                      <p className="text-xs text-gray-400">{formatFecha(d.creadoEn)}</p>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </>
