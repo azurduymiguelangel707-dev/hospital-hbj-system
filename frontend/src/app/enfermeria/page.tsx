@@ -550,7 +550,7 @@ export default function EnfermeriaDashboard() {
                     <th className="px-3 py-2 text-left text-gray-500 font-medium">Paciente</th>
                     <th className="px-2 py-2 text-center text-gray-500 font-medium">PA</th>
                     <th className="px-2 py-2 text-center text-gray-500 font-medium">FC</th>
-                    <th className="px-2 py-2 text-center text-gray-500 font-medium">TÃ‚Â°</th>
+                    <th className="px-2 py-2 text-center text-gray-500 font-medium">T°</th>
                     <th className="px-2 py-2 text-center text-gray-500 font-medium">SpO2</th>
                     <th className="px-2 py-2 text-center text-gray-500 font-medium">Hora</th>
                   </tr>
