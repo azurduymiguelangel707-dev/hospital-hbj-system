@@ -50,14 +50,14 @@ export default function PatientDashboard() {
   const fetchData = async () => {
     try {
       const [appsRes, doctorsRes] = await Promise.all([
-        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/appointments'),
-        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/doctors')
+        fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/appointments'),
+        fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/doctors')
       ]);
       
       const appsData = await appsRes.json();
       const doctorsData = await doctorsRes.json();
       
-      // En producciÃƒÂ³n, esto filtrarÃƒÂ­a por el ID del paciente autenticado
+      // En producciÃƒÆ’Ã‚Â³n, esto filtrarÃƒÆ’Ã‚Â­a por el ID del paciente autenticado
       setAppointments(appsData);
       setDoctors(doctorsData);
     } catch (error) {
@@ -69,8 +69,8 @@ export default function PatientDashboard() {
 
   const handleBookAppointment = async () => {
     try {
-      // En producciÃƒÂ³n, obtendrÃƒÂ­a el patientId del usuario autenticado
-      const patients = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients').then(r => r.json());
+      // En producciÃƒÆ’Ã‚Â³n, obtendrÃƒÆ’Ã‚Â­a el patientId del usuario autenticado
+      const patients = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/patients').then(r => r.json());
       const patientId = patients[0]?.id;
 
       if (!patientId) {
@@ -92,7 +92,7 @@ export default function PatientDashboard() {
       if (response.ok) {
         await fetchData();
         closeModal();
-        alert('Ã‚Â¡Cita agendada exitosamente!');
+        alert('Ãƒâ€šÃ‚Â¡Cita agendada exitosamente!');
       }
     } catch (error) {
       console.error('Error booking appointment:', error);
@@ -101,7 +101,7 @@ export default function PatientDashboard() {
   };
 
   const handleCancelAppointment = async (id: string) => {
-    if (!confirm('Ã‚Â¿EstÃƒÂ¡s seguro de cancelar esta cita?')) return;
+    if (!confirm('Ãƒâ€šÃ‚Â¿EstÃƒÆ’Ã‚Â¡s seguro de cancelar esta cita?')) return;
     
     try {
       const response = await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/appointments/${id}/cancel`, {
@@ -155,7 +155,7 @@ export default function PatientDashboard() {
     }
   };
 
-  // Separar citas prÃƒÂ³ximas y pasadas
+  // Separar citas prÃƒÆ’Ã‚Â³ximas y pasadas
   const today = new Date().toISOString().split('T')[0];
   const upcomingAppointments = appointments
     .filter(app => app.appointmentDate.split('T')[0] >= today && app.status !== 'ANULADA' && app.status !== 'COMPLETADA')
@@ -172,7 +172,7 @@ export default function PatientDashboard() {
       if (dateCompare !== 0) return dateCompare;
       return b.appointmentTime.localeCompare(a.appointmentTime);
     })
-    .slice(0, 10); // Solo las ÃƒÂºltimas 10
+    .slice(0, 10); // Solo las ÃƒÆ’Ã‚Âºltimas 10
 
   if (loading) {
     return (
@@ -188,14 +188,14 @@ export default function PatientDashboard() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Mi Portal de Paciente</h1>
-          <p className="text-gray-600 mt-1">Gestiona tus citas mÃƒÂ©dicas</p>
+          <p className="text-gray-600 mt-1">Gestiona tus citas mÃƒÆ’Ã‚Â©dicas</p>
         </div>
 
         {/* Quick Action */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 mb-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold mb-2">Ã‚Â¿Necesitas una consulta mÃƒÂ©dica?</h2>
+              <h2 className="text-2xl font-bold mb-2">Ãƒâ€šÃ‚Â¿Necesitas una consulta mÃƒÆ’Ã‚Â©dica?</h2>
               <p className="text-blue-100">Agenda tu cita con nuestros especialistas</p>
             </div>
             <button
@@ -213,7 +213,7 @@ export default function PatientDashboard() {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">PrÃƒÂ³ximas Citas</p>
+                <p className="text-sm text-gray-600 mb-1">PrÃƒÆ’Ã‚Â³ximas Citas</p>
                 <p className="text-3xl font-bold text-blue-600">{upcomingAppointments.length}</p>
               </div>
               <Calendar className="text-blue-600" size={40} />
@@ -243,9 +243,9 @@ export default function PatientDashboard() {
           </div>
         </div>
 
-        {/* PrÃƒÂ³ximas Citas */}
+        {/* PrÃƒÆ’Ã‚Â³ximas Citas */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Mis PrÃƒÂ³ximas Citas</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Mis PrÃƒÆ’Ã‚Â³ximas Citas</h2>
           
           {upcomingAppointments.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
@@ -291,7 +291,7 @@ export default function PatientDashboard() {
                             <span className="font-semibold">
                               {app.doctor?.user 
                                 ? `Dr(a). ${app.doctor.user.first_name} ${app.doctor.user.last_name}` 
-                                : 'MÃƒÂ©dico no asignado'}
+                                : 'MÃƒÆ’Ã‚Â©dico no asignado'}
                             </span>
                           </div>
                           
@@ -344,7 +344,7 @@ export default function PatientDashboard() {
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hora</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">MÃƒÂ©dico</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">MÃƒÆ’Ã‚Â©dico</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Especialidad</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
                   </tr>
@@ -393,13 +393,13 @@ export default function PatientDashboard() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Selecciona un MÃƒÂ©dico</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Selecciona un MÃƒÆ’Ã‚Â©dico</label>
                   <select
                     value={formData.doctorId}
                     onChange={(e) => setFormData({...formData, doctorId: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Seleccionar mÃƒÂ©dico...</option>
+                    <option value="">Seleccionar mÃƒÆ’Ã‚Â©dico...</option>
                     {doctors.map(d => (
                       <option key={d.id} value={d.id}>
                         {d.user ? `Dr(a). ${d.user.first_name} ${d.user.last_name}` : 'Sin nombre'} - {d.specialty} (Bs. {d.consultation_fee})
@@ -449,7 +449,7 @@ export default function PatientDashboard() {
                     onChange={(e) => setFormData({...formData, notes: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     rows={3}
-                    placeholder="InformaciÃƒÂ³n adicional que el mÃƒÂ©dico deba saber..."
+                    placeholder="InformaciÃƒÆ’Ã‚Â³n adicional que el mÃƒÆ’Ã‚Â©dico deba saber..."
                   />
                 </div>
               </div>

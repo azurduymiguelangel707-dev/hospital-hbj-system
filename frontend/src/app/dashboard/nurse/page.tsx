@@ -52,8 +52,8 @@ export default function NurseDashboard() {
   const fetchData = async () => {
     try {
       const [appointmentsRes, recordsRes] = await Promise.all([
-        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/appointments'),
-        fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/medical-records')
+        fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/appointments'),
+        fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/medical-records')
       ]);
       
       const appointments = await appointmentsRes.json();
@@ -110,7 +110,7 @@ export default function NurseDashboard() {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center">
             <Activity className="mr-3 text-blue-600" size={32} />
-            Dashboard de EnfermerÃƒÂ­a
+            Dashboard de EnfermerÃƒÆ’Ã‚Â­a
           </h1>
           <p className="text-gray-600 mt-1">
             {new Date().toLocaleDateString('es-ES', { 
@@ -189,7 +189,7 @@ export default function NurseDashboard() {
                         <div>
                           <h3 className="font-bold text-gray-800">{app.patient?.nombre || 'Paciente'}</h3>
                           <p className="text-sm text-gray-600">
-                            {app.patient?.edad ? `${app.patient.edad} aÃƒÂ±os` : 'Edad no especificada'}
+                            {app.patient?.edad ? `${app.patient.edad} aÃƒÆ’Ã‚Â±os` : 'Edad no especificada'}
                           </p>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(app.status)}`}>
@@ -252,7 +252,7 @@ export default function NurseDashboard() {
                             <div className="flex items-center">
                               <Heart className="mr-2 text-red-500" size={16} />
                               <div>
-                                <p className="text-xs text-gray-600">PresiÃƒÂ³n</p>
+                                <p className="text-xs text-gray-600">PresiÃƒÆ’Ã‚Â³n</p>
                                 <p className="font-semibold text-sm">{vs.blood_pressure}</p>
                               </div>
                             </div>
@@ -273,7 +273,7 @@ export default function NurseDashboard() {
                               <Thermometer className="mr-2 text-orange-500" size={16} />
                               <div>
                                 <p className="text-xs text-gray-600">Temperatura</p>
-                                <p className="font-semibold text-sm">{vs.temperature}Ã‚Â°C</p>
+                                <p className="font-semibold text-sm">{vs.temperature}Ãƒâ€šÃ‚Â°C</p>
                               </div>
                             </div>
                           )}
@@ -286,11 +286,11 @@ export default function NurseDashboard() {
           </div>
         </div>
 
-        {/* Agenda del DÃƒÂ­a */}
+        {/* Agenda del DÃƒÆ’Ã‚Â­a */}
         <div className="bg-white rounded-lg shadow-md p-6 mt-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
             <Calendar className="mr-2 text-blue-600" size={24} />
-            Agenda Completa del DÃƒÂ­a
+            Agenda Completa del DÃƒÆ’Ã‚Â­a
           </h2>
           
           {todayAppointments.length === 0 ? (
@@ -304,9 +304,9 @@ export default function NurseDashboard() {
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hora</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Paciente</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">MÃƒÂ©dico</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">MÃƒÆ’Ã‚Â©dico</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">AcciÃƒÂ³n</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">AcciÃƒÆ’Ã‚Â³n</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -340,7 +340,7 @@ export default function NurseDashboard() {
                             <span className="text-purple-600 text-sm font-semibold">En consulta</span>
                           )}
                           {app.status === 'COMPLETADA' && (
-                            <span className="text-green-600 text-sm">Ã¢Å“â€œ Completada</span>
+                            <span className="text-green-600 text-sm">ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“ Completada</span>
                           )}
                         </td>
                       </tr>

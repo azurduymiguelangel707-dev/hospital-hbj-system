@@ -39,20 +39,20 @@ export default function DoctorsPage() {
 
   const especialidades = [
     "Medicina General",
-    "PediatrÃƒÂ­a",
-    "CardiologÃƒÂ­a",
-    "DermatologÃƒÂ­a",
-    "GinecologÃƒÂ­a",
-    "TraumatologÃƒÂ­a",
-    "NeurologÃƒÂ­a",
-    "OftalmologÃƒÂ­a",
-    "OtorrinolaringologÃƒÂ­a",
-    "PsiquiatrÃƒÂ­a",
-    "UrologÃƒÂ­a",
-    "OncologÃƒÂ­a",
-    "EndocrinologÃƒÂ­a",
-    "NeumologÃƒÂ­a",
-    "GastroenterologÃƒÂ­a"
+    "PediatrÃƒÆ’Ã‚Â­a",
+    "CardiologÃƒÆ’Ã‚Â­a",
+    "DermatologÃƒÆ’Ã‚Â­a",
+    "GinecologÃƒÆ’Ã‚Â­a",
+    "TraumatologÃƒÆ’Ã‚Â­a",
+    "NeurologÃƒÆ’Ã‚Â­a",
+    "OftalmologÃƒÆ’Ã‚Â­a",
+    "OtorrinolaringologÃƒÆ’Ã‚Â­a",
+    "PsiquiatrÃƒÆ’Ã‚Â­a",
+    "UrologÃƒÆ’Ã‚Â­a",
+    "OncologÃƒÆ’Ã‚Â­a",
+    "EndocrinologÃƒÆ’Ã‚Â­a",
+    "NeumologÃƒÆ’Ã‚Â­a",
+    "GastroenterologÃƒÆ’Ã‚Â­a"
   ];
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function DoctorsPage() {
 
   const fetchDoctors = async () => {
     try {
-      const response = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/doctors');
+      const response = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/doctors');
       const data = await response.json();
       setDoctors(data);
       setLoading(false);
@@ -94,7 +94,7 @@ export default function DoctorsPage() {
 
       const userData = await userResponse.json();
 
-      // 2. Crear mÃƒÂ©dico
+      // 2. Crear mÃƒÆ’Ã‚Â©dico
       const doctorResponse = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/doctors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -109,7 +109,7 @@ export default function DoctorsPage() {
       });
 
       if (!doctorResponse.ok) {
-        throw new Error('Error al crear mÃƒÂ©dico');
+        throw new Error('Error al crear mÃƒÆ’Ã‚Â©dico');
       }
 
       // Resetear formulario y recargar lista
@@ -125,32 +125,32 @@ export default function DoctorsPage() {
       });
       setShowForm(false);
       fetchDoctors();
-      alert('Ã¢Å“â€¦ MÃƒÂ©dico creado exitosamente');
+      alert('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ MÃƒÆ’Ã‚Â©dico creado exitosamente');
     } catch (error) {
       console.error('Error:', error);
-      alert('Ã¢ÂÅ’ Error al crear mÃƒÂ©dico');
+      alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Error al crear mÃƒÆ’Ã‚Â©dico');
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Ã‚Â¿EstÃƒÂ¡ seguro de eliminar este mÃƒÂ©dico?')) return;
+    if (!confirm('Ãƒâ€šÃ‚Â¿EstÃƒÆ’Ã‚Â¡ seguro de eliminar este mÃƒÆ’Ã‚Â©dico?')) return;
 
     try {
       await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/doctors/${id}`, {
         method: 'DELETE'
       });
       fetchDoctors();
-      alert('Ã¢Å“â€¦ MÃƒÂ©dico eliminado');
+      alert('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ MÃƒÆ’Ã‚Â©dico eliminado');
     } catch (error) {
       console.error('Error:', error);
-      alert('Ã¢ÂÅ’ Error al eliminar mÃƒÂ©dico');
+      alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Error al eliminar mÃƒÆ’Ã‚Â©dico');
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-xl">Cargando mÃƒÂ©dicos...</div>
+        <div className="text-xl">Cargando mÃƒÆ’Ã‚Â©dicos...</div>
       </div>
     );
   }
@@ -160,22 +160,22 @@ export default function DoctorsPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">GestiÃƒÂ³n de MÃƒÂ©dicos</h1>
-          <p className="text-gray-600 mt-1">Total: {doctors.length} mÃƒÂ©dicos registrados</p>
+          <h1 className="text-3xl font-bold text-gray-800">GestiÃƒÆ’Ã‚Â³n de MÃƒÆ’Ã‚Â©dicos</h1>
+          <p className="text-gray-600 mt-1">Total: {doctors.length} mÃƒÆ’Ã‚Â©dicos registrados</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
           <UserPlus size={20} />
-          {showForm ? 'Cancelar' : 'Nuevo MÃƒÂ©dico'}
+          {showForm ? 'Cancelar' : 'Nuevo MÃƒÆ’Ã‚Â©dico'}
         </button>
       </div>
 
       {/* Formulario */}
       {showForm && (
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Agregar Nuevo MÃƒÂ©dico</h2>
+          <h2 className="text-xl font-bold mb-4 text-gray-800">Agregar Nuevo MÃƒÆ’Ã‚Â©dico</h2>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -201,7 +201,7 @@ export default function DoctorsPage() {
                 value={formData.lastName}
                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Ej: SÃƒÂ¡nchez"
+                placeholder="Ej: SÃƒÆ’Ã‚Â¡nchez"
               />
             </div>
 
@@ -238,7 +238,7 @@ export default function DoctorsPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                NÃƒÂºmero de Licencia *
+                NÃƒÆ’Ã‚Âºmero de Licencia *
               </label>
               <input
                 type="text"
@@ -252,7 +252,7 @@ export default function DoctorsPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                TelÃƒÂ©fono *
+                TelÃƒÆ’Ã‚Â©fono *
               </label>
               <input
                 type="tel"
@@ -280,7 +280,7 @@ export default function DoctorsPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                AÃƒÂ±os de Experiencia - Opcional
+                AÃƒÆ’Ã‚Â±os de Experiencia - Opcional
               </label>
               <input
                 type="number"
@@ -303,14 +303,14 @@ export default function DoctorsPage() {
                 type="submit"
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
-                Guardar MÃƒÂ©dico
+                Guardar MÃƒÆ’Ã‚Â©dico
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Lista de MÃƒÂ©dicos */}
+      {/* Lista de MÃƒÆ’Ã‚Â©dicos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {doctors.map((doctor) => (
           <div key={doctor.id} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
@@ -352,7 +352,7 @@ export default function DoctorsPage() {
                 )}
                 {doctor.yearsExperience && (
                   <p className="text-sm text-gray-600">
-                    <span className="font-medium">Experiencia:</span> {doctor.yearsExperience} aÃƒÂ±os
+                    <span className="font-medium">Experiencia:</span> {doctor.yearsExperience} aÃƒÆ’Ã‚Â±os
                   </p>
                 )}
               </div>
@@ -378,12 +378,12 @@ export default function DoctorsPage() {
       {doctors.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg shadow">
           <Stethoscope size={48} className="mx-auto text-gray-400 mb-3" />
-          <p className="text-gray-600">No hay mÃƒÂ©dicos registrados</p>
+          <p className="text-gray-600">No hay mÃƒÆ’Ã‚Â©dicos registrados</p>
           <button
             onClick={() => setShowForm(true)}
             className="mt-4 text-blue-600 hover:underline"
           >
-            Agregar el primer mÃƒÂ©dico
+            Agregar el primer mÃƒÆ’Ã‚Â©dico
           </button>
         </div>
       )}
