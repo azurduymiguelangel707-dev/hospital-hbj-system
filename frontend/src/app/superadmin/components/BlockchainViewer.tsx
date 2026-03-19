@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Shield, CheckCircle, XCircle, ChevronDown, ChevronUp, Download, RefreshCw, AlertTriangle } from 'lucide-react';
 
-const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string) {
   return fetch(`${API}${url}`, { headers: { Authorization: `Bearer ${getToken()}` } });
@@ -80,7 +80,7 @@ export function BlockchainViewer() {
         <td style="padding:6px 8px;font-size:11px">${b.resourceType}</td>
         <td style="padding:6px 8px;font-size:11px">${b.userId}</td>
         <td style="padding:6px 8px;font-size:11px;font-family:monospace">${b.currentHash.substring(0,16)}...</td>
-        <td style="padding:6px 8px;font-size:11px;text-align:center">${b.isValid ? 'âœ“' : 'âœ—'}</td>
+        <td style="padding:6px 8px;font-size:11px;text-align:center">${b.isValid ? 'Ã¢Å“â€œ' : 'Ã¢Å“â€”'}</td>
       </tr>
     `).join('');
 

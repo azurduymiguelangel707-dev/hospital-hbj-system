@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Search, UserPlus, CheckCircle, AlertTriangle, ChevronRight } from 'lucide-react';
 
-const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });
@@ -105,7 +105,7 @@ export function RegistroPaciente({ onPatientReady }: Props) {
         </div>
         <div className="grid grid-cols-2 gap-3 mb-4">
           {[
-            { label: 'N° Historial', value: savedPatient.numeroHistorial, highlight: true },
+            { label: 'NÂ° Historial', value: savedPatient.numeroHistorial, highlight: true },
             { label: 'Nombre', value: savedPatient.nombre },
             { label: 'CI', value: savedPatient.ci },
             { label: 'Especialidad', value: savedPatient.especialidadRequerida },
@@ -140,7 +140,7 @@ export function RegistroPaciente({ onPatientReady }: Props) {
         </div>
         <div className="grid grid-cols-3 gap-3 mb-4">
           {[
-            { label: 'N° Historial', value: found.numeroHistorial ?? 'Sin asignar' },
+            { label: 'NÂ° Historial', value: found.numeroHistorial ?? 'Sin asignar' },
             { label: 'Nombre', value: found.nombre },
             { label: 'CI', value: found.ci },
             { label: 'Edad', value: `${found.edad} anos` },
@@ -250,7 +250,7 @@ export function RegistroPaciente({ onPatientReady }: Props) {
                 { label: 'F.C. (lpm)', key: 'fc', placeholder: '72' },
                 { label: 'F.R. (rpm)', key: 'fr', placeholder: '16' },
                 { label: 'P.A. (mmHg)', key: 'pa', placeholder: '120/80', text: true },
-                { label: 'Temp. (°C)', key: 'temperatura', placeholder: '36.5' },
+                { label: 'Temp. (Â°C)', key: 'temperatura', placeholder: '36.5' },
                 { label: 'Peso (kg)', key: 'peso', placeholder: '70' },
               ].map(({ label, key, placeholder, text }) => (
                 <div key={key}>

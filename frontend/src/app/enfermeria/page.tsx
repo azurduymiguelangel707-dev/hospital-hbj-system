@@ -8,7 +8,7 @@ import {
   AlertTriangle, CheckCircle, Clock, RefreshCw, User
 } from 'lucide-react';
 
-const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 function getToken() {
   return typeof window !== 'undefined' ? (localStorage.getItem('auth_token') ?? '') : '';
@@ -402,7 +402,7 @@ export default function EnfermeriaDashboard() {
                     <AlertTriangle size={14} /> Alertas clinicas
                   </p>
                   {vitalAlerts.map((a, i) => (
-                    <p key={i} className="text-xs text-red-600">â€¢ {a}</p>
+                    <p key={i} className="text-xs text-red-600">Ã¢â‚¬Â¢ {a}</p>
                   ))}
                 </div>
               )}
@@ -550,7 +550,7 @@ export default function EnfermeriaDashboard() {
                     <th className="px-3 py-2 text-left text-gray-500 font-medium">Paciente</th>
                     <th className="px-2 py-2 text-center text-gray-500 font-medium">PA</th>
                     <th className="px-2 py-2 text-center text-gray-500 font-medium">FC</th>
-                    <th className="px-2 py-2 text-center text-gray-500 font-medium">TÂ°</th>
+                    <th className="px-2 py-2 text-center text-gray-500 font-medium">TÃ‚Â°</th>
                     <th className="px-2 py-2 text-center text-gray-500 font-medium">SpO2</th>
                     <th className="px-2 py-2 text-center text-gray-500 font-medium">Hora</th>
                   </tr>

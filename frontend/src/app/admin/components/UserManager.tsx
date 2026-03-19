@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Plus, Edit2, Power, Key, Trash2, X, Check, AlertTriangle } from 'lucide-react';
 
-const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });
@@ -170,7 +170,7 @@ export function UserManager({ users, onRefresh }: Props) {
                   </div>
                 </div>
                 <p className="text-xs text-green-600 mt-3 flex items-center gap-1">
-                  <AlertTriangle size={11} /> Guarda estas credenciales â€” no se mostraran de nuevo
+                  <AlertTriangle size={11} /> Guarda estas credenciales Ã¢â‚¬â€ no se mostraran de nuevo
                 </p>
                 <button onClick={() => { setShowModal(false); setResult(null); }}
                   className="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-medium">
@@ -206,12 +206,12 @@ export function UserManager({ users, onRefresh }: Props) {
                   </div>
                 )}
                 <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Codigo de acceso <span className="text-gray-400">(opcional â€” se genera automaticamente)</span></label>
+                  <label className="text-xs text-gray-500 mb-1 block">Codigo de acceso <span className="text-gray-400">(opcional Ã¢â‚¬â€ se genera automaticamente)</span></label>
                   <input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono" placeholder="MED-123456" />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Contrasena <span className="text-gray-400">(opcional â€” se genera automaticamente)</span></label>
+                  <label className="text-xs text-gray-500 mb-1 block">Contrasena <span className="text-gray-400">(opcional Ã¢â‚¬â€ se genera automaticamente)</span></label>
                   <input value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Dejar vacio para generar" />
                 </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Download, Calendar, Stethoscope, Users, FileText } from 'lucide-react';
 
-const API = 'process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string) {
   return fetch(`${API}${url}`, { headers: { Authorization: `Bearer ${getToken()}` } });
@@ -178,7 +178,7 @@ export function ReportesPanel() {
               <div className="border border-gray-100 rounded-lg overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-gray-50">
-                    <tr>{['Ficha', 'Paciente', 'N° Historial', 'Medico', 'Estado'].map(h => (
+                    <tr>{['Ficha', 'Paciente', 'NÂ° Historial', 'Medico', 'Estado'].map(h => (
                       <th key={h} className="px-3 py-2 text-left text-xs font-semibold text-gray-500">{h}</th>
                     ))}</tr>
                   </thead>

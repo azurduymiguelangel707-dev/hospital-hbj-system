@@ -126,7 +126,7 @@ export default function MedicalRecordsPage() {
       if (response.ok) {
         await fetchData();
         closeModal();
-        alert('Historial mÃ©dico registrado exitosamente');
+        alert('Historial mÃƒÂ©dico registrado exitosamente');
       }
     } catch (error) {
       console.error('Error creating record:', error);
@@ -182,7 +182,7 @@ export default function MedicalRecordsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-xl text-gray-600">Cargando registros mÃ©dicos...</div>
+        <div className="text-xl text-gray-600">Cargando registros mÃƒÂ©dicos...</div>
       </div>
     );
   }
@@ -196,9 +196,9 @@ export default function MedicalRecordsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center">
                 <FileText className="mr-3 text-blue-600" size={32} />
-                Historial ClÃ­nico ElectrÃ³nico
+                Historial ClÃƒÂ­nico ElectrÃƒÂ³nico
               </h1>
-              <p className="text-gray-600 mt-1">Total: {records.length} registros mÃ©dicos</p>
+              <p className="text-gray-600 mt-1">Total: {records.length} registros mÃƒÂ©dicos</p>
             </div>
             <button
               onClick={openCreateModal}
@@ -215,7 +215,7 @@ export default function MedicalRecordsPage() {
               <Search className="absolute left-3 top-3 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Buscar por paciente, mÃ©dico o diagnÃ³stico..."
+                placeholder="Buscar por paciente, mÃƒÂ©dico o diagnÃƒÂ³stico..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -289,12 +289,12 @@ export default function MedicalRecordsPage() {
 
         {/* Records List */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Registros MÃ©dicos</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Registros MÃƒÂ©dicos</h2>
           
           {filteredRecords.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               <FileText className="mx-auto mb-4 text-gray-400" size={48} />
-              <p>No se encontraron registros mÃ©dicos</p>
+              <p>No se encontraron registros mÃƒÂ©dicos</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -336,7 +336,7 @@ export default function MedicalRecordsPage() {
                       </div>
                       
                       <div className="text-sm text-gray-600 mb-2">
-                        <span className="font-semibold">DiagnÃ³stico:</span> {record.diagnosis}
+                        <span className="font-semibold">DiagnÃƒÂ³stico:</span> {record.diagnosis}
                       </div>
                       
                       {record.vitalSigns && (
@@ -351,7 +351,7 @@ export default function MedicalRecordsPage() {
                             <span>FC: {record.vitalSigns.heart_rate} bpm</span>
                           )}
                           {record.vitalSigns.temperature && (
-                            <span>Temp: {record.vitalSigns.temperature}Â°C</span>
+                            <span>Temp: {record.vitalSigns.temperature}Ã‚Â°C</span>
                           )}
                         </div>
                       )}
@@ -369,7 +369,7 @@ export default function MedicalRecordsPage() {
             <div className="bg-white rounded-lg p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">
-                  {viewingRecord ? 'Ver Registro MÃ©dico' : 'Nuevo Registro MÃ©dico'}
+                  {viewingRecord ? 'Ver Registro MÃƒÂ©dico' : 'Nuevo Registro MÃƒÂ©dico'}
                 </h2>
                 <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
                   <X size={24} />
@@ -411,20 +411,20 @@ export default function MedicalRecordsPage() {
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {viewingRecord.vitalSigns.blood_pressure && (
                           <div>
-                            <span className="text-xs text-gray-600">PresiÃ³n Arterial</span>
+                            <span className="text-xs text-gray-600">PresiÃƒÂ³n Arterial</span>
                             <p className="font-semibold">{viewingRecord.vitalSigns.blood_pressure}</p>
                           </div>
                         )}
                         {viewingRecord.vitalSigns.heart_rate && (
                           <div>
-                            <span className="text-xs text-gray-600">Frecuencia CardÃ­aca</span>
+                            <span className="text-xs text-gray-600">Frecuencia CardÃƒÂ­aca</span>
                             <p className="font-semibold">{viewingRecord.vitalSigns.heart_rate} bpm</p>
                           </div>
                         )}
                         {viewingRecord.vitalSigns.temperature && (
                           <div>
                             <span className="text-xs text-gray-600">Temperatura</span>
-                            <p className="font-semibold">{viewingRecord.vitalSigns.temperature}Â°C</p>
+                            <p className="font-semibold">{viewingRecord.vitalSigns.temperature}Ã‚Â°C</p>
                           </div>
                         )}
                         {viewingRecord.vitalSigns.weight && (
@@ -444,12 +444,12 @@ export default function MedicalRecordsPage() {
                   )}
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-600">SÃ­ntomas</label>
+                    <label className="text-sm font-semibold text-gray-600">SÃƒÂ­ntomas</label>
                     <p className="text-gray-800 mt-1">{viewingRecord.symptoms}</p>
                   </div>
 
                   <div>
-                    <label className="text-sm font-semibold text-gray-600">DiagnÃ³stico</label>
+                    <label className="text-sm font-semibold text-gray-600">DiagnÃƒÂ³stico</label>
                     <p className="text-gray-800 mt-1">{viewingRecord.diagnosis}</p>
                   </div>
 
@@ -502,14 +502,14 @@ export default function MedicalRecordsPage() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">MÃ©dico *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">MÃƒÂ©dico *</label>
                     <select
                       value={formData.doctorId}
                       onChange={(e) => setFormData({...formData, doctorId: e.target.value})}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       required
                     >
-                      <option value="">Seleccionar mÃ©dico...</option>
+                      <option value="">Seleccionar mÃƒÂ©dico...</option>
                       {doctors.map(d => (
                         <option key={d.id} value={d.id}>
                           {d.user ? `Dr(a). ${d.user.first_name} ${d.user.last_name}` : 'Sin nombre'} - {d.specialty}
@@ -543,7 +543,7 @@ export default function MedicalRecordsPage() {
                     <h3 className="font-semibold text-gray-800 mb-3">Signos Vitales</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-xs text-gray-600 mb-1">PresiÃ³n Arterial</label>
+                        <label className="block text-xs text-gray-600 mb-1">PresiÃƒÂ³n Arterial</label>
                         <input
                           type="text"
                           value={formData.bloodPressure}
@@ -553,7 +553,7 @@ export default function MedicalRecordsPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-600 mb-1">Frecuencia CardÃ­aca (bpm)</label>
+                        <label className="block text-xs text-gray-600 mb-1">Frecuencia CardÃƒÂ­aca (bpm)</label>
                         <input
                           type="number"
                           value={formData.heartRate}
@@ -563,7 +563,7 @@ export default function MedicalRecordsPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-600 mb-1">Temperatura (Â°C)</label>
+                        <label className="block text-xs text-gray-600 mb-1">Temperatura (Ã‚Â°C)</label>
                         <input
                           type="number"
                           step="0.1"
@@ -598,25 +598,25 @@ export default function MedicalRecordsPage() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">SÃ­ntomas *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">SÃƒÂ­ntomas *</label>
                     <textarea
                       value={formData.symptoms}
                       onChange={(e) => setFormData({...formData, symptoms: e.target.value})}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       rows={3}
-                      placeholder="Describa los sÃ­ntomas del paciente..."
+                      placeholder="Describa los sÃƒÂ­ntomas del paciente..."
                       required
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">DiagnÃ³stico *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">DiagnÃƒÂ³stico *</label>
                     <textarea
                       value={formData.diagnosis}
                       onChange={(e) => setFormData({...formData, diagnosis: e.target.value})}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       rows={3}
-                      placeholder="DiagnÃ³stico mÃ©dico..."
+                      placeholder="DiagnÃƒÂ³stico mÃƒÂ©dico..."
                       required
                     />
                   </div>

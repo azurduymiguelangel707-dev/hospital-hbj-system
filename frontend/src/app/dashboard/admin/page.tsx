@@ -75,7 +75,7 @@ export default function AdminDashboard() {
         appointmentsCancelled: appointments.filter((a: Appointment) => a.status === 'ANULADA').length
       });
 
-      // Ãšltimas 10 citas
+      // ÃƒÅ¡ltimas 10 citas
       const sorted = appointments
         .sort((a: Appointment, b: Appointment) => {
           const dateCompare = b.appointmentDate.localeCompare(a.appointmentDate);
@@ -131,7 +131,7 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Panel de AdministraciÃ³n</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Panel de AdministraciÃƒÂ³n</h1>
           <p className="text-gray-600 mt-1">Vista general del sistema hospitalario</p>
         </div>
 
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
             </div>
             <p className="text-blue-100 text-sm mb-1">Total Pacientes</p>
             <p className="text-4xl font-bold">{stats.patients}</p>
-            <p className="text-blue-100 text-xs mt-2">Click para gestionar â†’</p>
+            <p className="text-blue-100 text-xs mt-2">Click para gestionar Ã¢â€ â€™</p>
           </div>
 
           <div 
@@ -158,9 +158,9 @@ export default function AdminDashboard() {
               <Stethoscope size={40} className="opacity-80" />
               <Activity size={24} className="opacity-60" />
             </div>
-            <p className="text-green-100 text-sm mb-1">MÃ©dicos Activos</p>
+            <p className="text-green-100 text-sm mb-1">MÃƒÂ©dicos Activos</p>
             <p className="text-4xl font-bold">{stats.doctors}</p>
-            <p className="text-green-100 text-xs mt-2">Click para gestionar â†’</p>
+            <p className="text-green-100 text-xs mt-2">Click para gestionar Ã¢â€ â€™</p>
           </div>
 
           <div 
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
             </div>
             <p className="text-purple-100 text-sm mb-1">Citas Totales</p>
             <p className="text-4xl font-bold">{stats.appointments}</p>
-            <p className="text-purple-100 text-xs mt-2">Click para gestionar â†’</p>
+            <p className="text-purple-100 text-xs mt-2">Click para gestionar Ã¢â€ â€™</p>
           </div>
 
           <div 
@@ -184,9 +184,9 @@ export default function AdminDashboard() {
               <FileText size={40} className="opacity-80" />
               <TrendingUp size={24} className="opacity-60" />
             </div>
-            <p className="text-orange-100 text-sm mb-1">Registros MÃ©dicos</p>
+            <p className="text-orange-100 text-sm mb-1">Registros MÃƒÂ©dicos</p>
             <p className="text-4xl font-bold">{stats.medicalRecords}</p>
-            <p className="text-orange-100 text-xs mt-2">Click para ver â†’</p>
+            <p className="text-orange-100 text-xs mt-2">Click para ver Ã¢â€ â€™</p>
           </div>
         </div>
 
@@ -239,7 +239,7 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Acciones RÃ¡pidas</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Acciones RÃƒÂ¡pidas</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <button
               onClick={() => router.push('/dashboard/patients')}
@@ -254,7 +254,7 @@ export default function AdminDashboard() {
               className="flex flex-col items-center justify-center p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition"
             >
               <Stethoscope className="text-green-600 mb-2" size={32} />
-              <span className="text-sm font-semibold text-gray-700">Gestionar MÃ©dicos</span>
+              <span className="text-sm font-semibold text-gray-700">Gestionar MÃƒÂ©dicos</span>
             </button>
 
             <button
@@ -291,7 +291,7 @@ export default function AdminDashboard() {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hora</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Paciente</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">MÃ©dico</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">MÃƒÂ©dico</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Motivo</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
                   </tr>
@@ -332,16 +332,16 @@ export default function AdminDashboard() {
 
         {/* System Info */}
         <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-lg shadow-md p-6 mt-6 text-white">
-          <h3 className="font-bold text-lg mb-3">ðŸ“Š Resumen del Sistema</h3>
+          <h3 className="font-bold text-lg mb-3">Ã°Å¸â€œÅ  Resumen del Sistema</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <p className="text-gray-300">OcupaciÃ³n</p>
+              <p className="text-gray-300">OcupaciÃƒÂ³n</p>
               <p className="text-2xl font-bold">
                 {stats.appointments > 0 ? Math.round((stats.appointmentsCompleted / stats.appointments) * 100) : 0}%
               </p>
             </div>
             <div>
-              <p className="text-gray-300">Tasa de Ã‰xito</p>
+              <p className="text-gray-300">Tasa de Ãƒâ€°xito</p>
               <p className="text-2xl font-bold">
                 {stats.appointments > 0 ? Math.round(((stats.appointmentsCompleted) / stats.appointments) * 100) : 0}%
               </p>
