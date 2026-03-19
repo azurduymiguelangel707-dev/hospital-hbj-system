@@ -154,8 +154,8 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                     <div key={d.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <FileText size={14} className="text-gray-400" />
                       <div>
-                        <p className="text-sm font-medium text-gray-700">{d.title}</p>
-                        <p className="text-xs text-gray-400">{formatFecha(d.created_at)}</p>
+                        <p className="text-sm font-medium text-gray-700">{d.fileName ?? d.descripcion ?? 'Documento'}</p>
+                        <p className="text-xs text-gray-400">{formatFecha(d.creadoEn)}</p>
                       </div>
                     </div>
                   ))}
