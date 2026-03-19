@@ -207,7 +207,7 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
             <select value={form.doctorId} onChange={e => setForm(f => ({ ...f, doctorId: e.target.value }))}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white">
               {doctors.map(d => (
-                <option key={d.id} value={d.id}>
+                  Dr. {d.user?.first_name ?? ''} {d.user?.last_name ?? ''} - {d.specialty}
                   Dr. {d.user?.first_name ?? ''} {d.user?.last_name ?? ''} — {d.specialty}
                 </option>
               ))}
