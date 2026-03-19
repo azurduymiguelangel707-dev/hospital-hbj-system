@@ -1,4 +1,4 @@
-﻿interface AuthTokens {
+interface AuthTokens {
   access_token: string;
   refresh_token: string;
   expires_in: number;
@@ -19,7 +19,7 @@ class AuthService {
   private readonly USER_KEY = 'user_data';
 
   async login(username: string, password: string): Promise<AuthTokens> {
-    const response = await fetch('http://localhost:3001/api/auth/login', {
+    const response = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -57,7 +57,7 @@ class AuthService {
     if (!refreshToken) return null;
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/refresh', {
+      const response = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/auth/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh_token: refreshToken }),
@@ -161,7 +161,7 @@ class AuthService {
   async fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
     let token = this.getAccessToken();
 
-    // Si el token está por expirar, intenta refrescarlo
+    // Si el token estÃƒÂ¡ por expirar, intenta refrescarlo
     if (token) {
       const payload = this.decodeToken(token);
       const now = Date.now() / 1000;
