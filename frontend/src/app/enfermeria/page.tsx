@@ -402,7 +402,7 @@ export default function EnfermeriaDashboard() {
                     <AlertTriangle size={14} /> Alertas clinicas
                   </p>
                   {vitalAlerts.map((a, i) => (
-                    <p key={i} className="text-xs text-red-600">Ã¢â‚¬Â¢ {a}</p>
+                    <p key={i} className="text-xs text-red-600">• {a}</p>
                   ))}
                 </div>
               )}
