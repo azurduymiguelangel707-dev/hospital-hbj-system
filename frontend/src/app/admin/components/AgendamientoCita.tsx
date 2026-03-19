@@ -96,8 +96,8 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Comprobante de cita</p>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: 'NÃ‚Â° Ficha', value: `${saved.numeroFicha} / ${saved.totalFichasTurno}`, highlight: true },
-              { label: 'NÃ‚Â° Historial', value: patient.numeroHistorial, highlight: true },
+              { label: 'N° Ficha', value: `${saved.numeroFicha} / ${saved.totalFichasTurno}`, highlight: true },
+              { label: 'N° Historial', value: patient.numeroHistorial, highlight: true },
               { label: 'Paciente', value: patient.nombre },
               { label: 'Medico', value: selectedDoctor ? `Dr. ${selectedDoctor.user?.first_name ?? ''} ${selectedDoctor.user?.last_name ?? ''}` : '-' },
               { label: 'Especialidad', value: saved.especialidad },
@@ -183,7 +183,7 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
             ) : slots.fichasDisponibles > 0 ? (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-green-700">Ficha NÃ‚Â° {slots.proximaFicha} / {slots.totalFichas}</p>
+                  <p className="font-semibold text-green-700">Ficha N° {slots.proximaFicha} / {slots.totalFichas}</p>
                   <p className="text-xs text-green-600">{slots.fichasDisponibles} fichas disponibles</p>
                 </div>
                 <div className="flex gap-1">
