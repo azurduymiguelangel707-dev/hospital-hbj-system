@@ -39,20 +39,20 @@ export default function DoctorsPage() {
 
   const especialidades = [
     "Medicina General",
-    "PediatrÃƒÆ’Ã‚Â­a",
-    "CardiologÃƒÆ’Ã‚Â­a",
-    "DermatologÃƒÆ’Ã‚Â­a",
-    "GinecologÃƒÆ’Ã‚Â­a",
-    "TraumatologÃƒÆ’Ã‚Â­a",
-    "NeurologÃƒÆ’Ã‚Â­a",
-    "OftalmologÃƒÆ’Ã‚Â­a",
-    "OtorrinolaringologÃƒÆ’Ã‚Â­a",
-    "PsiquiatrÃƒÆ’Ã‚Â­a",
-    "UrologÃƒÆ’Ã‚Â­a",
-    "OncologÃƒÆ’Ã‚Â­a",
-    "EndocrinologÃƒÆ’Ã‚Â­a",
-    "NeumologÃƒÆ’Ã‚Â­a",
-    "GastroenterologÃƒÆ’Ã‚Â­a"
+    "PediatrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "CardiologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "DermatologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "GinecologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "TraumatologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "NeurologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "OftalmologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "OtorrinolaringologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "PsiquiatrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "UrologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "OncologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "EndocrinologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "NeumologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a",
+    "GastroenterologÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a"
   ];
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function DoctorsPage() {
     
     try {
       // 1. Crear usuario
-      const userResponse = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/users', {
+      const userResponse = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -94,8 +94,8 @@ export default function DoctorsPage() {
 
       const userData = await userResponse.json();
 
-      // 2. Crear mÃƒÆ’Ã‚Â©dico
-      const doctorResponse = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/doctors', {
+      // 2. Crear mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico
+      const doctorResponse = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/doctors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -109,7 +109,7 @@ export default function DoctorsPage() {
       });
 
       if (!doctorResponse.ok) {
-        throw new Error('Error al crear mÃƒÆ’Ã‚Â©dico');
+        throw new Error('Error al crear mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico');
       }
 
       // Resetear formulario y recargar lista
@@ -125,32 +125,32 @@ export default function DoctorsPage() {
       });
       setShowForm(false);
       fetchDoctors();
-      alert('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ MÃƒÆ’Ã‚Â©dico creado exitosamente');
+      alert('ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico creado exitosamente');
     } catch (error) {
       console.error('Error:', error);
-      alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Error al crear mÃƒÆ’Ã‚Â©dico');
+      alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error al crear mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico');
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Ãƒâ€šÃ‚Â¿EstÃƒÆ’Ã‚Â¡ seguro de eliminar este mÃƒÆ’Ã‚Â©dico?')) return;
+    if (!confirm('ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿EstÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ seguro de eliminar este mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico?')) return;
 
     try {
       await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/doctors/${id}`, {
         method: 'DELETE'
       });
       fetchDoctors();
-      alert('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ MÃƒÆ’Ã‚Â©dico eliminado');
+      alert('ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico eliminado');
     } catch (error) {
       console.error('Error:', error);
-      alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Error al eliminar mÃƒÆ’Ã‚Â©dico');
+      alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Error al eliminar mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico');
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-xl">Cargando mÃƒÆ’Ã‚Â©dicos...</div>
+        <div className="text-xl">Cargando mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dicos...</div>
       </div>
     );
   }
@@ -160,22 +160,22 @@ export default function DoctorsPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">GestiÃƒÆ’Ã‚Â³n de MÃƒÆ’Ã‚Â©dicos</h1>
-          <p className="text-gray-600 mt-1">Total: {doctors.length} mÃƒÆ’Ã‚Â©dicos registrados</p>
+          <h1 className="text-3xl font-bold text-gray-800">GestiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dicos</h1>
+          <p className="text-gray-600 mt-1">Total: {doctors.length} mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dicos registrados</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
           <UserPlus size={20} />
-          {showForm ? 'Cancelar' : 'Nuevo MÃƒÆ’Ã‚Â©dico'}
+          {showForm ? 'Cancelar' : 'Nuevo MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico'}
         </button>
       </div>
 
       {/* Formulario */}
       {showForm && (
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Agregar Nuevo MÃƒÆ’Ã‚Â©dico</h2>
+          <h2 className="text-xl font-bold mb-4 text-gray-800">Agregar Nuevo MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico</h2>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -201,7 +201,7 @@ export default function DoctorsPage() {
                 value={formData.lastName}
                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Ej: SÃƒÆ’Ã‚Â¡nchez"
+                placeholder="Ej: SÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡nchez"
               />
             </div>
 
@@ -238,7 +238,7 @@ export default function DoctorsPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                NÃƒÆ’Ã‚Âºmero de Licencia *
+                NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºmero de Licencia *
               </label>
               <input
                 type="text"
@@ -252,7 +252,7 @@ export default function DoctorsPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                TelÃƒÆ’Ã‚Â©fono *
+                TelÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©fono *
               </label>
               <input
                 type="tel"
@@ -280,7 +280,7 @@ export default function DoctorsPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                AÃƒÆ’Ã‚Â±os de Experiencia - Opcional
+                AÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±os de Experiencia - Opcional
               </label>
               <input
                 type="number"
@@ -303,14 +303,14 @@ export default function DoctorsPage() {
                 type="submit"
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
-                Guardar MÃƒÆ’Ã‚Â©dico
+                Guardar MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Lista de MÃƒÆ’Ã‚Â©dicos */}
+      {/* Lista de MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dicos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {doctors.map((doctor) => (
           <div key={doctor.id} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
@@ -352,7 +352,7 @@ export default function DoctorsPage() {
                 )}
                 {doctor.yearsExperience && (
                   <p className="text-sm text-gray-600">
-                    <span className="font-medium">Experiencia:</span> {doctor.yearsExperience} aÃƒÆ’Ã‚Â±os
+                    <span className="font-medium">Experiencia:</span> {doctor.yearsExperience} aÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±os
                   </p>
                 )}
               </div>
@@ -378,12 +378,12 @@ export default function DoctorsPage() {
       {doctors.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg shadow">
           <Stethoscope size={48} className="mx-auto text-gray-400 mb-3" />
-          <p className="text-gray-600">No hay mÃƒÆ’Ã‚Â©dicos registrados</p>
+          <p className="text-gray-600">No hay mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dicos registrados</p>
           <button
             onClick={() => setShowForm(true)}
             className="mt-4 text-blue-600 hover:underline"
           >
-            Agregar el primer mÃƒÆ’Ã‚Â©dico
+            Agregar el primer mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico
           </button>
         </div>
       )}

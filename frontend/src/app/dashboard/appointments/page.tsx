@@ -87,7 +87,7 @@ export default function AppointmentsPage() {
 
   const handleCreate = async () => {
     try {
-      const response = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/appointments', {
+      const response = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -106,7 +106,7 @@ export default function AppointmentsPage() {
   };
 
   const handleCancel = async (id: string) => {
-    if (!confirm('Ãƒâ€šÃ‚Â¿EstÃƒÆ’Ã‚Â¡s seguro de cancelar esta cita?')) return;
+    if (!confirm('ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿EstÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡s seguro de cancelar esta cita?')) return;
     
     try {
       const response = await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/appointments/${id}/cancel`, {
@@ -214,7 +214,7 @@ export default function AppointmentsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center">
                 <Calendar className="mr-3 text-blue-600" size={32} />
-                GestiÃƒÆ’Ã‚Â³n de Citas
+                GestiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de Citas
               </h1>
               <p className="text-gray-600 mt-1">Total: {appointments.length} citas registradas</p>
             </div>
@@ -233,7 +233,7 @@ export default function AppointmentsPage() {
               <Search className="absolute left-3 top-3 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder="Buscar por paciente, mÃƒÆ’Ã‚Â©dico o motivo..."
+                placeholder="Buscar por paciente, mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico o motivo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -250,7 +250,7 @@ export default function AppointmentsPage() {
               <option value="EN_CONSULTA">En consulta</option>
               <option value="COMPLETADA">Completada</option>
               <option value="ANULADA">Anulada</option>
-              <option value="NO_ASISTIO">No AsistiÃƒÆ’Ã‚Â³</option>
+              <option value="NO_ASISTIO">No AsistiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³</option>
             </select>
           </div>
         </div>
@@ -404,13 +404,13 @@ export default function AppointmentsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">MÃƒÆ’Ã‚Â©dico</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico</label>
                   <select
                     value={formData.doctorId}
                     onChange={(e) => setFormData({...formData, doctorId: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Seleccionar mÃƒÆ’Ã‚Â©dico...</option>
+                    <option value="">Seleccionar mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dico...</option>
                     {doctors.map(d => (
                       <option key={d.id} value={d.id}>
                         {d.user ? `Dr(a). ${d.user.first_name} ${d.user.last_name}` : 'Sin nombre'} - {d.specialty}
@@ -457,12 +457,12 @@ export default function AppointmentsPage() {
                     onChange={(e) => setFormData({...formData, notes: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     rows={3}
-                    placeholder="InformaciÃƒÆ’Ã‚Â³n adicional..."
+                    placeholder="InformaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n adicional..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">DuraciÃƒÆ’Ã‚Â³n (minutos)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">DuraciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n (minutos)</label>
                   <input
                     type="number"
                     value={formData.durationMinutes}

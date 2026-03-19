@@ -61,7 +61,7 @@ export default function PatientsPage() {
 
   const handleCreate = async () => {
     try {
-      const response = await fetch('process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients', {
+      const response = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api/patients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -102,7 +102,7 @@ export default function PatientsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Ã‚Â¿EstÃƒÂ¡s seguro de eliminar este paciente?')) return;
+    if (!confirm('Ãƒâ€šÃ‚Â¿EstÃƒÆ’Ã‚Â¡s seguro de eliminar este paciente?')) return;
     
     try {
       const response = await fetch(`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'/api/patients/${id}`, {
@@ -186,7 +186,7 @@ export default function PatientsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center">
                 <User className="mr-3 text-blue-600" size={32} />
-                GestiÃƒÂ³n de Pacientes
+                GestiÃƒÆ’Ã‚Â³n de Pacientes
               </h1>
               <p className="text-gray-600 mt-1">Total: {patients.length} pacientes registrados</p>
             </div>
@@ -204,7 +204,7 @@ export default function PatientsPage() {
             <Search className="absolute left-3 top-3 text-gray-400" size={20} />
             <input
               type="text"
-              placeholder="Buscar por nombre, CI, telÃƒÂ©fono o email..."
+              placeholder="Buscar por nombre, CI, telÃƒÆ’Ã‚Â©fono o email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -221,7 +221,7 @@ export default function PatientsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">CI</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Edad</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">TelÃƒÂ©fono</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">TelÃƒÆ’Ã‚Â©fono</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo Sangre</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
@@ -245,7 +245,7 @@ export default function PatientsPage() {
                         {patient.ci}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {patient.edad} aÃƒÂ±os
+                        {patient.edad} aÃƒÆ’Ã‚Â±os
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {patient.telefono}
@@ -328,7 +328,7 @@ export default function PatientsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">GÃƒÂ©nero</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">GÃƒÆ’Ã‚Â©nero</label>
                   <select
                     value={formData.genero}
                     onChange={(e) => setFormData({...formData, genero: e.target.value})}
@@ -360,7 +360,7 @@ export default function PatientsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">TelÃƒÂ©fono</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">TelÃƒÆ’Ã‚Â©fono</label>
                   <input
                     type="tel"
                     value={formData.telefono}
@@ -382,7 +382,7 @@ export default function PatientsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">DirecciÃƒÂ³n</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">DirecciÃƒÆ’Ã‚Â³n</label>
                   <input
                     type="text"
                     value={formData.direccion}
@@ -410,7 +410,7 @@ export default function PatientsPage() {
                     value={formData.contactoEmergencia}
                     onChange={(e) => setFormData({...formData, contactoEmergencia: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nombre y telÃƒÂ©fono"
+                    placeholder="Nombre y telÃƒÆ’Ã‚Â©fono"
                   />
                 </div>
 
@@ -426,24 +426,24 @@ export default function PatientsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Condiciones MÃƒÂ©dicas</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Condiciones MÃƒÆ’Ã‚Â©dicas</label>
                   <textarea
                     value={formData.condiciones}
                     onChange={(e) => setFormData({...formData, condiciones: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     rows={2}
-                    placeholder="HipertensiÃƒÂ³n, diabetes..."
+                    placeholder="HipertensiÃƒÆ’Ã‚Â³n, diabetes..."
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">CirugÃƒÂ­as Previas</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">CirugÃƒÆ’Ã‚Â­as Previas</label>
                   <textarea
                     value={formData.cirugias}
                     onChange={(e) => setFormData({...formData, cirugias: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     rows={2}
-                    placeholder="Detalle de cirugÃƒÂ­as anteriores..."
+                    placeholder="Detalle de cirugÃƒÆ’Ã‚Â­as anteriores..."
                   />
                 </div>
               </div>
