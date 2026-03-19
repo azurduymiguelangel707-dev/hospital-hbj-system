@@ -115,12 +115,12 @@ export default function AuditDashboard() {
 
   const getEventIcon = (eventType: string) => {
     const icons: { [key: string]: string } = {
-      'CREATE': 'ÃƒÂ¢Ã…Â¾Ã¢â‚¬Â¢',
-      'ACCESS': 'ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ‚ÂÃƒÂ¯Ã‚Â¸Ã‚Â',
-      'UPDATE': 'ÃƒÂ¢Ã…â€œÃ‚ÂÃƒÂ¯Ã‚Â¸Ã‚Â',
-      'DELETE': 'ÃƒÂ°Ã…Â¸Ã¢â‚¬â€Ã¢â‚¬ËœÃƒÂ¯Ã‚Â¸Ã‚Â'
+      'CREATE': 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢',
+      'ACCESS': 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â',
+      'UPDATE': 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â',
+      'DELETE': 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â'
     };
-    return icons[eventType] || 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â';
+    return icons[eventType] || 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
   };
 
   const exportToJSON = () => {
@@ -150,7 +150,7 @@ export default function AuditDashboard() {
   };
 
   const exportToCSV = () => {
-    const headers = ['Bloque', 'Marca de Tiempo', 'Evento', 'Recurso', 'Usuario', 'Hash', 'Hash Anterior', 'Nonce', 'VÃƒÆ’Ã‚Â¡lido'];
+    const headers = ['Bloque', 'Marca de Tiempo', 'Evento', 'Recurso', 'Usuario', 'Hash', 'Hash Anterior', 'Nonce', 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lido'];
     const rows = blocks.map(b => [
       b.blockIndex,
       formatTimestamp(b.timestamp),
@@ -160,7 +160,7 @@ export default function AuditDashboard() {
       b.currentHash,
       b.previousHash,
       b.nonce,
-      b.isValid ? 'SÃƒÆ’Ã‚Â' : 'NO'
+      b.isValid ? 'SÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â' : 'NO'
     ]);
     
     const csvContent = [
@@ -189,7 +189,7 @@ export default function AuditDashboard() {
       setShowTrailResults(true);
     } catch (error) {
       console.error('Error searching audit trail:', error);
-      alert('Error al buscar rastro de auditorÃƒÆ’Ã‚Â­a');
+      alert('Error al buscar rastro de auditorÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a');
     }
   };
 
@@ -222,14 +222,14 @@ export default function AuditDashboard() {
         <div className="flex items-center gap-3 mb-2">
           <Shield className="text-blue-600" size={36} />
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Seguridad y AuditorÃƒÆ’Ã‚Â­a Blockchain</h1>
+            <h1 className="text-3xl font-bold text-gray-800">Seguridad y AuditorÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a Blockchain</h1>
             <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
               <Clock size={16} />
-              ÃƒÆ’Ã…Â¡ltima actualizaciÃƒÆ’Ã‚Â³n: {lastUpdate.toLocaleTimeString('es-BO')}
+              ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ltima actualizaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n: {lastUpdate.toLocaleTimeString('es-BO')}
             </div>
           </div>
         </div>
-        <p className="text-gray-600">Sistema de auditorÃƒÆ’Ã‚Â­a inmutable con Prueba de Trabajo</p>
+        <p className="text-gray-600">Sistema de auditorÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a inmutable con Prueba de Trabajo</p>
       </div>
 
       {/* New Block Notification */}
@@ -238,7 +238,7 @@ export default function AuditDashboard() {
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
             <div>
-              <p className="font-bold text-green-800">ÃƒÂ°Ã…Â¸Ã…Â½Ã¢â‚¬Â° Ãƒâ€šÃ‚Â¡Nuevo bloque generado!</p>
+              <p className="font-bold text-green-800">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â½ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â° ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡Nuevo bloque generado!</p>
               <p className="text-sm text-green-600">Un nuevo evento ha sido registrado en la cadena de bloques</p>
             </div>
           </div>
@@ -287,7 +287,7 @@ export default function AuditDashboard() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-gray-600 font-medium">Creaciones</h3>
-            <span className="text-2xl">ÃƒÂ¢Ã…Â¾Ã¢â‚¬Â¢</span>
+            <span className="text-2xl">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢</span>
           </div>
           <p className="text-3xl font-bold text-green-600">
             {statistics?.byEventType.find(e => e.eventType === 'CREATE')?.count || 0}
@@ -298,7 +298,7 @@ export default function AuditDashboard() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-gray-600 font-medium">Accesos</h3>
-            <span className="text-2xl">ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ‚ÂÃƒÂ¯Ã‚Â¸Ã‚Â</span>
+            <span className="text-2xl">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â</span>
           </div>
           <p className="text-3xl font-bold text-blue-600">
             {statistics?.byEventType.find(e => e.eventType === 'ACCESS')?.count || 0}
@@ -314,7 +314,7 @@ export default function AuditDashboard() {
           <p className="text-3xl font-bold text-green-600">
             {verification?.isValid ? '100%' : '0%'}
           </p>
-          <p className="text-sm text-gray-500 mt-1">Cadena vÃƒÆ’Ã‚Â¡lida</p>
+          <p className="text-sm text-gray-500 mt-1">Cadena vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lida</p>
         </div>
       </div>
 
@@ -337,7 +337,7 @@ export default function AuditDashboard() {
             <p className="text-xs opacity-80 mt-1">Hash debe empezar con "00"</p>
           </div>
           <div>
-            <h3 className="text-sm opacity-80 mb-1">ÃƒÆ’Ã…Â¡ltimo Bloque</h3>
+            <h3 className="text-sm opacity-80 mb-1">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ltimo Bloque</h3>
             <p className="text-3xl font-bold">
               {blocks.length > 0 
                 ? `#${blocks[0].blockIndex}`
@@ -357,7 +357,7 @@ export default function AuditDashboard() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">DistribuciÃƒÆ’Ã‚Â³n por Tipo de Evento</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">DistribuciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n por Tipo de Evento</h2>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -368,7 +368,7 @@ export default function AuditDashboard() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent = 0 }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
@@ -442,7 +442,7 @@ export default function AuditDashboard() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="bloques" stroke="#3b82f6" name="Bloques por dÃƒÆ’Ã‚Â­a" />
+            <Line type="monotone" dataKey="bloques" stroke="#3b82f6" name="Bloques por dÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a" />
             <Line type="monotone" dataKey="acumulado" stroke="#10b981" name="Total acumulado" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
@@ -450,7 +450,7 @@ export default function AuditDashboard() {
 
       {/* Audit Trail Search */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â Buscar Rastro de AuditorÃƒÆ’Ã‚Â­a de Recurso</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Buscar Rastro de AuditorÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a de Recurso</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <select 
             value={trailResourceType}
@@ -476,7 +476,7 @@ export default function AuditDashboard() {
           </button>
         </div>
         <div className="text-sm text-gray-600">
-          ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â¡ Ingresa el ID de un historial mÃƒÆ’Ã‚Â©dico, paciente o cita para ver todos los eventos relacionados
+          ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ Ingresa el ID de un historial mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dico, paciente o cita para ver todos los eventos relacionados
         </div>
         
         {/* Trail Results */}
@@ -490,7 +490,7 @@ export default function AuditDashboard() {
                 onClick={() => setShowTrailResults(false)}
                 className="text-sm text-gray-500 hover:text-gray-700"
               >
-                ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢ Cerrar
+                ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Cerrar
               </button>
             </div>
             {trailResults.length > 0 ? (
@@ -569,13 +569,13 @@ export default function AuditDashboard() {
                   onClick={exportToJSON}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-t-lg"
                 >
-                  ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Å¾ Exportar JSON
+                  ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ Exportar JSON
                 </button>
                 <button
                   onClick={exportToCSV}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-b-lg"
                 >
-                  ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â  Exportar CSV
+                  ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â  Exportar CSV
                 </button>
               </div>
             </div>
@@ -603,7 +603,7 @@ export default function AuditDashboard() {
                   </div>
                 </div>
                 {index < 9 && blocks.length > index + 1 && (
-                  <div className="text-blue-600 text-2xl mx-2">ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢</div>
+                  <div className="text-blue-600 text-2xl mx-2">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢</div>
                 )}
               </div>
             ))}
@@ -620,10 +620,10 @@ export default function AuditDashboard() {
           <h2 className="text-xl font-bold text-gray-800 mb-4">Detalles del Bloque #{selectedBlock.blockIndex}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-gray-700 mb-2">InformaciÃƒÆ’Ã‚Â³n General</h3>
+              <h3 className="font-semibold text-gray-700 mb-2">InformaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n General</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">ÃƒÆ’Ã‚Ândice de Bloque:</span>
+                  <span className="text-gray-600">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Ândice de Bloque:</span>
                   <span className="font-mono font-bold">#{selectedBlock.blockIndex}</span>
                 </div>
                 <div className="flex justify-between">
@@ -671,7 +671,7 @@ export default function AuditDashboard() {
                   <span className="text-gray-600">Estado:</span>
                   <span className={`flex items-center gap-1 ${selectedBlock.isValid ? 'text-green-600' : 'text-red-600'}`}>
                     {selectedBlock.isValid ? <CheckCircle size={16} /> : <AlertTriangle size={16} />}
-                    {selectedBlock.isValid ? 'VÃƒÆ’Ã‚Â¡lido' : 'InvÃƒÆ’Ã‚Â¡lido'}
+                    {selectedBlock.isValid ? 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lido' : 'InvÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lido'}
                   </span>
                 </div>
               </div>
@@ -680,7 +680,7 @@ export default function AuditDashboard() {
 
           {selectedBlock.actionDetails && (
             <div className="mt-4 pt-4 border-t">
-              <h3 className="font-semibold text-gray-700 mb-2">Detalles de la AcciÃƒÆ’Ã‚Â³n</h3>
+              <h3 className="font-semibold text-gray-700 mb-2">Detalles de la AcciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n</h3>
               <pre className="bg-gray-100 p-3 rounded text-xs overflow-auto">
                 {JSON.stringify(selectedBlock.actionDetails, null, 2)}
               </pre>
@@ -691,7 +691,7 @@ export default function AuditDashboard() {
 
       {/* Blocks List */}
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Registro Completo de AuditorÃƒÆ’Ã‚Â­a</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Registro Completo de AuditorÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a</h2>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
