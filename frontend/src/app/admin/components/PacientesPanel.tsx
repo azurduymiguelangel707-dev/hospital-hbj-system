@@ -32,6 +32,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
   const [historial, setHistorial] = useState<any[]>([]);
   const [documentos, setDocumentos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imgModal, setImgModal] = useState<string|null>(null);
   const [tab, setTab] = useState<'citas'|'vitales'|'historial'|'documentos'>('citas');
   useEffect(() => {
     const cargar = async () => {
@@ -156,7 +157,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                     return (
                     <div key={d.id} className="p-3 bg-gray-50 rounded-lg">
                       {isImg && url ? (
-                        <img src={url} alt={d.fileName} className="w-full max-h-48 object-contain rounded mb-2 border" />
+                        <img src={url} alt={d.fileName} className="w-full max-h-48 object-contain rounded mb-2 border cursor-pointer hover:opacity-90" onClick={() => setImgModal(url)} />
                       ) : (
                         <div className="flex items-center gap-2 mb-1"><FileText size={14} className="text-gray-400" /></div>
                       )}
@@ -172,6 +173,13 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
         </div>
       </div>
     </div>
+      {imgModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4" onClick={() => setImgModal(null)}>
+          <img src={imgModal} className="max-w-full max-h-full rounded-lg shadow-2xl" />
+          <button className="absolute top-4 right-4 text-white text-2xl font-bold" onClick={() => setImgModal(null)}>x</button>
+        </div>
+      )}
+  
   );
 }
 export function PacientesPanel() {
