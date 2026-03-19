@@ -125,12 +125,12 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                 <div className="space-y-2">
                   {vitales.slice(0, 5).map((v: any) => (
                     <div key={v.id} className="p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-400 mb-1">{formatFecha(v.recorded_at)}</p>
+                      <p className="text-xs text-gray-400 mb-1">{formatFecha(v.registradoEn)}</p>
                       <div className="grid grid-cols-4 gap-2 text-xs">
-                        {v.blood_pressure && <span>PA: {v.blood_pressure}</span>}
-                        {v.heart_rate && <span>FC: {v.heart_rate}</span>}
-                        {v.temperature && <span>Temp: {v.temperature}</span>}
-                        {v.oxygen_saturation && <span>SpO2: {v.oxygen_saturation}%</span>}
+                        {v.presionArterial && <span>PA: {v.presionArterial}</span>}
+                        {v.frecuenciaCardiaca && <span>FC: {v.frecuenciaCardiaca}</span>}
+                        {v.temperatura && <span>Temp: {v.temperatura}</span>}
+                        {v.saturacionOxigeno && <span>SpO2: {v.saturacionOxigeno}%</span>}
                       </div>
                     </div>
                   ))}
