@@ -243,7 +243,7 @@ export function DocumentsPanel({
                         </div>
                       </div>
                       <div className="flex gap-1 flex-shrink-0">
-                        <a href={`process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'${doc.fileUrl}`} target="_blank" rel="noopener noreferrer"
+                        <a href={`\${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}\${doc.fileUrl}`} target="_blank" rel="noopener noreferrer"
                           className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition" title="Ver">
                           <Eye size={14} />
                         </a>
