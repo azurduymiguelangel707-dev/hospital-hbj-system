@@ -152,7 +152,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                 <div className="space-y-2">
                   {documentos.map((d: any) => {
                     const isImg = d.mimeType?.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(d.fileName ?? '');
-                    const url = d.fileUrl ? (d.fileUrl.startsWith('http') ? d.fileUrl : `http://localhost:3001${d.fileUrl}`) : null;
+                    const url = d.fileUrl ? (d.fileUrl.startsWith('http') ? d.fileUrl : API.replace('/api','') + d.fileUrl) : null;
                     return (
                     <div key={d.id} className="p-3 bg-gray-50 rounded-lg">
                       {isImg && url ? (
