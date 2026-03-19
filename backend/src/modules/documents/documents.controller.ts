@@ -1,19 +1,17 @@
-﻿import {
+import {
   Controller, Get, Post, Delete, Param, Query,
   UseInterceptors, UploadedFile, Body, BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname, join } from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import { memoryStorage } from 'multer';
 import { DocumentsService } from './documents.service';
 import { DocType } from './entities/document.entity';
+import { v2 as cloudinary } from 'cloudinary';
 
-const storage = diskStorage({
-  destination: join(process.cwd(), 'uploads'),
-  filename: (_req, file, cb) => {
-    cb(null, `${uuidv4()}${extname(file.originalname)}`);
-  },
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dxyivspi8',
+  api_key: process.env.CLOUDINARY_API_KEY || '381572823248681',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'GqhCDf_NLEqsYqCwZG0Y0Rc34lM',
 });
 
 @Controller('documents')
@@ -27,7 +25,7 @@ export class DocumentsController {
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', { storage, limits: { fileSize: 20 * 1024 * 1024 } }))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } }))
   async upload(
     @UploadedFile() file: any,
     @Body('patientId') patientId: string,
@@ -37,12 +35,20 @@ export class DocumentsController {
     @Body('descripcion') descripcion: string,
   ) {
     if (!file) throw new BadRequestException('Archivo requerido');
-    const fileUrl = `/uploads/${file.filename}`;
+
+    const result = await new Promise<any>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'hbj-hospital', resource_type: 'auto' },
+        (error, result) => { if (error) reject(error); else resolve(result); }
+      );
+      stream.end(file.buffer);
+    });
+
     return this.svc.create({
       patientId, appointmentId, doctorId,
       tipo: tipo ?? DocType.OTRO,
       descripcion,
-      fileUrl,
+      fileUrl: result.secure_url,
       fileName: file.originalname,
       fileSize: file.size,
       mimeType: file.mimetype,
@@ -54,5 +60,3 @@ export class DocumentsController {
     return this.svc.delete(id);
   }
 }
-
-
