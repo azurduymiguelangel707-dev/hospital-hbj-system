@@ -78,8 +78,8 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-xs text-gray-400 mb-3 uppercase tracking-wide">Historial clinico</p>
-          <InfoFila label="N Historial" value={paciente.numero_historial} />
-          <InfoFila label="Especialidad" value={paciente.especialidad_requerida} />
+          <InfoFila label="N Historial" value={paciente.numeroHistorial} />
+          <InfoFila label="Especialidad" value={paciente.especialidadRequerida} />
           {ultimaConsulta && <InfoFila label="Ultima consulta" value={formatFecha(ultimaConsulta.visit_date)} />}
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
@@ -192,7 +192,7 @@ export function PacientesPanel() {
   const filtrados = pacientes.filter(p =>
     p.nombre?.toLowerCase().includes(search.toLowerCase()) ||
     p.ci?.includes(search) ||
-    p.numero_historial?.includes(search)
+    p.numeroHistorial?.includes(search)
   );
   if (selected) return <FichaPaciente paciente={selected} onBack={() => setSelected(null)} />;
   return (
@@ -222,14 +222,14 @@ export function PacientesPanel() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-800">{p.nombre}</p>
-                    <p className="text-xs text-gray-400">CI: {p.ci} - Hist: {p.numero_historial ?? '-'}</p>
+                    <p className="text-xs text-gray-400">CI: {p.ci} - Hist: {p.numeroHistorial ?? '-'}</p>
                   </div>
                 </div>
                 <ChevronRight size={14} className="text-gray-300 mt-1" />
               </div>
               <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
                 <span>{p.edad} anos - {p.genero}</span>
-                {p.especialidad_requerida && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">{p.especialidad_requerida}</span>}
+                {p.especialidadRequerida && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">{p.especialidadRequerida}</span>}
               </div>
             </button>
           ))}
