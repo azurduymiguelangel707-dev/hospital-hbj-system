@@ -161,7 +161,7 @@ export default function AdminDashboard() {
                 </p>
               </div>
               <StatsGrid userStats={userStats} apptStats={apptStats} />
-              <div className="grid grid-cols-2 gap-6 mt-6">
+              <div className="grid grid-cols-2 gap-6 mt-6" style={{ height: "calc(100vh - 280px)" }}>
                 <div className="bg-white border border-gray-200 rounded-xl p-5">
                   <h3 className="text-sm font-semibold text-gray-700 mb-4">Monitor de citas - hoy</h3>
                   <AppointmentMonitor appointments={appointments} onRefresh={loadAll} />
