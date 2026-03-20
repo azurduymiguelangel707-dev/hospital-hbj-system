@@ -22,6 +22,11 @@ export class MedicalRecordsController {
     return this.medicalRecordsService.findAll();
   }
 
+  @Get('reports/medications')
+  getMedicationsReport() {
+    return this.medicalRecordsService.getMedicationsReport();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.medicalRecordsService.findOne(id);

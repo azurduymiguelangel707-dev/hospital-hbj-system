@@ -144,4 +144,25 @@ export class MedicalRecordsService {
       },
     });
   }
+
+  async getMedicationsReport(): Promise<{ medicamento: string; cantidad: number }[]> {
+    const records = await this.medicalRecordRepository.find({
+      select: ['prescriptions'],
+      where: 'prescriptions IS NOT NULL' as any,
+    });
+    const contador: Record<string, number> = {};
+    records.forEach(r => {
+      if (!r.prescriptions) return;
+      const items = r.prescriptions.split(/[,\n;]+/);
+      items.forEach(item => {
+        const nombre = item.trim().toLowerCase().replace(/\d+mg|\d+\s*mg|\d+ml/gi, '').trim();
+        if (nombre.length < 3) return;
+        contador[nombre] = (contador[nombre] || 0) + 1;
+      });
+    });
+    return Object.entries(contador)
+      .map(([medicamento, cantidad]) => ({ medicamento, cantidad }))
+      .sort((a, b) => b.cantidad - a.cantidad)
+      .slice(0, 10);
+  }
 }

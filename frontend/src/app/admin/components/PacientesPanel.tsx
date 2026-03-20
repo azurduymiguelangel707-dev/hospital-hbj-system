@@ -1,7 +1,7 @@
-﻿'use client';
+'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { Search, User, FileText, ChevronRight, ArrowLeft, AlertCircle } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
@@ -49,24 +49,27 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
   const [historial, setHistorial] = useState<any[]>([]);
   const [documentos, setDocumentos] = useState<any[]>([]);
   const [summary, setSummary] = useState<any>(null);
+  const [medicamentos, setMedicamentos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'citas'|'vitales'|'historial'|'documentos'>('citas');
   const [metricaVital, setMetricaVital] = useState<string>('frecuenciaCardiaca');
   useEffect(() => {
     const cargar = async () => {
       try {
-        const [cRes, vRes, hRes, dRes, sRes] = await Promise.all([
+        const [cRes, vRes, hRes, dRes, sRes, mRes] = await Promise.all([
           authFetch('/api/patients/' + paciente.id + '/appointments/full').then(r => r.json()),
           authFetch('/api/patients/' + paciente.id + '/vitals/history').then(r => r.json()),
           authFetch('/api/medical-records?patientId=' + paciente.id).then(r => r.json()),
           authFetch('/api/documents?patientId=' + paciente.id).then(r => r.json()),
           authFetch('/api/patients/' + paciente.id + '/summary').then(r => r.json()),
+          authFetch('/api/medical-records/reports/medications').then(r => r.json()),
         ]);
         setCitasFull(Array.isArray(cRes) ? cRes : []);
         setVitalesHistory(Array.isArray(vRes) ? vRes : []);
         setHistorial(Array.isArray(hRes) ? hRes : (Array.isArray(hRes?.data) ? hRes.data : []));
         setDocumentos(Array.isArray(dRes) ? dRes : []);
         setSummary(sRes && !sRes.message ? sRes : null);
+        setMedicamentos(Array.isArray(mRes) ? mRes : []);
       } catch(e) { console.error(e); }
       finally { setLoading(false); }
     };
@@ -182,34 +185,53 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                 </div>
               )}
               {tab === 'vitales' && (
-                vitalesHistory.length === 0 ? <p className="text-center text-gray-400 py-8 text-sm">Sin signos vitales registrados</p> :
                 <div>
-                  <div className="flex gap-2 mb-4 flex-wrap">
-                    {METRICAS.map(m => (
-                      <button key={m.key} onClick={() => setMetricaVital(m.key)}
-                        className={'px-3 py-1.5 rounded-lg text-xs font-medium transition border ' + (metricaVital === m.key ? 'text-white border-transparent' : 'bg-white text-gray-500 border-gray-200')}
-                        style={metricaVital === m.key ? { backgroundColor: m.color, borderColor: m.color } : {}}>
-                        {m.label}
-                      </button>
-                    ))}
-                  </div>
-                  {datosGrafico.length === 0
-                    ? <p className="text-center text-gray-400 py-6 text-sm">Sin datos para esta metrica</p>
-                    : <LineChartVitales datos={datosGrafico} color={metricaActual.color} unidad={metricaActual.unidad} min={metricaActual.min ?? null} max={metricaActual.max ?? null} />}
-                  <div className="mt-4 space-y-2">
-                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Ultimos registros</p>
-                    {vitalesHistory.slice(0, 5).map((v: any, i: number) => (
-                      <div key={i} className="p-3 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-400 mb-1">{formatFecha(v.fecha)}</p>
-                        <div className="grid grid-cols-5 gap-2 text-xs">
-                          {v.presionArterial && <span className="text-gray-700">PA: <strong>{v.presionArterial}</strong></span>}
-                          {v.frecuenciaCardiaca && <span className="text-gray-700">FC: <strong>{v.frecuenciaCardiaca} bpm</strong></span>}
-                          {v.temperatura && <span className="text-gray-700">T: <strong>{v.temperatura}C</strong></span>}
-                          {v.saturacionOxigeno && <span className="text-gray-700">SpO2: <strong>{v.saturacionOxigeno}%</strong></span>}
-                          {v.peso && <span className="text-gray-700">Peso: <strong>{v.peso} kg</strong></span>}
-                        </div>
+                  {vitalesHistory.length > 0 && (
+                    <div>
+                      <div className="flex gap-2 mb-4 flex-wrap">
+                        {METRICAS.map(m => (
+                          <button key={m.key} onClick={() => setMetricaVital(m.key)}
+                            className={'px-3 py-1.5 rounded-lg text-xs font-medium transition border ' + (metricaVital === m.key ? 'text-white border-transparent' : 'bg-white text-gray-500 border-gray-200')}
+                            style={metricaVital === m.key ? { backgroundColor: m.color, borderColor: m.color } : {}}>
+                            {m.label}
+                          </button>
+                        ))}
                       </div>
-                    ))}
+                      {datosGrafico.length === 0
+                        ? <p className="text-center text-gray-400 py-6 text-sm">Sin datos para esta metrica</p>
+                        : <LineChartVitales datos={datosGrafico} color={metricaActual.color} unidad={metricaActual.unidad} min={metricaActual.min ?? null} max={metricaActual.max ?? null} />}
+                      <div className="mt-4 space-y-2">
+                        <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Ultimos registros</p>
+                        {vitalesHistory.slice(0, 5).map((v: any, i: number) => (
+                          <div key={i} className="p-3 bg-gray-50 rounded-lg">
+                            <p className="text-xs text-gray-400 mb-1">{formatFecha(v.fecha)}</p>
+                            <div className="grid grid-cols-5 gap-2 text-xs">
+                              {v.presionArterial && <span className="text-gray-700">PA: <strong>{v.presionArterial}</strong></span>}
+                              {v.frecuenciaCardiaca && <span className="text-gray-700">FC: <strong>{v.frecuenciaCardiaca} bpm</strong></span>}
+                              {v.temperatura && <span className="text-gray-700">T: <strong>{v.temperatura}C</strong></span>}
+                              {v.saturacionOxigeno && <span className="text-gray-700">SpO2: <strong>{v.saturacionOxigeno}%</strong></span>}
+                              {v.peso && <span className="text-gray-700">Peso: <strong>{v.peso} kg</strong></span>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {vitalesHistory.length === 0 && (
+                    <p className="text-center text-gray-400 py-4 text-sm">Sin signos vitales registrados</p>
+                  )}
+                  <div className="mt-6 border-t border-gray-100 pt-4">
+                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Top 10 medicamentos recetados</p>
+                    {medicamentos.length === 0 ? <p className="text-center text-gray-400 py-4 text-sm">Sin datos de prescripciones</p> : (
+                      <ResponsiveContainer width="100%" height={280}>
+                        <BarChart data={medicamentos} layout="vertical" margin={{ top: 0, right: 24, left: 8, bottom: 0 }}>
+                          <XAxis type="number" tick={{ fontSize: 11 }} />
+                          <YAxis type="category" dataKey="medicamento" tick={{ fontSize: 11 }} width={120} />
+                          <Tooltip formatter={(v: any) => [v + ' recetas', 'Cantidad']} />
+                          <Bar dataKey="cantidad" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
                   </div>
                 </div>
               )}
