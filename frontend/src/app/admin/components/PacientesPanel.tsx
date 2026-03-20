@@ -259,20 +259,30 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
               )}
               {tab === 'documentos' && (
                 documentos.length === 0 ? <p className="text-center text-gray-400 py-8 text-sm">Sin documentos</p> :
-                <div className="space-y-2">
+                <div className="grid grid-cols-3 gap-4">
                   {documentos.map((d: any) => {
                     const isImg = d.mimeType?.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(d.fileName ?? '');
+                    const isPdf = d.mimeType === 'application/pdf' || /\.pdf$/i.test(d.fileName ?? '');
                     const url = d.fileUrl ? (d.fileUrl.startsWith('http') ? d.fileUrl : API.replace('/api','') + d.fileUrl) : null;
+                    const nombre = d.fileName ? d.fileName.replace(/^[0-9a-f-]{36}[-_]?/i,'').replace(/\.[^.]+$/,'') || d.fileName : (d.descripcion ?? 'Documento');
+                    const ext = d.fileName ? d.fileName.split('.').pop()?.toUpperCase() : 'DOC';
                     return (
-                    <div key={d.id} className="p-3 bg-gray-50 rounded-lg">
-                      {isImg && url ? (
-                        <img src={url} alt={d.fileName} className="w-full max-h-48 object-contain rounded mb-2 border" />
-                      ) : (
-                        <div className="flex items-center gap-2 mb-1"><FileText size={14} className="text-gray-400" /></div>
-                      )}
-                      <p className="text-sm font-medium text-gray-700">{d.fileName ?? d.descripcion ?? 'Documento'}</p>
-                      <p className="text-xs text-gray-400">{formatFecha(d.creadoEn)}</p>
-                    </div>
+                      <div key={d.id} className="bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-gray-200 hover:shadow-sm transition">
+                        {isImg && url ? (
+                          <a href={url} target="_blank" rel="noopener noreferrer">
+                            <img src={url} alt={nombre} className="w-full h-40 object-cover" />
+                          </a>
+                        ) : (
+                          <div className="w-full h-40 bg-gray-50 flex flex-col items-center justify-center gap-2">
+                            <FileText size={32} className={isPdf ? 'text-red-400' : 'text-blue-400'} />
+                            <span className={'text-xs font-bold px-2 py-0.5 rounded ' + (isPdf ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-500')}>{ext}</span>
+                          </div>
+                        )}
+                        <div className="p-3">
+                          <p className="text-xs font-medium text-gray-700 truncate" title={d.fileName}>{nombre}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{formatFecha(d.creadoEn)}</p>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
