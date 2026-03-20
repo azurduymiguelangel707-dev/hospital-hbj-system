@@ -1,4 +1,4 @@
-﻿import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Patient } from './entities/patient.entity';
@@ -195,14 +195,8 @@ export class PatientsService {
   }
 
   async getSpecialtiesReport(): Promise<{ especialidad: string; cantidad: number }[]> {
-    const result = await this.patientRepository.query(
-      SELECT especialidad_requerida as especialidad, COUNT(*) as cantidad
-       FROM patients
-       WHERE especialidad_requerida IS NOT NULL AND especialidad_requerida != ''
-       GROUP BY especialidad_requerida
-       ORDER BY cantidad DESC
-       LIMIT 10
-    );
+    const sql = 'SELECT especialidad_requerida as especialidad, COUNT(*) as cantidad FROM patients WHERE especialidad_requerida IS NOT NULL AND especialidad_requerida !=  GROUP BY especialidad_requerida ORDER BY cantidad DESC LIMIT 10';
+    const result = await this.patientRepository.query(sql, ['']);
     return result.map((r: any) => ({ especialidad: r.especialidad, cantidad: Number(r.cantidad) }));
   }
 }
