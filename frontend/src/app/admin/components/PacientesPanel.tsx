@@ -252,16 +252,24 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                     </div>
                   )}
                   <div className="mt-6 border-t border-gray-100 pt-4">
-                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Medicamentos del paciente</p>
-                    {paciente.medicamentos && paciente.medicamentos.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {paciente.medicamentos.map((m: string, i: number) => (
-                          <span key={i} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">{m}</span>
-                        ))}
+                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Resumen clinico</p>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <p className="text-xs text-gray-400 mb-1">Total registros vitales</p>
+                        <p className="text-2xl font-bold text-gray-800">{vitalesHistory.length}</p>
+                        <p className="text-xs text-gray-400 mt-1">registros en total</p>
                       </div>
-                    ) : (
-                      <p className="text-xs text-gray-400">Sin medicamentos registrados</p>
-                    )}
+                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <p className="text-xs text-gray-400 mb-1">Ultimo diagnostico</p>
+                        <p className="text-sm font-semibold text-gray-800 leading-tight">{historial[0]?.diagnosis ?? '-'}</p>
+                        <p className="text-xs text-gray-400 mt-1">{historial[0] ? formatFecha(historial[0].visit_date || historial[0].visitDate) : ''}</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <p className="text-xs text-gray-400 mb-1">Proximo seguimiento</p>
+                        <p className="text-sm font-semibold text-gray-800">{historial[0]?.follow_up_date ? formatFecha(historial[0].follow_up_date) : '-'}</p>
+                        <p className="text-xs text-gray-400 mt-1">{historial[0]?.follow_up_date ? 'fecha programada' : 'sin seguimiento'}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
