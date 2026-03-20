@@ -329,25 +329,20 @@ export function PacientesPanel() {
       </div>
       {loading ? <p className="text-center text-gray-400 py-12 text-sm">Cargando pacientes...</p> :
         filtrados.length === 0 ? <p className="text-center text-gray-400 py-12 text-sm">Sin resultados</p> :
-        <div className="grid grid-cols-2 gap-3 pr-1 overflow-y-auto" style={{ height: 'calc(100vh - 220px)' }}>
+        <div className="grid grid-cols-1 gap-1.5 pr-1 overflow-y-auto" style={{ height: 'calc(100vh - 220px)' }}>
           {filtrados.map(p => (
             <button key={p.id} onClick={() => setSelected(p)}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-left hover:border-blue-300 hover:shadow-sm transition">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User size={16} className="text-blue-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800">{p.nombre}</p>
-                    <p className="text-xs text-gray-400">CI: {p.ci} - Hist: {p.numeroHistorial ?? '-'}</p>
-                  </div>
-                </div>
-                <ChevronRight size={14} className="text-gray-300 mt-1" />
+              className="bg-white border border-gray-100 rounded-lg px-4 py-2.5 text-left hover:border-blue-300 hover:bg-blue-50 transition flex items-center gap-3 w-full">
+              <div className="w-7 h-7 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
+                <User size={13} className="text-blue-500" />
               </div>
-              <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
-                <span>{p.edad} anos - {p.genero}</span>
-                {p.especialidadRequerida && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">{p.especialidadRequerida}</span>}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-800 truncate">{p.nombre}</p>
+                <p className="text-xs text-gray-400">CI: {p.ci} · Hist: {p.numeroHistorial ?? '-'} · {p.edad} anos · {p.genero}</p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {p.especialidadRequerida && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs">{p.especialidadRequerida}</span>}
+                <ChevronRight size={13} className="text-gray-300" />
               </div>
             </button>
           ))}
