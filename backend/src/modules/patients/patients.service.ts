@@ -132,18 +132,18 @@ export class PatientsService {
       turno: a.turno,
       numeroFicha: a.numeroFicha,
       totalFichasTurno: a.totalFichasTurno,
-      doctor: a.doctor
-        ? {
+        doctor: a.doctor
+          ? {
             id: a.doctor.id,
             nombre: (a.doctor as any).user
-              ? ((a.doctor as any).user.nombre + ' ' + (a.doctor as any).user.apellido)
+              ? ((a.doctor as any).user.first_name + ' ' + (a.doctor as any).user.last_name)
               : 'Sin asignar',
-            especialidad: (a.doctor as any).especialidad ?? a.especialidad,
+            especialidad: (a.doctor as any).specialty ?? a.especialidad,
           }
-        : null,
-      cancelacion: a.cancelledAt
-        ? { fecha: a.cancelledAt, motivo: a.cancellationReason }
-        : null,
+          : null,
+        cancelacion: a.cancelledAt
+          ? { fecha: a.cancelledAt, motivo: a.cancellationReason }
+          : null,
     }));
   }
 
