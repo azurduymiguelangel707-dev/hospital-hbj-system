@@ -128,9 +128,9 @@ export function SystemMonitor() {
             : <ShieldAlert size={18} className="text-red-600 mt-0.5 flex-shrink-0" />}
           <div className="flex-1">
             <p className={`text-sm font-semibold ${chainIntegrity ? 'text-green-800' : 'text-red-800'}`}>
-              Cadena blockchain Ã¢â‚¬â€ {chainIntegrity ? 'INTEGRA' : 'COMPROMETIDA'}
+              Cadena blockchain — {chainIntegrity ? 'INTEGRA' : 'COMPROMETIDA'}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5">{totalEvents} bloques registrados Ã¢â‚¬â€ {invalidBlocks.length} bloques invalidos</p>
+            <p className="text-xs text-gray-500 mt-0.5">{totalEvents} bloques registrados — {invalidBlocks.length} bloques invalidos</p>
             {lastBlock && (
               <p className="text-xs font-mono text-gray-400 mt-1">Ultimo hash: {lastBlock.currentHash?.substring(0, 24)}...</p>
             )}
@@ -142,7 +142,7 @@ export function SystemMonitor() {
             <p className="text-xs text-gray-400 mb-1">Ultimo evento registrado</p>
             <div className="flex items-center justify-between">
               <div>
-<p className="text-sm font-medium text-gray-700">{lastBlock.resourceType==='AUTH'?'Autenticacion':lastBlock.resourceType==='MEDICAL_RECORD'?'Historial medico':lastBlock.resourceType==='VITAL_SIGNS'?'Signos vitales':lastBlock.resourceType==='DOCUMENTS'?'Documentos':lastBlock.resourceType==='USERS'?'Usuarios':lastBlock.resourceType} Ã¢â‚¬â€ {lastBlock.eventType==='CREATE'?'Creacion':lastBlock.eventType==='UPDATE'?'Modificacion':lastBlock.eventType==='DELETE'?'Eliminacion':lastBlock.eventType==='ACCESS'?'Acceso':lastBlock.eventType}</p>
+<p className="text-sm font-medium text-gray-700">{lastBlock.resourceType==='AUTH'?'Autenticacion':lastBlock.resourceType==='MEDICAL_RECORD'?'Historial medico':lastBlock.resourceType==='VITAL_SIGNS'?'Signos vitales':lastBlock.resourceType==='DOCUMENTS'?'Documentos':lastBlock.resourceType==='USERS'?'Usuarios':lastBlock.resourceType} — {lastBlock.eventType==='CREATE'?'Creacion':lastBlock.eventType==='UPDATE'?'Modificacion':lastBlock.eventType==='DELETE'?'Eliminacion':lastBlock.eventType==='ACCESS'?'Acceso':lastBlock.eventType}</p>
                 <p className="text-xs text-gray-400">{new Date(lastBlock.timestamp).toLocaleString('es-ES')}</p>
               </div>
               <span className="text-xs font-mono text-gray-400">Bloque #{lastBlock.blockIndex}</span>
