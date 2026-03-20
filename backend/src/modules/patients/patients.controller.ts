@@ -28,6 +28,21 @@ export class PatientsController {
     return this.patientsService.getLatestVitals(id);
   }
 
+  @Get(':id/vitals/history')
+  getVitalsHistory(@Param('id') id: string) {
+    return this.patientsService.getVitalsHistory(id);
+  }
+
+  @Get(':id/appointments/full')
+  getAppointmentsFull(@Param('id') id: string) {
+    return this.patientsService.getAppointmentsFull(id);
+  }
+
+  @Get(':id/summary')
+  getSummary(@Param('id') id: string) {
+    return this.patientsService.getSummary(id);
+  }
+
   @Post()
   create(@Body() data: Partial<Patient>): Promise<Patient> {
     return this.patientsService.create(data);
