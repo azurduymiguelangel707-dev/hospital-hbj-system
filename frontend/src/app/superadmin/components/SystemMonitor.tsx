@@ -142,7 +142,7 @@ export function SystemMonitor() {
             <p className="text-xs text-gray-400 mb-1">Ultimo evento registrado</p>
             <div className="flex items-center justify-between">
               <div>
-<p className="text-sm font-medium text-gray-700">{lastBlock.resourceType==='AUTH'?'Autenticacion':lastBlock.resourceType==='MEDICAL_RECORD'?'Historial medico':lastBlock.resourceType==='VITAL_SIGNS'?'Signos vitales':lastBlock.resourceType==='DOCUMENTS'?'Documentos':lastBlock.resourceType==='USERS'?'Usuarios':lastBlock.resourceType} â€”Â-  {lastBlock.eventType==='CREATE'?'Creacion':lastBlock.eventType==='UPDATE'?'Modificacion':lastBlock.eventType==='DELETE'?'Eliminacion':lastBlock.eventType==='ACCESS'?'Acceso':lastBlock.eventType}</p>
+<p className="text-sm font-medium text-gray-700">{lastBlock.resourceType==='AUTH'?'Autenticacion':lastBlock.resourceType==='MEDICAL_RECORD'?'Historial medico':lastBlock.resourceType==='VITAL_SIGNS'?'Signos vitales':lastBlock.resourceType==='DOCUMENTS'?'Documentos':lastBlock.resourceType==='USERS'?'Usuarios':lastBlock.resourceType} --  {lastBlock.eventType==='CREATE'?'Creacion':lastBlock.eventType==='UPDATE'?'Modificacion':lastBlock.eventType==='DELETE'?'Eliminacion':lastBlock.eventType==='ACCESS'?'Acceso':lastBlock.eventType}</p>
                 <p className="text-xs text-gray-400">{new Date(lastBlock.timestamp).toLocaleString('es-ES')}</p>
               </div>
               <span className="text-xs font-mono text-gray-400">Bloque #{lastBlock.blockIndex}</span>
