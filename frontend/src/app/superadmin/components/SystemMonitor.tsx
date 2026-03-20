@@ -130,7 +130,7 @@ export function SystemMonitor() {
             <p className={`text-sm font-semibold ${chainIntegrity ? 'text-green-800' : 'text-red-800'}`}>
               Cadena blockchain - {chainIntegrity ? 'INTEGRA' : 'COMPROMETIDA'}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5">{totalEvents} bloques registrados â€”Â {invalidBlocks.length} bloques invalidos</p>
+            <p className="text-xs text-gray-500 mt-0.5">{totalEvents} bloques registrados - {invalidBlocks.length} bloques invalidos</p>- 
             {lastBlock && (
               <p className="text-xs font-mono text-gray-400 mt-1">Ultimo hash: {lastBlock.currentHash?.substring(0, 24)}...</p>
             )}
