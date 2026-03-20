@@ -193,4 +193,16 @@ export class PatientsService {
       ],
     };
   }
+
+  async getSpecialtiesReport(): Promise<{ especialidad: string; cantidad: number }[]> {
+    const result = await this.patientRepository.query(
+      SELECT especialidad_requerida as especialidad, COUNT(*) as cantidad
+       FROM patients
+       WHERE especialidad_requerida IS NOT NULL AND especialidad_requerida != ''
+       GROUP BY especialidad_requerida
+       ORDER BY cantidad DESC
+       LIMIT 10
+    );
+    return result.map((r: any) => ({ especialidad: r.especialidad, cantidad: Number(r.cantidad) }));
+  }
 }

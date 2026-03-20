@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { LayoutDashboard, Users, Calendar, Activity, Shield, LogOut, RefreshCw, UserPlus, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, Activity, Shield, LogOut, RefreshCw, UserPlus, ClipboardList, BarChart2 } from 'lucide-react';
 import { StatsGrid } from './components/StatsGrid';
 import { UserManager } from './components/UserManager';
 import TurnosPanel from './components/TurnosPanel';
@@ -13,6 +13,7 @@ import { PacientesPanel } from './components/PacientesPanel';
 import { RegistroPaciente } from './components/RegistroPaciente';
 import { CerrarDiaButton } from './components/CerrarDiaButton';
 import { AgendamientoCita } from './components/AgendamientoCita';
+import { ReportesPanel } from './components/ReportesPanel';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
@@ -20,7 +21,7 @@ function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });
 }
 
-type Panel = 'dashboard' | 'registro' | 'pacientes' | 'usuarios' | 'citas' | 'sistema';
+type Panel = 'dashboard' | 'registro' | 'pacientes' | 'usuarios' | 'citas' | 'sistema' | 'reportes';
 
 const PANELS: { key: Panel; label: string; icon: any }[] = [
   { key: 'dashboard', label: 'Panel principal',  icon: LayoutDashboard },
@@ -29,6 +30,7 @@ const PANELS: { key: Panel; label: string; icon: any }[] = [
   { key: 'usuarios',  label: 'Usuarios',   icon: Users },
   { key: 'citas',     label: 'Citas',      icon: Calendar },
   { key: 'sistema',   label: 'Sistema',    icon: Activity },
+  { key: 'reportes',  label: 'Reportes',   icon: BarChart2 },
 ];
 
 function useAdminSession() {
@@ -239,6 +241,17 @@ export default function AdminDashboard() {
               <div className="bg-white border border-gray-200 rounded-xl p-5">
                 <AppointmentMonitor appointments={appointments} onRefresh={loadAll} />
               </div>
+            </div>
+          )}
+
+          {/* REPORTES */}
+          {activePanel === 'reportes' && (
+            <div>
+              <div className="mb-5">
+                <h2 className="text-xl font-semibold text-gray-800">Reportes y estadisticas</h2>
+                <p className="text-sm text-gray-500 mt-0.5">Analisis de especialidades, medicamentos y citas</p>
+              </div>
+              <ReportesPanel />
             </div>
           )}
 

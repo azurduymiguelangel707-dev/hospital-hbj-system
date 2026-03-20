@@ -11,6 +11,11 @@ export class PatientsController {
     return this.patientsService.findAll();
   }
 
+  @Get('reports/specialties')
+  getSpecialtiesReport() {
+    return this.patientsService.getSpecialtiesReport();
+  }
+
   @Get('buscar')
   async buscar(@Query('ci') ci?: string, @Query('historial') historial?: string) {
     if (ci) return this.patientsService.findByCI(ci);

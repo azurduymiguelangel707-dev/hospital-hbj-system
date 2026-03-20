@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { Search, User, FileText, ChevronRight, ArrowLeft, AlertCircle } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
@@ -49,27 +49,27 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
   const [historial, setHistorial] = useState<any[]>([]);
   const [documentos, setDocumentos] = useState<any[]>([]);
   const [summary, setSummary] = useState<any>(null);
-  const [medicamentos, setMedicamentos] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'citas'|'vitales'|'historial'|'documentos'>('citas');
   const [metricaVital, setMetricaVital] = useState<string>('frecuenciaCardiaca');
   useEffect(() => {
     const cargar = async () => {
       try {
-        const [cRes, vRes, hRes, dRes, sRes, mRes] = await Promise.all([
+        const [cRes, vRes, hRes, dRes, sRes] = await Promise.all([
           authFetch('/api/patients/' + paciente.id + '/appointments/full').then(r => r.json()),
           authFetch('/api/patients/' + paciente.id + '/vitals/history').then(r => r.json()),
           authFetch('/api/medical-records?patientId=' + paciente.id).then(r => r.json()),
           authFetch('/api/documents?patientId=' + paciente.id).then(r => r.json()),
           authFetch('/api/patients/' + paciente.id + '/summary').then(r => r.json()),
-          authFetch('/api/medical-records/reports/medications').then(r => r.json()),
         ]);
         setCitasFull(Array.isArray(cRes) ? cRes : []);
         setVitalesHistory(Array.isArray(vRes) ? vRes : []);
         setHistorial(Array.isArray(hRes) ? hRes : (Array.isArray(hRes?.data) ? hRes.data : []));
         setDocumentos(Array.isArray(dRes) ? dRes : []);
         setSummary(sRes && !sRes.message ? sRes : null);
-        setMedicamentos(Array.isArray(mRes) ? mRes : []);
+
+
       } catch(e) { console.error(e); }
       finally { setLoading(false); }
     };
@@ -221,16 +221,15 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                     <p className="text-center text-gray-400 py-4 text-sm">Sin signos vitales registrados</p>
                   )}
                   <div className="mt-6 border-t border-gray-100 pt-4">
-                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Top 10 medicamentos recetados</p>
-                    {medicamentos.length === 0 ? <p className="text-center text-gray-400 py-4 text-sm">Sin datos de prescripciones</p> : (
-                      <ResponsiveContainer width="100%" height={280}>
-                        <BarChart data={medicamentos} layout="vertical" margin={{ top: 0, right: 24, left: 8, bottom: 0 }}>
-                          <XAxis type="number" tick={{ fontSize: 11 }} />
-                          <YAxis type="category" dataKey="medicamento" tick={{ fontSize: 11 }} width={120} />
-                          <Tooltip formatter={(v: any) => [v + ' recetas', 'Cantidad']} />
-                          <Bar dataKey="cantidad" fill="#3b82f6" radius={[0, 4, 4, 0]} />
-                        </BarChart>
-                      </ResponsiveContainer>
+                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Medicamentos del paciente</p>
+                    {paciente.medicamentos && paciente.medicamentos.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {paciente.medicamentos.map((m: string, i: number) => (
+                          <span key={i} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">{m}</span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-400">Sin medicamentos registrados</p>
                     )}
                   </div>
                 </div>
