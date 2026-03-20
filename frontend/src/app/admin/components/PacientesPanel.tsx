@@ -329,7 +329,7 @@ export function PacientesPanel() {
       </div>
       {loading ? <p className="text-center text-gray-400 py-12 text-sm">Cargando pacientes...</p> :
         filtrados.length === 0 ? <p className="text-center text-gray-400 py-12 text-sm">Sin resultados</p> :
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 pr-1 overflow-y-auto" style={{ height: 'calc(100vh - 220px)' }}>
           {filtrados.map(p => (
             <button key={p.id} onClick={() => setSelected(p)}
               className="bg-white border border-gray-200 rounded-xl p-4 text-left hover:border-blue-300 hover:shadow-sm transition">
