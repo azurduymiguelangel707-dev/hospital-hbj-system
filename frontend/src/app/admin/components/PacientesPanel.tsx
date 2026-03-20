@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { Search, User, FileText, ChevronRight, ArrowLeft, AlertCircle } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
+
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
 function authFetch(url: string, options: RequestInit = {}) {
@@ -29,20 +29,6 @@ function InfoFila({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-function LineChartVitales({ datos, color, unidad, min, max }: { datos: any[]; color: string; unidad: string; min: number|null; max: number|null }) {
-  return (
-    <ResponsiveContainer width="100%" height={220}>
-      <LineChart data={datos} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-        <XAxis dataKey="fecha" tick={{ fontSize: 11 }} />
-        <YAxis tick={{ fontSize: 11 }} width={36} />
-        <Tooltip formatter={(v: any) => [v + ' ' + unidad, 'Valor']} />
-        {min !== null && <ReferenceLine y={min} stroke={color} strokeDasharray="4 2" strokeOpacity={0.4} />}
-        {max !== null && <ReferenceLine y={max} stroke={color} strokeDasharray="4 2" strokeOpacity={0.4} />}
-        <Line type="monotone" dataKey="valor" stroke={color} strokeWidth={2} dot={{ r: 3, fill: color }} activeDot={{ r: 5 }} />
-      </LineChart>
-    </ResponsiveContainer>
-  );
-}
 function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void }) {
   const [citasFull, setCitasFull] = useState<any[]>([]);
   const [vitalesHistory, setVitalesHistory] = useState<any[]>([]);
@@ -52,7 +38,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
 
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'citas'|'vitales'|'historial'|'documentos'>('citas');
-  const [metricaVital, setMetricaVital] = useState<string>('frecuenciaCardiaca');
+
   useEffect(() => {
     const cargar = async () => {
       try {
@@ -78,17 +64,17 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
   const proximaCita = summary?.citas?.proxima ?? null;
   const ultimaVisita = summary?.citas?.ultimaVisita ?? null;
   const alertas: any[] = summary?.alertas ?? [];
-  const METRICAS = [
-    { key: 'frecuenciaCardiaca', label: 'Frec. cardiaca', unidad: 'bpm', color: '#ef4444', min: 60, max: 100 },
-    { key: 'temperatura', label: 'Temperatura', unidad: 'C', color: '#f97316', min: 36, max: 37.5 },
-    { key: 'peso', label: 'Peso', unidad: 'kg', color: '#3b82f6', min: null, max: null },
-    { key: 'saturacionOxigeno', label: 'SpO2', unidad: '%', color: '#8b5cf6', min: 95, max: 100 },
-    { key: 'frecuenciaRespiratoria', label: 'Frec. resp.', unidad: 'rpm', color: '#10b981', min: 12, max: 20 },
-  ];
-  const metricaActual = METRICAS.find(m => m.key === metricaVital) ?? METRICAS[0];
-  const datosGrafico = vitalesHistory
-    .filter(v => v[metricaVital] !== null && v[metricaVital] !== undefined)
-    .map(v => ({ fecha: new Date(v.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }), valor: Number(v[metricaVital]) }));
+
+
+
+
+
+
+
+
+
+
+
   const tabs = [
     { key: 'citas', label: 'Citas', count: citasFull.length },
     { key: 'vitales', label: 'Vitales', count: vitalesHistory.length },
@@ -186,39 +172,84 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
               )}
               {tab === 'vitales' && (
                 <div>
-                  {vitalesHistory.length > 0 && (
+                  {vitalesHistory.length === 0 ? (
+                    <p className="text-center text-gray-400 py-6 text-sm">Sin signos vitales registrados</p>
+                  ) : (
                     <div>
-                      <div className="flex gap-2 mb-4 flex-wrap">
-                        {METRICAS.map(m => (
-                          <button key={m.key} onClick={() => setMetricaVital(m.key)}
-                            className={'px-3 py-1.5 rounded-lg text-xs font-medium transition border ' + (metricaVital === m.key ? 'text-white border-transparent' : 'bg-white text-gray-500 border-gray-200')}
-                            style={metricaVital === m.key ? { backgroundColor: m.color, borderColor: m.color } : {}}>
-                            {m.label}
-                          </button>
-                        ))}
-                      </div>
-                      {datosGrafico.length === 0
-                        ? <p className="text-center text-gray-400 py-6 text-sm">Sin datos para esta metrica</p>
-                        : <LineChartVitales datos={datosGrafico} color={metricaActual.color} unidad={metricaActual.unidad} min={metricaActual.min ?? null} max={metricaActual.max ?? null} />}
-                      <div className="mt-4 space-y-2">
-                        <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Ultimos registros</p>
-                        {vitalesHistory.slice(0, 5).map((v: any, i: number) => (
-                          <div key={i} className="p-3 bg-gray-50 rounded-lg">
-                            <p className="text-xs text-gray-400 mb-1">{formatFecha(v.fecha)}</p>
-                            <div className="grid grid-cols-5 gap-2 text-xs">
-                              {v.presionArterial && <span className="text-gray-700">PA: <strong>{v.presionArterial}</strong></span>}
-                              {v.frecuenciaCardiaca && <span className="text-gray-700">FC: <strong>{v.frecuenciaCardiaca} bpm</strong></span>}
-                              {v.temperatura && <span className="text-gray-700">T: <strong>{v.temperatura}C</strong></span>}
-                              {v.saturacionOxigeno && <span className="text-gray-700">SpO2: <strong>{v.saturacionOxigeno}%</strong></span>}
-                              {v.peso && <span className="text-gray-700">Peso: <strong>{v.peso} kg</strong></span>}
+                      <div className="grid grid-cols-3 gap-3 mb-6">
+                        {[{
+                          key: 'presionArterial', label: 'Presion arterial', unidad: '', color: 'blue',
+                          min: null, max: null, isString: true
+                        },{
+                          key: 'frecuenciaCardiaca', label: 'Frec. cardiaca', unidad: 'bpm', color: 'red',
+                          min: 60, max: 100, isString: false
+                        },{
+                          key: 'temperatura', label: 'Temperatura', unidad: 'C', color: 'orange',
+                          min: 36, max: 37.5, isString: false
+                        },{
+                          key: 'saturacionOxigeno', label: 'SpO2', unidad: '%', color: 'purple',
+                          min: 95, max: 100, isString: false
+                        },{
+                          key: 'peso', label: 'Peso', unidad: 'kg', color: 'green',
+                          min: null, max: null, isString: false
+                        },{
+                          key: 'frecuenciaRespiratoria', label: 'Frec. resp.', unidad: 'rpm', color: 'teal',
+                          min: 12, max: 20, isString: false
+                        }].map((m: any) => {
+                          const ultimo = vitalesHistory[vitalesHistory.length - 1];
+                          const penultimo = vitalesHistory.length > 1 ? vitalesHistory[vitalesHistory.length - 2] : null;
+                          const valor = ultimo ? ultimo[m.key] : null;
+                          const valorPrev = penultimo ? penultimo[m.key] : null;
+                          const enRango = m.isString || m.min === null ? null : (valor !== null && Number(valor) >= m.min && Number(valor) <= m.max);
+                          const tendencia = (!m.isString && valor !== null && valorPrev !== null) ? (Number(valor) > Number(valorPrev) ? 'up' : Number(valor) < Number(valorPrev) ? 'down' : 'eq') : null;
+                          const bgColor = enRango === null ? 'bg-gray-50' : enRango ? 'bg-green-50' : 'bg-red-50';
+                          const textColor = enRango === null ? 'text-gray-700' : enRango ? 'text-green-700' : 'text-red-700';
+                          const labelColor = enRango === null ? 'text-gray-400' : enRango ? 'text-green-500' : 'text-red-400';
+                          return (
+                            <div key={m.key} className={'rounded-xl p-4 border ' + bgColor + (enRango === false ? ' border-red-100' : ' border-gray-100')}>
+                              <p className={'text-xs uppercase tracking-wide mb-1 ' + labelColor}>{m.label}</p>
+                              <div className="flex items-end gap-2">
+                                <span className={'text-2xl font-bold ' + textColor}>
+                                  {valor !== null && valor !== undefined ? (m.isString ? valor : Number(valor).toFixed(m.unidad === 'C' ? 1 : 0)) : '-'}
+                                </span>
+                                {m.unidad && valor !== null && <span className={'text-xs ' + labelColor}>{m.unidad}</span>}
+                                {tendencia === 'up' && <span className="text-red-400 text-sm font-bold mb-1">↑</span>}
+                                {tendencia === 'down' && <span className="text-green-400 text-sm font-bold mb-1">↓</span>}
+                              </div>
+                              {m.min !== null && <p className="text-xs text-gray-300 mt-1">Normal: {m.min} - {m.max} {m.unidad}</p>}
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
+                      </div>
+                      <div className="border border-gray-100 rounded-xl overflow-hidden">
+                        <table className="w-full text-xs">
+                          <thead>
+                            <tr className="bg-gray-50 border-b border-gray-100">
+                              <th className="text-left p-3 text-gray-400 font-medium">Fecha</th>
+                              <th className="text-center p-3 text-gray-400 font-medium">PA</th>
+                              <th className="text-center p-3 text-gray-400 font-medium">FC</th>
+                              <th className="text-center p-3 text-gray-400 font-medium">Temp</th>
+                              <th className="text-center p-3 text-gray-400 font-medium">SpO2</th>
+                              <th className="text-center p-3 text-gray-400 font-medium">Peso</th>
+                              <th className="text-center p-3 text-gray-400 font-medium">FR</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[...vitalesHistory].reverse().map((v: any, i: number) => (
+                              <tr key={i} className="border-b border-gray-50 hover:bg-gray-50 transition">
+                                <td className="p-3 text-gray-500">{formatFecha(v.fecha)}</td>
+                                <td className="p-3 text-center text-gray-700">{v.presionArterial || '-'}</td>
+                                <td className={'p-3 text-center font-medium ' + (v.frecuenciaCardiaca && (Number(v.frecuenciaCardiaca) < 60 || Number(v.frecuenciaCardiaca) > 100) ? 'text-red-500' : 'text-gray-700')}>{v.frecuenciaCardiaca ? Number(v.frecuenciaCardiaca).toFixed(0) + ' bpm' : '-'}</td>
+                                <td className={'p-3 text-center font-medium ' + (v.temperatura && (Number(v.temperatura) < 36 || Number(v.temperatura) > 37.5) ? 'text-red-500' : 'text-gray-700')}>{v.temperatura ? Number(v.temperatura).toFixed(1) + 'C' : '-'}</td>
+                                <td className={'p-3 text-center font-medium ' + (v.saturacionOxigeno && Number(v.saturacionOxigeno) < 95 ? 'text-red-500' : 'text-gray-700')}>{v.saturacionOxigeno ? Number(v.saturacionOxigeno).toFixed(0) + '%' : '-'}</td>
+                                <td className="p-3 text-center text-gray-700">{v.peso ? Number(v.peso).toFixed(1) + ' kg' : '-'}</td>
+                                <td className={'p-3 text-center font-medium ' + (v.frecuenciaRespiratoria && (Number(v.frecuenciaRespiratoria) < 12 || Number(v.frecuenciaRespiratoria) > 20) ? 'text-red-500' : 'text-gray-700')}>{v.frecuenciaRespiratoria ? Number(v.frecuenciaRespiratoria).toFixed(0) + ' rpm' : '-'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
-                  )}
-                  {vitalesHistory.length === 0 && (
-                    <p className="text-center text-gray-400 py-4 text-sm">Sin signos vitales registrados</p>
                   )}
                   <div className="mt-6 border-t border-gray-100 pt-4">
                     <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Medicamentos del paciente</p>
