@@ -128,7 +128,7 @@ export function SystemMonitor() {
             : <ShieldAlert size={18} className="text-red-600 mt-0.5 flex-shrink-0" />}
           <div className="flex-1">
             <p className={`text-sm font-semibold ${chainIntegrity ? 'text-green-800' : 'text-red-800'}`}>
-              Cadena blockchain â€”Â-  {chainIntegrity ? 'INTEGRA' : 'COMPROMETIDA'}
+              Cadena blockchain - {chainIntegrity ? 'INTEGRA' : 'COMPROMETIDA'}
             </p>
             <p className="text-xs text-gray-500 mt-0.5">{totalEvents} bloques registrados â€”Â {invalidBlocks.length} bloques invalidos</p>
             {lastBlock && (
