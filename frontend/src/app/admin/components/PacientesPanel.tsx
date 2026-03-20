@@ -177,100 +177,67 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                   ) : (
                     <div>
                       <div className="grid grid-cols-3 gap-3 mb-6">
-                        {[{
-                          key: 'presionArterial', label: 'Presion arterial', unidad: '', color: 'blue',
-                          min: null, max: null, isString: true
-                        },{
-                          key: 'frecuenciaCardiaca', label: 'Frec. cardiaca', unidad: 'bpm', color: 'red',
-                          min: 60, max: 100, isString: false
-                        },{
-                          key: 'temperatura', label: 'Temperatura', unidad: 'C', color: 'orange',
-                          min: 36, max: 37.5, isString: false
-                        },{
-                          key: 'saturacionOxigeno', label: 'SpO2', unidad: '%', color: 'purple',
-                          min: 95, max: 100, isString: false
-                        },{
-                          key: 'peso', label: 'Peso', unidad: 'kg', color: 'green',
-                          min: null, max: null, isString: false
-                        },{
-                          key: 'frecuenciaRespiratoria', label: 'Frec. resp.', unidad: 'rpm', color: 'teal',
-                          min: 12, max: 20, isString: false
-                        }].map((m: any) => {
-                          const ultimo = vitalesHistory[vitalesHistory.length - 1];
-                          const penultimo = vitalesHistory.length > 1 ? vitalesHistory[vitalesHistory.length - 2] : null;
-                          const valor = ultimo ? ultimo[m.key] : null;
-                          const valorPrev = penultimo ? penultimo[m.key] : null;
-                          const enRango = m.isString || m.min === null ? null : (valor !== null && Number(valor) >= m.min && Number(valor) <= m.max);
-                          const tendencia = (!m.isString && valor !== null && valorPrev !== null) ? (Number(valor) > Number(valorPrev) ? 'up' : Number(valor) < Number(valorPrev) ? 'down' : 'eq') : null;
-                          const bgColor = enRango === null ? 'bg-gray-50' : enRango ? 'bg-green-50' : 'bg-red-50';
-                          const textColor = enRango === null ? 'text-gray-700' : enRango ? 'text-green-700' : 'text-red-700';
-                          const labelColor = enRango === null ? 'text-gray-400' : enRango ? 'text-green-500' : 'text-red-400';
+                        {[{key:'presionArterial',label:'Presion arterial',unidad:'',min:null,max:null,str:true},
+                          {key:'frecuenciaCardiaca',label:'Frec. cardiaca',unidad:'bpm',min:60,max:100,str:false},
+                          {key:'temperatura',label:'Temperatura',unidad:'C',min:36,max:37.5,str:false},
+                          {key:'saturacionOxigeno',label:'SpO2',unidad:'%',min:95,max:100,str:false},
+                          {key:'peso',label:'Peso',unidad:'kg',min:null,max:null,str:false},
+                          {key:'frecuenciaRespiratoria',label:'Frec. resp.',unidad:'rpm',min:12,max:20,str:false}
+                        ].map((m: any) => {
+                          const ult = vitalesHistory[vitalesHistory.length-1];
+                          const pen = vitalesHistory.length > 1 ? vitalesHistory[vitalesHistory.length-2] : null;
+                          const val = ult ? ult[m.key] : null;
+                          const valP = pen ? pen[m.key] : null;
+                          const enRango = m.str || m.min===null ? null : (val!==null && Number(val)>=m.min && Number(val)<=m.max);
+                          const tend = (!m.str && val!==null && valP!==null) ? (Number(val)>Number(valP)?'up':Number(val)<Number(valP)?'down':'eq') : null;
+                          const bg = enRango===null?'bg-gray-50':enRango?'bg-green-50':'bg-red-50';
+                          const tc = enRango===null?'text-gray-700':enRango?'text-green-700':'text-red-600';
+                          const lc = enRango===null?'text-gray-400':enRango?'text-green-500':'text-red-400';
                           return (
-                            <div key={m.key} className={'rounded-xl p-4 border ' + bgColor + (enRango === false ? ' border-red-100' : ' border-gray-100')}>
-                              <p className={'text-xs uppercase tracking-wide mb-1 ' + labelColor}>{m.label}</p>
+                            <div key={m.key} className={'rounded-xl p-4 border ' + bg + (enRango===false?' border-red-100':' border-gray-100')}>
+                              <p className={'text-xs uppercase tracking-wide mb-1 ' + lc}>{m.label}</p>
                               <div className="flex items-end gap-2">
-                                <span className={'text-2xl font-bold ' + textColor}>
-                                  {valor !== null && valor !== undefined ? (m.isString ? valor : Number(valor).toFixed(m.unidad === 'C' ? 1 : 0)) : '-'}
-                                </span>
-                                {m.unidad && valor !== null && <span className={'text-xs ' + labelColor}>{m.unidad}</span>}
-                                {tendencia === 'up' && <span className="text-red-400 text-sm font-bold mb-1">↑</span>}
-                                {tendencia === 'down' && <span className="text-green-400 text-sm font-bold mb-1">↓</span>}
+                                <span className={'text-2xl font-bold ' + tc}>{val!==null&&val!==undefined?(m.str?val:Number(val).toFixed(m.unidad==='C'?1:0)):'-'}</span>
+                                {m.unidad && val!==null && <span className={'text-xs ' + lc}>{m.unidad}</span>}
+                                {tend==='up' && <span className="text-red-400 text-sm font-bold mb-1">↑</span>}
+                                {tend==='down' && <span className="text-green-400 text-sm font-bold mb-1">↓</span>}
                               </div>
-                              {m.min !== null && <p className="text-xs text-gray-300 mt-1">Normal: {m.min} - {m.max} {m.unidad}</p>}
+                              {m.min!==null && <p className="text-xs text-gray-300 mt-1">Normal: {m.min} - {m.max} {m.unidad}</p>}
                             </div>
                           );
                         })}
                       </div>
-                      <div className="border border-gray-100 rounded-xl overflow-hidden">
-                        <table className="w-full text-xs">
-                          <thead>
-                            <tr className="bg-gray-50 border-b border-gray-100">
-                              <th className="text-left p-3 text-gray-400 font-medium">Fecha</th>
-                              <th className="text-center p-3 text-gray-400 font-medium">PA</th>
-                              <th className="text-center p-3 text-gray-400 font-medium">FC</th>
-                              <th className="text-center p-3 text-gray-400 font-medium">Temp</th>
-                              <th className="text-center p-3 text-gray-400 font-medium">SpO2</th>
-                              <th className="text-center p-3 text-gray-400 font-medium">Peso</th>
-                              <th className="text-center p-3 text-gray-400 font-medium">FR</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {[...vitalesHistory].reverse().map((v: any, i: number) => (
-                              <tr key={i} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                                <td className="p-3 text-gray-500">{formatFecha(v.fecha)}</td>
-                                <td className="p-3 text-center text-gray-700">{v.presionArterial || '-'}</td>
-                                <td className={'p-3 text-center font-medium ' + (v.frecuenciaCardiaca && (Number(v.frecuenciaCardiaca) < 60 || Number(v.frecuenciaCardiaca) > 100) ? 'text-red-500' : 'text-gray-700')}>{v.frecuenciaCardiaca ? Number(v.frecuenciaCardiaca).toFixed(0) + ' bpm' : '-'}</td>
-                                <td className={'p-3 text-center font-medium ' + (v.temperatura && (Number(v.temperatura) < 36 || Number(v.temperatura) > 37.5) ? 'text-red-500' : 'text-gray-700')}>{v.temperatura ? Number(v.temperatura).toFixed(1) + 'C' : '-'}</td>
-                                <td className={'p-3 text-center font-medium ' + (v.saturacionOxigeno && Number(v.saturacionOxigeno) < 95 ? 'text-red-500' : 'text-gray-700')}>{v.saturacionOxigeno ? Number(v.saturacionOxigeno).toFixed(0) + '%' : '-'}</td>
-                                <td className="p-3 text-center text-gray-700">{v.peso ? Number(v.peso).toFixed(1) + ' kg' : '-'}</td>
-                                <td className={'p-3 text-center font-medium ' + (v.frecuenciaRespiratoria && (Number(v.frecuenciaRespiratoria) < 12 || Number(v.frecuenciaRespiratoria) > 20) ? 'text-red-500' : 'text-gray-700')}>{v.frecuenciaRespiratoria ? Number(v.frecuenciaRespiratoria).toFixed(0) + ' rpm' : '-'}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                      <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Historial de registros</p>
+                      <div className="relative">
+                        <div className="absolute left-16 top-0 bottom-0 w-px bg-gray-100"></div>
+                        {[...vitalesHistory].reverse().map((v: any, idx: number, arr: any[]) => {
+                          const prev = arr[idx+1];
+                          const chg = (k: string) => prev && prev[k]!==null && v[k]!==null && String(v[k])!==String(prev[k]);
+                          const oor = (k: string, mn: number, mx: number) => v[k]!==null && v[k]!==undefined && (Number(v[k])<mn||Number(v[k])>mx);
+                          return (
+                            <div key={idx} className="flex gap-4 mb-3 relative">
+                              <div className="w-16 flex-shrink-0 text-right pt-1">
+                                <p className="text-xs text-gray-400 leading-tight">{new Date(v.fecha).toLocaleDateString('es-ES',{day:'2-digit',month:'short'})}</p>
+                                <p className="text-xs text-gray-300">{new Date(v.fecha).getFullYear()}</p>
+                              </div>
+                              <div className="w-2 h-2 rounded-full bg-blue-300 flex-shrink-0 mt-2 relative z-10"></div>
+                              <div className="flex-1 bg-gray-50 rounded-xl p-3 border border-gray-100">
+                                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                                  {v.presionArterial && <span className={'font-medium '+(chg('presionArterial')?'text-blue-600':'text-gray-500')}>PA: {v.presionArterial}</span>}
+                                  {v.frecuenciaCardiaca && <span className={'font-medium '+(oor('frecuenciaCardiaca',60,100)?'text-red-500':chg('frecuenciaCardiaca')?'text-blue-600':'text-gray-500')}>FC: {Number(v.frecuenciaCardiaca).toFixed(0)} bpm</span>}
+                                  {v.temperatura && <span className={'font-medium '+(oor('temperatura',36,37.5)?'text-red-500':chg('temperatura')?'text-blue-600':'text-gray-500')}>T: {Number(v.temperatura).toFixed(1)}C</span>}
+                                  {v.saturacionOxigeno && <span className={'font-medium '+(oor('saturacionOxigeno',95,100)?'text-red-500':chg('saturacionOxigeno')?'text-blue-600':'text-gray-500')}>SpO2: {Number(v.saturacionOxigeno).toFixed(0)}%</span>}
+                                  {v.peso && <span className={'font-medium '+(chg('peso')?'text-blue-600':'text-gray-500')}>Peso: {Number(v.peso).toFixed(1)} kg</span>}
+                                  {v.frecuenciaRespiratoria && <span className={'font-medium '+(oor('frecuenciaRespiratoria',12,20)?'text-red-500':chg('frecuenciaRespiratoria')?'text-blue-600':'text-gray-500')}>FR: {Number(v.frecuenciaRespiratoria).toFixed(0)} rpm</span>}
+                                </div>
+                                {v.notas && <p className="text-xs text-gray-400 mt-2 pt-2 border-t border-gray-100">Nota: {v.notas}</p>}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
-                  <div className="mt-6 border-t border-gray-100 pt-4">
-                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Resumen clinico</p>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <p className="text-xs text-gray-400 mb-1">Total registros vitales</p>
-                        <p className="text-2xl font-bold text-gray-800">{vitalesHistory.length}</p>
-                        <p className="text-xs text-gray-400 mt-1">registros en total</p>
-                      </div>
-                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <p className="text-xs text-gray-400 mb-1">Ultimo diagnostico</p>
-                        <p className="text-sm font-semibold text-gray-800 leading-tight">{historial[0]?.diagnosis ?? '-'}</p>
-                        <p className="text-xs text-gray-400 mt-1">{historial[0] ? formatFecha(historial[0].visit_date || historial[0].visitDate) : ''}</p>
-                      </div>
-                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <p className="text-xs text-gray-400 mb-1">Proximo seguimiento</p>
-                        <p className="text-sm font-semibold text-gray-800">{historial[0]?.follow_up_date ? formatFecha(historial[0].follow_up_date) : '-'}</p>
-                        <p className="text-xs text-gray-400 mt-1">{historial[0]?.follow_up_date ? 'fecha programada' : 'sin seguimiento'}</p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               )}
               {tab === 'historial' && (
