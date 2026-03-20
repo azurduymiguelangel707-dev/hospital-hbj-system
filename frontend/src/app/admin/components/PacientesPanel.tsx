@@ -25,7 +25,7 @@ function LineChartVitales({ datos, color, unidad, min, max }) {
       <LineChart data={datos} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
         <XAxis dataKey="fecha" tick={{ fontSize: 11 }} />
         <YAxis tick={{ fontSize: 11 }} width={36} />
-        <Tooltip formatter={(v) => [v + " " + unidad, "Valor"]} />
+        <Tooltip formatter={function(v) { return [v + ' ' + unidad, 'Valor']; }} />
         {min !== null && <ReferenceLine y={min} stroke={color} strokeDasharray="4 2" strokeOpacity={0.4} />}
         {max !== null && <ReferenceLine y={max} stroke={color} strokeDasharray="4 2" strokeOpacity={0.4} />}
         <Line type="monotone" dataKey="valor" stroke={color} strokeWidth={2} dot={{ r: 3, fill: color }} activeDot={{ r: 5 }} />
@@ -33,7 +33,6 @@ function LineChartVitales({ datos, color, unidad, min, max }) {
     </ResponsiveContainer>
   );
 }
-function InfoFila({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between py-2 border-b border-gray-50 last:border-0">
       <span className="text-xs text-gray-400 uppercase tracking-wide">{label}</span>
