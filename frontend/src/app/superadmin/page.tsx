@@ -1,5 +1,6 @@
 // src/app/superadmin/page.tsx
 'use client';
+import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { LayoutDashboard, UserCog, ShieldCheck, HeartPulse, BarChart2, LogOut, RefreshCw, Terminal } from 'lucide-react';
@@ -198,6 +199,7 @@ export default function SuperAdminPage() {
               { label: "Total registros BD",  val: totalRegistros,              color: "#6b7280", bg: "#f9fafb", icono: KpiIcons.database,  sub: "en PostgreSQL" },
             ];
 
+            const [dashTab, setDashTab] = React.useState('resumen');
             return (
               <div className="overflow-y-auto" style={{ maxHeight: "calc(100vh - 130px)" }}><div className="space-y-5">
                 {/* Header */}
@@ -212,6 +214,16 @@ export default function SuperAdminPage() {
                     className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-xs text-gray-600 rounded-lg hover:bg-gray-50 transition">
                     <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Actualizar datos
                   </button>
+                </div>
+
+                {/* Tabs navigation */}
+                <div className="flex gap-1 bg-gray-100 p-1 rounded-xl mb-2">
+                  {([['resumen','📊 Resumen'],['bd','🗄️ Base de datos'],['servicios','🖥️ Servicios']] as [string,string][]).map(([k,l]) => (
+                    <button key={k} onClick={() => setDashTab(k)}
+                      className={'flex-1 py-2 rounded-lg text-xs font-medium transition ' + (dashTab === k ? 'bg-white shadow-sm text-gray-800' : 'text-gray-500 hover:text-gray-700')}>
+                      {l}
+                    </button>
+                  ))}
                 </div>
 
                 {/* KPIs */}
