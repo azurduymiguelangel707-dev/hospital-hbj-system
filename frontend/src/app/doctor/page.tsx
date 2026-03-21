@@ -246,8 +246,9 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
   appointments: AppointmentWithPatient[]; selectedId?: string; loading: boolean;
   onSelect: (a: AppointmentWithPatient) => void; onStart: (id: string) => void; onComplete: () => void;
 }) {
+  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all"|"pending"|"done"|"ready">("all");
-  const filtered = appointments.filter(a =>
+  const filtered = appointments.filter(a => search ? (a.patient?.nombre ?? "").toLowerCase().includes(search.toLowerCase()) || (a.reason ?? "").toLowerCase().includes(search.toLowerCase()) : true).filter(a =>
     filter === "pending" ? (a.status !== "COMPLETADA" && a.flowStatus === "waiting_vitals") :
     filter === "ready"   ? (a.flowStatus === "ready" || a.flowStatus === "in_progress") :
     filter === "done"    ? a.status === "COMPLETADA" : true
@@ -292,6 +293,19 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
               </button>
             ))}
           </div>
+        </div>
+        {/* Buscador */}
+        <div className="relative mb-3">
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar paciente por nombre o motivo..."
+            className="w-full border border-gray-200 rounded-lg pl-8 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          />
+          <span className="absolute left-2.5 top-2.5 text-gray-300 text-sm">🔍</span>
+          {search && (
+            <button onClick={() => setSearch("")} className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-600 text-xs px-1">✕</button>
+          )}
         </div>
         {/* Lista */}
         {loading ? (
