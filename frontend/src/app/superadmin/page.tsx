@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { LayoutDashboard, UserCog, ShieldCheck, Activity, BarChart2, LogOut, RefreshCw, Terminal } from 'lucide-react';
+import { IconDashboard, IconDoctor, IconShieldCheck, IconDatabase, IconReportes, IconSistema } from '@/components/icons/MedicalIcons';
 import { GlobalUserManager } from './components/GlobalUserManager';
 import { BlockchainViewer } from './components/BlockchainViewer';
 import { SystemMonitor } from './components/SystemMonitor';
@@ -19,12 +20,12 @@ function authFetch(url: string, options: RequestInit = {}) {
 type Panel = 'dashboard' | 'usuarios' | 'blockchain' | 'reportes' | 'sistema' | 'backup';
 
 const PANELS: { key: Panel; label: string; icon: any; desc: string }[] = [
-  { key: 'dashboard',  label: 'Resumen ejecutivo',   icon: LayoutDashboard,   desc: 'Vision general del sistema' },
-  { key: 'usuarios',   label: 'Usuarios',    icon: UserCog,      desc: 'Gestion global' },
-  { key: 'blockchain', label: 'Blockchain',  icon: ShieldCheck, desc: 'Audit log' },
-  { key: 'reportes',   label: 'Reportes',    icon: BarChart2,    desc: 'Estadisticas' },
-  { key: 'sistema',    label: 'Sistema',     icon: Activity,     desc: 'Monitor' },
-  { key: 'backup',     label: 'Backup',      icon: Terminal,    desc: 'Respaldo y recuperacion' },
+  { key: 'dashboard',  label: 'Resumen ejecutivo',   icon: IconDashboard,   desc: 'Vision general del sistema' },
+  { key: 'usuarios',   label: 'Usuarios',    icon: IconDoctor,      desc: 'Gestion global' },
+  { key: 'blockchain', label: 'Blockchain',  icon: IconShieldCheck, desc: 'Audit log' },
+  { key: 'reportes',   label: 'Reportes',    icon: IconReportes,    desc: 'Estadisticas' },
+  { key: 'sistema',    label: 'Sistema',     icon: IconSistema,     desc: 'Monitor' },
+  { key: 'backup',     label: 'Backup',      icon: IconDatabase,    desc: 'Respaldo y recuperacion' },
 ];
 
 function useSession() {
@@ -129,7 +130,7 @@ export default function SuperAdminPage() {
           {PANELS.map(({ key, label, icon: Icon, desc }) => (
             <button key={key} onClick={() => setActivePanel(key)}
               className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all text-left w-full ${activePanel === key ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}>
-              <Icon size={15} className={activePanel === key ? 'text-red-400' : ''} />
+              <div className={'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ' + (activePanel === key ? 'bg-red-500/20' : 'bg-gray-800')}><Icon size={20} className={activePanel === key ? 'text-red-400' : 'text-gray-400'} /></div>
               <div>
                 <p className="text-xs font-medium leading-tight">{label}</p>
                 <p className="text-xs text-gray-600 leading-tight">{desc}</p>
