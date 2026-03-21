@@ -639,6 +639,40 @@ export default function EnfermeriaDashboard() {
               </table>
             )}
           </div>
+          {/* Grafico historial vitales paciente seleccionado */}
+          {selected && (() => {
+            const pv = vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id);
+            if (pv.length === 0) return null;
+            const data = pv.slice(0, 6).reverse().map((v: any, i: number) => ({
+              name: "R" + (i + 1),
+              PA: Number(String(v.presionArterial ?? "").split("/")[0]) || 0,
+              FC: Number(v.frecuenciaCardiaca) || 0,
+              SpO2: Number(v.saturacionOxigeno) || 0,
+            }));
+            return (
+              <div className="border-t border-gray-100 px-3 py-3">
+                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 flex items-center gap-1">
+                  <Activity size={11} className="text-teal-500" />
+                  Tendencia — {selected.patient?.nombre?.split(" ")[0]}
+                </p>
+                <ResponsiveContainer width="100%" height={140}>
+                  <BarChart data={data} barSize={10} barGap={1}>
+                    <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                    <YAxis hide />
+                    <Tooltip contentStyle={{ fontSize: 10, borderRadius: 6 }} />
+                    <Bar dataKey="PA" name="PAS" fill="#0d9488" radius={[3,3,0,0]} />
+                    <Bar dataKey="FC" name="FC" fill="#6366f1" radius={[3,3,0,0]} />
+                    <Bar dataKey="SpO2" name="SpO2" fill="#f59e0b" radius={[3,3,0,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+                <div className="flex gap-3 justify-center mt-1">
+                  <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-sm bg-teal-600 inline-block"/>PAS</span>
+                  <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-sm bg-indigo-500 inline-block"/>FC</span>
+                  <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-sm bg-amber-400 inline-block"/>SpO2</span>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>
