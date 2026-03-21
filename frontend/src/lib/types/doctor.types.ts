@@ -87,6 +87,7 @@ export interface PatientDetail {
 
 export interface AppointmentWithPatient {
   id: string;
+  doctorId?: string;
   appointmentDate: string;
   appointmentTime: string;
   status: AppointmentStatus;

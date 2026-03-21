@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Calendar, ClipboardList, FileText, BookOpen, BarChart2, AlertTriangle, Activity } from 'lucide-react';
+import { Calendar, ClipboardList, FileText, BookOpen, BarChart2, AlertTriangle, Activity, Clock } from 'lucide-react';
 import type {
   AppointmentWithPatient, PatientDetail, ConsultaForm,
   ClinicalDocument, WeeklyReportData, FollowUpPatient,
@@ -102,7 +102,7 @@ export default function DoctorDashboard() {
       setActivePanel('consulta');
       return;
     }
-    await submitConsulta(selectedAppt.id, consultaForm, selectedAppt.patient?.id, selectedAppt.doctorId);
+    await submitConsulta(selectedAppt.id, consultaForm, selectedAppt.patient?.id, selectedAppt.doctorId.doctorId);
     loadAppointments();
     setActivePanel('agenda');
   }
@@ -230,7 +230,7 @@ export default function DoctorDashboard() {
           {/* REPORTE */}
           {activePanel === 'reporte' && (
             <ReportePanel report={weeklyReport} weekOffset={weekOffset}
-              onWeekChange={(o) => { setWeekOffset(o); getWeeklyReport(doctor.id, o).then(setWeeklyReport).catch(() => {}); }} />
+              onWeekChange={(o: number) => { setWeekOffset(o); getWeeklyReport(doctor.id, o).then(setWeeklyReport).catch(() => {}); }} />
           )}
 
         </main>
@@ -243,41 +243,157 @@ export default function DoctorDashboard() {
 
 function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onComplete }: {
   appointments: AppointmentWithPatient[]; selectedId?: string; loading: boolean;
-  onSelect: (a: AppointmentWithPatient) => void; onStart: (id: string) => void; onComplete: (id: string) => void;
+  onSelect: (a: AppointmentWithPatient) => void; onStart: (id: string) => void; onComplete: () => void;
 }) {
-  const [filter, setFilter] = useState<'all'|'pending'|'done'>('all');
+  const [filter, setFilter] = useState<"all"|"pending"|"done"|"ready">("all");
   const filtered = appointments.filter(a =>
-    filter === 'pending' ? a.status !== 'COMPLETADA' :
-    filter === 'done' ? a.status === 'COMPLETADA' : true
-  );
+    filter === "pending" ? (a.status !== "COMPLETADA" && a.flowStatus === "waiting_vitals") :
+    filter === "ready"   ? (a.flowStatus === "ready" || a.flowStatus === "in_progress") :
+    filter === "done"    ? a.status === "COMPLETADA" : true
+  ).sort((a, b) => (a.appointmentTime ?? "").localeCompare(b.appointmentTime ?? ""));
+
+  const stats = {
+    total:     appointments.length,
+    completed: appointments.filter(a => a.status === "COMPLETADA").length,
+    ready:     appointments.filter(a => a.flowStatus === "ready").length,
+    inProgress:appointments.filter(a => a.flowStatus === "in_progress").length,
+    waiting:   appointments.filter(a => a.flowStatus === "waiting_vitals").length,
+    urgent:    appointments.filter(a => a.isUrgent).length,
+  };
+  const progress = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+  const next = appointments.find(a => a.flowStatus === "ready" || a.flowStatus === "in_progress");
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">Agenda de hoy</h2>
-        <div className="flex gap-1">
-          {([['all','Todos'],['pending','Pendientes'],['done','Completados']] as const).map(([k,l]) => (
-            <button key={k} onClick={() => setFilter(k)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${filter===k?'bg-blue-600 text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-              {l}
+    <div className="flex gap-5 h-full">
+      {/* Columna izquierda - lista citas */}
+      <div className="flex-1 min-w-0">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800">Agenda de hoy</h2>
+            <p className="text-xs text-gray-400">{stats.completed} de {stats.total} consultas completadas</p>
+          </div>
+          <div className="flex gap-1">
+            {([
+              ["all",     "Todas",          stats.total],
+              ["ready",   "Con vitales",    stats.ready + stats.inProgress],
+              ["pending", "Sin vitales",    stats.waiting],
+              ["done",    "Completadas",    stats.completed],
+            ] as const).map(([k, l, n]) => (
+              <button key={k} onClick={() => setFilter(k as typeof filter)}
+                className={"px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1 " +
+                  (filter === k ? "bg-blue-600 text-white" : "bg-white border border-gray-200 text-gray-500 hover:border-gray-300")}
+              >
+                {l}
+                <span className={"px-1.5 py-0.5 rounded-full text-xs " + (filter === k ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500")}>
+                  {n}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+        {/* Lista */}
+        {loading ? (
+          <div className="text-center py-16 text-gray-400">Cargando agenda...</div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-16 text-gray-400">
+            <Calendar size={40} className="mx-auto mb-3 opacity-30" />
+            <p className="text-sm">No hay citas en esta categoria</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filtered.map(a => (
+              <PatientCard key={a.id} appointment={a} selected={a.id === selectedId}
+                onSelect={() => onSelect(a)} onStart={() => onStart(a.id)} onComplete={() => onComplete()} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Columna derecha - resumen turno */}
+      <div className="w-72 flex-shrink-0 space-y-4">
+        {/* Progreso del turno */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Progreso del turno</p>
+          <div className="flex items-end justify-between mb-2">
+            <span className="text-3xl font-bold text-gray-800">{progress}%</span>
+            <span className="text-xs text-gray-400">{stats.completed}/{stats.total} citas</span>
+          </div>
+          <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-3">
+            <div className="h-2 bg-blue-500 rounded-full transition-all" style={{ width: progress + "%" }} />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: "Con vitales",  val: stats.ready,      color: "#10b981", bg: "#f0fdf4" },
+              { label: "En consulta",  val: stats.inProgress, color: "#3b82f6", bg: "#eff6ff" },
+              { label: "Sin vitales",  val: stats.waiting,    color: "#f59e0b", bg: "#fffbeb" },
+              { label: "Completadas",  val: stats.completed,  color: "#6b7280", bg: "#f9fafb" },
+            ].map((s, i) => (
+              <div key={i} className="rounded-lg p-2 text-center" style={{ backgroundColor: s.bg }}>
+                <div className="text-xl font-bold" style={{ color: s.color }}>{s.val}</div>
+                <div className="text-xs" style={{ color: s.color }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+          {stats.urgent > 0 && (
+            <div className="mt-3 flex items-center gap-2 bg-red-50 rounded-lg px-3 py-2">
+              <AlertTriangle size={13} className="text-red-500 flex-shrink-0" />
+              <span className="text-xs text-red-600 font-medium">{stats.urgent} paciente(s) urgente(s)</span>
+            </div>
+          )}
+        </div>
+
+        {/* Proximo paciente */}
+        {next && (
+          <div className="bg-white rounded-xl border border-emerald-200 p-4">
+            <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-2 flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+              {next.flowStatus === "in_progress" ? "En consulta ahora" : "Siguiente paciente"}
+            </p>
+            <p className="text-sm font-semibold text-gray-800">{next.patient?.nombre?.split(" ").slice(0,2).join(" ")}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{next.reason}</p>
+            <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
+              <Clock size={11} />
+              <span>{next.appointmentTime?.substring(0,5)}</span>
+              {next.patient?.edad && <span>· {next.patient.edad} anos</span>}
+            </div>
+            <button
+              onClick={() => onSelect(next)}
+              className="mt-3 w-full px-3 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-lg hover:bg-emerald-700 transition"
+            >
+              {next.flowStatus === "in_progress" ? "Continuar consulta" : "Iniciar consulta"}
             </button>
-          ))}
+          </div>
+        )}
+
+        {/* Lista rapida orden del dia */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Orden del dia</p>
+          <div className="space-y-1.5">
+            {appointments.sort((a,b) => (a.appointmentTime ?? "").localeCompare(b.appointmentTime ?? "")).map((a, i) => {
+              const flow = {
+                waiting_vitals: { dot: "bg-amber-400", text: "text-amber-600" },
+                ready:          { dot: "bg-emerald-500", text: "text-emerald-600" },
+                in_progress:    { dot: "bg-blue-500", text: "text-blue-600" },
+                completed:      { dot: "bg-gray-300", text: "text-gray-400" },
+              }[a.flowStatus];
+              return (
+                <div key={i}
+                  onClick={() => onSelect(a)}
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer transition"
+                >
+                  <span className={"w-2 h-2 rounded-full flex-shrink-0 " + flow.dot} />
+                  <span className="text-xs font-mono text-gray-400 w-10 flex-shrink-0">{a.appointmentTime?.substring(0,5)}</span>
+                  <span className={"text-xs font-medium truncate flex-1 " + (a.id === selectedId ? "text-blue-600" : "text-gray-700")}>
+                    {a.patient?.nombre?.split(" ").slice(0,2).join(" ")}
+                  </span>
+                  {a.isUrgent && <AlertTriangle size={10} className="text-red-500 flex-shrink-0" />}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
-      {loading ? (
-        <div className="text-center py-16 text-gray-400">Cargando agenda...</div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
-          <Calendar size={40} className="mx-auto mb-3 opacity-30" />
-          <p className="text-sm">No hay citas en esta categoria</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {filtered.sort((a,b) => (a.appointmentTime ?? '').localeCompare(b.appointmentTime ?? '')).map(a => (
-            <PatientCard key={a.id} appointment={a} selected={a.id === selectedId}
-              onSelect={() => onSelect(a)} onStart={() => onStart(a.id)} onComplete={() => onComplete(a.id)} />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
