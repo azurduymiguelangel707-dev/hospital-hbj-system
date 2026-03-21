@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, ClipboardList, FileText, BookOpen, BarChart2, AlertTriangle, Activity, Clock } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 import type {
   AppointmentWithPatient, PatientDetail, ConsultaForm,
   ClinicalDocument, WeeklyReportData, FollowUpPatient,
@@ -1138,47 +1139,173 @@ function SeguimientoPanel({ followUps, onRefresh }: { followUps: FollowUpPatient
 }
 
 function ReportePanel({ report, weekOffset, onWeekChange }: any) {
-  if (!report) return <div className="text-center py-16 text-gray-400">Cargando reporte...</div>;
+  if (!report) return (
+    <div className="text-center py-16 text-gray-400">
+      <BarChart2 size={40} className="mx-auto mb-3 opacity-30" />
+      <p className="text-sm">Cargando reporte...</p>
+    </div>
+  );
+
+  const diasData = (report.consultasPorDia ?? []).map((d: any) => ({
+    dia: d.dia,
+    Consultas: d.count,
+    max: d.max,
+  }));
+
+  const diagData = (report.diagnosticosFrecuentes ?? []).slice(0, 8).map((d: any) => ({
+    nombre: d.nombre.length > 20 ? d.nombre.substring(0, 20) + "..." : d.nombre,
+    Casos: d.count,
+  }));
+
+  const docsData = [
+    { name: "Imagenes",    value: report.documentosSubidos?.imagenes ?? 0, color: "#3b82f6" },
+    { name: "Laboratorio", value: report.documentosSubidos?.labs ?? 0,     color: "#10b981" },
+    { name: "Recetas",     value: report.documentosSubidos?.recetas ?? 0,  color: "#ec4899" },
+    { name: "Ordenes",     value: report.documentosSubidos?.ordenes ?? 0,  color: "#6b7280" },
+  ].filter(d => d.value > 0);
+
+  const kpis = [
+    { label: "Total consultas",      val: report.totalConsultas ?? 0,        color: "#3b82f6", bg: "#eff6ff", icono: "🩺" },
+    { label: "Pacientes criticos",   val: report.pacientesCriticosCount ?? 0,color: "#ef4444", bg: "#fef2f2", icono: "🚨" },
+    { label: "Controles pendientes", val: report.controlesPendientes ?? 0,   color: "#f59e0b", bg: "#fffbeb", icono: "📅" },
+    { label: "Documentos subidos",   val: report.docsTotal ?? 0,             color: "#10b981", bg: "#f0fdf4", icono: "📄" },
+  ];
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-800">Reporte semanal</h2>
-          <p className="text-xs text-gray-500">{report.semana}</p>
-        </div>
-        <div className="flex gap-2">
-          <select value={weekOffset} onChange={e=>onWeekChange(Number(e.target.value))}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none">
-            {["Semana actual","Semana pasada","Hace 2 semanas","Hace 3 semanas"].map((s,i)=><option key={i} value={i}>{s}</option>)}
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">Reporte semanal</h2>
+            <p className="text-xs text-gray-400 mt-0.5">{report.semana}</p>
+          </div>
+          <select value={weekOffset} onChange={e => onWeekChange(Number(e.target.value))}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            {["Semana actual","Semana pasada","Hace 2 semanas","Hace 3 semanas"].map((s, i) => (
+              <option key={i} value={i}>{s}</option>
+            ))}
           </select>
         </div>
+        {/* KPIs */}
+        <div className="grid grid-cols-4 gap-3 mt-4">
+          {kpis.map((k, i) => (
+            <div key={i} className="rounded-xl p-3 text-center" style={{ backgroundColor: k.bg }}>
+              <div className="text-2xl mb-1">{k.icono}</div>
+              <div className="text-2xl font-bold" style={{ color: k.color }}>{k.val}</div>
+              <div className="text-xs mt-0.5" style={{ color: k.color }}>{k.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {[
-          { label:"Pacientes atendidos", value: report.pacientesAtendidos, color:"blue" },
-          { label:"Consultas completadas", value: report.consultasCompletadas, color:"green" },
-          { label:"Canceladas", value: report.canceladas, color:"red" },
-          { label:"Pendientes", value: report.pendientes, color:"amber" },
-        ].map(m => (
-          <div key={m.label} className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-gray-700">{m.value}</div>
-            <div className="text-xs text-gray-500 mt-1">{m.label}</div>
-          </div>
-        ))}
+
+      <div className="grid grid-cols-2 gap-5">
+        {/* Consultas por dia */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Consultas por dia</p>
+          <p className="text-xs text-gray-400 mb-3">Distribucion de citas durante la semana</p>
+          {diasData.length === 0 ? (
+            <div className="text-center py-8 text-gray-300 text-xs">Sin datos esta semana</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={diasData} barSize={28}>
+                <XAxis dataKey="dia" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }}
+
+                />
+                <Bar dataKey="Consultas" radius={[6,6,0,0]}>
+                  {diasData.map((_: any, i: number) => (
+                    <Cell key={i} fill={i === diasData.length - 1 ? "#3b82f6" : "#bfdbfe"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+          <p className="text-xs text-gray-400 text-center mt-1">El dia mas reciente en azul oscuro</p>
+        </div>
+
+        {/* Diagnosticos frecuentes */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Diagnosticos frecuentes</p>
+          <p className="text-xs text-gray-400 mb-3">Top patologias atendidas esta semana</p>
+          {diagData.length === 0 ? (
+            <div className="text-center py-8 text-gray-300 text-xs">Sin diagnosticos registrados</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={diagData} layout="vertical" barSize={16}>
+                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="nombre" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={120} />
+                <Tooltip
+                  contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }}
+
+                />
+                <Bar dataKey="Casos" fill="#6366f1" radius={[0,6,6,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
       </div>
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Documentos subidos</p>
-      <div className="grid grid-cols-4 gap-3">
-        {[
-          { label:"Imagenes", value: report.documentosSubidos.imagenes },
-          { label:"Labs", value: report.documentosSubidos.labs },
-          { label:"Recetas", value: report.documentosSubidos.recetas },
-          { label:"Ordenes", value: report.documentosSubidos.ordenes },
-        ].map(m => (
-          <div key={m.label} className="bg-gray-50 rounded-xl p-3 text-center">
-            <div className="text-xl font-semibold text-gray-700">{m.value}</div>
-            <div className="text-xs text-gray-500 mt-1">{m.label}</div>
-          </div>
-        ))}
+
+      <div className="grid grid-cols-2 gap-5">
+        {/* Dona documentos */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Documentos subidos</p>
+          <p className="text-xs text-gray-400 mb-3">Distribucion por tipo de documento</p>
+          {docsData.length === 0 ? (
+            <div className="text-center py-8 text-gray-300 text-xs">Sin documentos esta semana</div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <ResponsiveContainer width="60%" height={160}>
+                <PieChart>
+                  <Pie data={docsData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value">
+                    {docsData.map((_: any, i: number) => <Cell key={i} fill={docsData[i].color} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex-1 space-y-2">
+                {docsData.map((d: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }} />
+                      <span className="text-xs text-gray-600">{d.name}</span>
+                    </div>
+                    <span className="text-xs font-bold" style={{ color: d.color }}>{d.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Pacientes criticos */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Pacientes criticos</p>
+          <p className="text-xs text-gray-400 mb-3">Casos que requieren seguimiento prioritario</p>
+          {(report.pacientesCriticos ?? []).length === 0 ? (
+            <div className="text-center py-8">
+              <div className="text-3xl mb-2">✅</div>
+              <p className="text-xs text-gray-400">Sin pacientes criticos esta semana</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {(report.pacientesCriticos ?? []).slice(0, 5).map((p: any, i: number) => (
+                <div key={i} className="flex items-start gap-2 px-3 py-2 bg-red-50 rounded-lg border border-red-100">
+                  <div className="w-6 h-6 rounded-full bg-red-200 flex items-center justify-center text-xs font-bold text-red-700 flex-shrink-0">
+                    {p.nombre?.split(" ")[0]?.[0] ?? "P"}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-red-800 truncate">{p.nombre}</p>
+                    <p className="text-xs text-red-500 truncate">{p.diagnostico}</p>
+                    <p className="text-xs text-red-400">{p.estado}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
