@@ -129,264 +129,226 @@ export function BlockchainViewer() {
   })).filter(e => e.Eventos > 0);
 
   const totalPages = Math.ceil(total / 20);
+  const chainIntegrity = blocks.filter(b => !b.isValid).length === 0;
+  const invalidBlocks = blocks.filter(b => !b.isValid);
 
   return (
-    <div className='flex gap-5'>
+    <div className="flex gap-4 h-full">
       {/* Columna principal */}
-      <div className='flex-1 min-w-0 space-y-4'>
+      <div className="flex-1 min-w-0 flex flex-col gap-3 overflow-hidden">
 
         {/* Banner integridad */}
         {integrity && (
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${integrity.isValid ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
+          <div className={"flex items-center gap-3 px-4 py-2.5 rounded-xl border flex-shrink-0 " + (integrity.isValid ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
             {integrity.isValid
-              ? <CheckCircle size={18} className='text-emerald-600 flex-shrink-0' />
-              : <XCircle size={18} className='text-red-600 flex-shrink-0' />}
-            <div className='flex-1'>
-              <p className={`text-sm font-bold ${integrity.isValid ? 'text-emerald-800' : 'text-red-800'}`}>
-                Cadena blockchain — {integrity.isValid ? 'INTEGRA ✓' : 'COMPROMETIDA ✕'}
-              </p>
-              <p className='text-xs text-gray-500 mt-0.5'>{integrity.message}</p>
-              {!integrity.isValid && integrity.invalidBlocks && (
-                <p className='text-xs text-red-600 mt-0.5'>Bloques comprometidos: {integrity.invalidBlocks.join(', ')}</p>
-              )}
-            </div>
-            <button onClick={() => setIntegrity(null)} className='text-gray-400 hover:text-gray-600 text-xs'>✕</button>
+              ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>}
+            <p className={"text-xs font-bold flex-1 " + (integrity.isValid ? "text-emerald-800" : "text-red-800")}>
+              {integrity.isValid ? "Cadena INTEGRA — todos los bloques son validos" : "CADENA COMPROMETIDA — " + (integrity.invalidBlocks?.length ?? 0) + " bloque(s) invalido(s)"}
+            </p>
+            <button onClick={() => setIntegrity(null)} className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
           </div>
         )}
 
-        {/* Controles */}
-        <div className='flex items-center gap-2 flex-wrap'>
+        {/* Controles compactos */}
+        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
           <select value={filterEvent} onChange={e => setFilterEvent(e.target.value)}
-            className='border border-gray-200 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500'>
-            <option value=''>Todos los eventos</option>
+            className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Todos los eventos</option>
             {Object.entries(EVENT_CFG).map(([k, v]) => <option key={k} value={k}>{v.icono} {v.label}</option>)}
           </select>
           <select value={filterResource} onChange={e => setFilterResource(e.target.value)}
-            className='border border-gray-200 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500'>
-            <option value=''>Todos los recursos</option>
+            className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Todos los recursos</option>
             {resources.map(r => <option key={r} value={r}>{RESOURCE_LABELS[r] ?? r}</option>)}
           </select>
           <input value={search} onChange={e => setSearch(e.target.value)}
-            placeholder='Buscar por hash o usuario...'
-            className='border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 w-48' />
-          <div className='ml-auto flex gap-2'>
+            placeholder="Buscar hash o usuario..."
+            className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 w-40" />
+          <div className="ml-auto flex gap-1.5">
             <button onClick={verifyChain} disabled={verifying}
-              className='flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition'>
-              <span className="text-xs">🛡️</span> {verifying ? 'Verificando...' : 'Verificar integridad'}
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              {verifying ? "..." : "Verificar"}
             </button>
-            <button onClick={exportJSON}
-              className='flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition'>
-              <span className="text-xs">⬇️</span> JSON
-            </button>
-            <button onClick={exportPDF}
-              className='flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition'>
-              <span className="text-xs">⬇️</span> PDF
-            </button>
-            <button onClick={loadBlocks}
-              className='p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition'>
-              <span className="text-sm">🔄</span>
+            <button onClick={exportJSON} className="px-2.5 py-1.5 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition">JSON</button>
+            <button onClick={exportPDF} className="px-2.5 py-1.5 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition">PDF</button>
+            <button onClick={loadBlocks} className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+              <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
             </button>
           </div>
         </div>
 
-        {/* Tabla */}
-        <div className='border border-gray-200 rounded-xl overflow-hidden'>
-          <table className='w-full'>
-            <thead className='bg-gray-50 border-b border-gray-200 sticky top-0'>
-              <tr>
-                {['Bloque','Timestamp','Evento','Recurso','Usuario','Hash','Estado',''].map(h => (
-                  <th key={h} className='px-3 py-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide'>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-gray-50'>
-              {loading ? (
-                <tr><td colSpan={8} className='text-center py-8 text-gray-400 text-sm'>
-                  <RefreshCw size={20} className='mx-auto mb-2 animate-spin opacity-30' />
-                  Cargando bloques...
-                </td></tr>
-              ) : filtered.length === 0 ? (
-                <tr><td colSpan={8} className='text-center py-8 text-gray-400 text-sm'>Sin bloques registrados</td></tr>
-              ) : filtered.map(b => {
-                const cfg = EVENT_CFG[b.eventType] ?? EVENT_CFG.ACCESS;
-                return (
-                  <>
-                    <tr key={b.id} className={`hover:bg-gray-50 transition ${!b.isValid ? 'bg-red-50' : ''}`}>
-                      {/* Bloque */}
-                      <td className='px-3 py-2.5'>
-                        <div className='flex items-center gap-1.5'>
-                          <Hash size={10} className='text-gray-300' />
-                          <span className='text-xs font-mono font-bold text-gray-600'>{b.blockIndex}</span>
-                        </div>
-                      </td>
-                      {/* Timestamp */}
-                      <td className='px-3 py-2.5 text-xs text-gray-500'>
-                        {new Date(b.timestamp).toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}
-                      </td>
-                      {/* Evento */}
-                      <td className='px-3 py-2.5'>
-                        <span className='px-2 py-0.5 rounded-full text-xs font-semibold'
-                          style={{ color: cfg.color, backgroundColor: cfg.bg, border: '1px solid ' + cfg.border }}>
-                          {cfg.icono} {cfg.label}
-                        </span>
-                      </td>
-                      {/* Recurso */}
-                      <td className='px-3 py-2.5 text-xs text-gray-600'>
-                        {RESOURCE_LABELS[b.resourceType] ?? b.resourceType}
-                      </td>
-                      {/* Usuario */}
-                      <td className='px-3 py-2.5 text-xs font-mono text-gray-400'>
-                        {b.userId?.substring(0,8)}...
-                      </td>
-                      {/* Hash */}
-                      <td className='px-3 py-2.5'>
-                        <span className='text-xs font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded'>
-                          {b.currentHash?.substring(0,10)}...
-                        </span>
-                      </td>
-                      {/* Estado */}
-                      <td className='px-3 py-2.5'>
-                        {b.isValid
-                          ? <span className='flex items-center gap-1 text-xs text-emerald-600'><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Valido</span>
-                          : <span className='flex items-center gap-1 text-xs text-red-600 font-semibold'><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg> Invalido</span>
-                        }
-                      </td>
-                      {/* Expand */}
-                      <td className='px-3 py-2.5'>
-                        <button onClick={() => setExpanded(expanded === b.id ? null : b.id)}
-                          className='p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition'>
-                          {expanded === b.id ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-                        </button>
-                      </td>
-                    </tr>
-                    {expanded === b.id && (
-                      <tr key={b.id + '-detail'} className='bg-blue-50'>
-                        <td colSpan={8} className='px-4 py-3'>
-                          <div className='grid grid-cols-2 gap-3'>
-                            <div className='bg-white rounded-lg p-3 border border-blue-100'>
-                              <p className='text-xs font-semibold text-gray-500 mb-1 flex items-center gap-1'><span className="text-xs">🔐</span> Hash actual</p>
-                              <p className='font-mono text-xs text-gray-700 break-all'>{b.currentHash}</p>
-                            </div>
-                            <div className='bg-white rounded-lg p-3 border border-blue-100'>
-                              <p className='text-xs font-semibold text-gray-500 mb-1 flex items-center gap-1'><span className="text-xs">🔐</span> Hash anterior</p>
-                              <p className='font-mono text-xs text-gray-700 break-all'>{b.previousHash}</p>
-                            </div>
-                            <div className='bg-white rounded-lg p-3 border border-blue-100'>
-                              <p className='text-xs font-semibold text-gray-500 mb-1'>Nonce</p>
-                              <p className='font-mono text-xs text-gray-700'>{b.nonce}</p>
-                            </div>
-                            <div className='bg-white rounded-lg p-3 border border-blue-100'>
-                              <p className='text-xs font-semibold text-gray-500 mb-1'>Detalles</p>
-                              <p className='font-mono text-xs text-gray-600 break-all'>{JSON.stringify(b.actionDetails)}</p>
-                            </div>
-                          </div>
+        {/* Tabla compacta */}
+        <div className="border border-gray-200 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0">
+          <div className="overflow-y-auto flex-1">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
+                <tr>
+                  {['#','Fecha','Evento','Recurso','Usuario','Hash','Estado',''].map(h => (
+                    <th key={h} className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {loading ? (
+                  <tr><td colSpan={8} className="text-center py-8 text-gray-400 text-sm">
+                    <RefreshCw size={18} className="mx-auto mb-2 animate-spin opacity-30" />Cargando...
+                  </td></tr>
+                ) : filtered.length === 0 ? (
+                  <tr><td colSpan={8} className="text-center py-6 text-gray-400 text-xs">Sin bloques</td></tr>
+                ) : filtered.map(b => {
+                  const cfg = EVENT_CFG[b.eventType] ?? EVENT_CFG.ACCESS;
+                  return (
+                    <>
+                      <tr key={b.id} className={"hover:bg-gray-50 transition cursor-pointer " + (!b.isValid ? "bg-red-50" : "")}
+                        onClick={() => setExpanded(expanded === b.id ? null : b.id)}>
+                        <td className="px-3 py-2 text-xs font-mono font-bold text-gray-600">{b.blockIndex}</td>
+                        <td className="px-3 py-2 text-xs text-gray-500">
+                          {new Date(b.timestamp).toLocaleDateString("es-ES",{day:"2-digit",month:"short"})} {new Date(b.timestamp).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}
+                        </td>
+                        <td className="px-3 py-2">
+                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold" style={{ color: cfg.color, backgroundColor: cfg.bg, border: "1px solid " + cfg.border }}>
+                            {cfg.icono} {cfg.label}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-xs text-gray-600">{RESOURCE_LABELS[b.resourceType] ?? b.resourceType}</td>
+                        <td className="px-3 py-2 text-xs font-mono text-gray-400">{b.userId?.substring(0,8)}...</td>
+                        <td className="px-3 py-2">
+                          <span className="text-xs font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{b.currentHash?.substring(0,10)}...</span>
+                        </td>
+                        <td className="px-3 py-2">
+                          {b.isValid
+                            ? <span className="flex items-center gap-1 text-xs text-emerald-600"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Valido</span>
+                            : <span className="flex items-center gap-1 text-xs text-red-600 font-semibold"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>Invalido</span>}
+                        </td>
+                        <td className="px-3 py-2">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                            className={"transition-transform text-gray-400 " + (expanded === b.id ? "rotate-180" : "")}>
+                            <path d="M6 9l6 6 6-6"/>
+                          </svg>
                         </td>
                       </tr>
-                    )}
-                  </>
-                );
+                      {expanded === b.id && (
+                        <tr key={b.id + "-detail"} className="bg-blue-50">
+                          <td colSpan={8} className="px-4 py-3">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
+                                <p className="text-xs font-semibold text-gray-500 mb-1">Hash actual</p>
+                                <p className="font-mono text-xs text-gray-700 break-all">{b.currentHash}</p>
+                              </div>
+                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
+                                <p className="text-xs font-semibold text-gray-500 mb-1">Hash anterior</p>
+                                <p className="font-mono text-xs text-gray-700 break-all">{b.previousHash}</p>
+                              </div>
+                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
+                                <p className="text-xs font-semibold text-gray-500 mb-1">Nonce</p>
+                                <p className="font-mono text-xs text-gray-700">{b.nonce}</p>
+                              </div>
+                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
+                                <p className="text-xs font-semibold text-gray-500 mb-1">Detalles</p>
+                                <p className="font-mono text-xs text-gray-600 break-all">{JSON.stringify(b.actionDetails)}</p>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {/* Paginacion compacta */}
+          <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-t border-gray-100 flex-shrink-0">
+            <span className="text-xs text-gray-400">{total} bloques · pag {page}/{totalPages}</span>
+            <div className="flex gap-1">
+              <button onClick={() => setPage(1)} disabled={page === 1} className="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-100 disabled:opacity-40">«</button>
+              <button onClick={() => setPage(p => Math.max(1,p-1))} disabled={page === 1} className="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-100 disabled:opacity-40">‹</button>
+              {[...Array(Math.min(5,totalPages))].map((_,i) => {
+                const p = Math.max(1,page-2)+i;
+                if (p > totalPages) return null;
+                return <button key={p} onClick={() => setPage(p)} className={"px-2.5 py-1 rounded text-xs border transition " + (p === page ? "bg-blue-600 text-white border-blue-600" : "border-gray-200 hover:bg-gray-100")}>{p}</button>;
               })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Paginacion */}
-        <div className='flex items-center justify-between'>
-          <p className='text-xs text-gray-400'>{total} bloques totales · pagina {page} de {totalPages}</p>
-          <div className='flex gap-1'>
-            <button onClick={() => setPage(1)} disabled={page === 1}
-              className='px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-gray-50 disabled:opacity-40 transition'>
-              «
-            </button>
-            <button onClick={() => setPage(p => Math.max(1, p-1))} disabled={page === 1}
-              className='px-3 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-gray-50 disabled:opacity-40 transition'>
-              Anterior
-            </button>
-            {[...Array(Math.min(5, totalPages))].map((_, i) => {
-              const p = Math.max(1, page - 2) + i;
-              if (p > totalPages) return null;
-              return (
-                <button key={p} onClick={() => setPage(p)}
-                  className={`px-3 py-1.5 rounded-lg text-xs transition border ${p === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 hover:bg-gray-50'}`}>
-                  {p}
-                </button>
-              );
-            })}
-            <button onClick={() => setPage(p => p+1)} disabled={blocks.length < 20}
-              className='px-3 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-gray-50 disabled:opacity-40 transition'>
-              Siguiente
-            </button>
-            <button onClick={() => setPage(totalPages)} disabled={page === totalPages}
-              className='px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-gray-50 disabled:opacity-40 transition'>
-              »
-            </button>
+              <button onClick={() => setPage(p => p+1)} disabled={blocks.length < 20} className="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-100 disabled:opacity-40">›</button>
+              <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-100 disabled:opacity-40">»</button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Panel lateral */}
-      <div className='w-56 flex-shrink-0 space-y-4'>
+      {/* Panel lateral compacto */}
+      <div className="w-52 flex-shrink-0 space-y-3">
         {/* Estado cadena */}
-        <div className='bg-white rounded-xl border border-gray-200 p-4'>
-          <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5'>
-            <span className="text-xs">🛡️</span> Estado de la cadena
-          </p>
-          <div className='space-y-2'>
-            <div className='flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg'>
-              <span className='text-xs text-gray-500'>Total bloques</span>
-              <span className='text-sm font-bold text-gray-700'>{total}</span>
-            </div>
-            <div className='flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg'>
-              <span className='text-xs text-gray-500'>En esta pagina</span>
-              <span className='text-sm font-bold text-gray-700'>{blocks.length}</span>
-            </div>
-            <div className='flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg'>
-              <span className='text-xs text-gray-500'>Invalidos</span>
-              <span className={`text-sm font-bold ${blocks.filter(b => !b.isValid).length > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                {blocks.filter(b => !b.isValid).length}
-              </span>
-            </div>
+        <div className={"rounded-xl border p-3 " + (chainIntegrity ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
+          <div className="flex items-center gap-2 mb-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={chainIntegrity ? "#10b981" : "#ef4444"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              {chainIntegrity ? <path d="M9 12l2 2 4-4"/> : <path d="M12 8v4M12 16h.01"/>}
+            </svg>
+            <p className={"text-xs font-bold " + (chainIntegrity ? "text-emerald-800" : "text-red-800")}>
+              {chainIntegrity ? "INTEGRA ✓" : "COMPROMETIDA ✕"}
+            </p>
+          </div>
+          <div className="space-y-1">
+            {[
+              { label: "Total",    val: total },
+              { label: "Pagina",   val: blocks.length },
+              { label: "Invalidos", val: blocks.filter(b => !b.isValid).length, alert: blocks.filter(b => !b.isValid).length > 0 },
+            ].map((s, i) => (
+              <div key={i} className="flex justify-between text-xs">
+                <span className="text-gray-500">{s.label}</span>
+                <span className={"font-bold " + ((s as any).alert ? "text-red-600" : chainIntegrity ? "text-emerald-700" : "text-gray-700")}>{s.val}</span>
+              </div>
+            ))}
           </div>
           <button onClick={verifyChain} disabled={verifying}
-            className='mt-3 w-full py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition flex items-center justify-center gap-1.5'>
-            <Shield size={11} /> {verifying ? 'Verificando...' : 'Verificar cadena'}
+            className="mt-2 w-full py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition">
+            {verifying ? "Verificando..." : "Verificar cadena"}
           </button>
         </div>
 
         {/* Distribucion eventos */}
-        {eventCounts.length > 0 && (
-          <div className='bg-white rounded-xl border border-gray-200 p-4'>
-            <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3'>Eventos en pagina</p>
-            <ResponsiveContainer width='100%' height={120}>
-              <BarChart data={eventCounts} barSize={20}>
-                <XAxis dataKey='name' tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
-                <YAxis hide />
-                <Tooltip contentStyle={{ fontSize: 10, borderRadius: 6 }} />
-                <Bar dataKey='Eventos' radius={[4,4,0,0]}>
-                  {eventCounts.map((e, i) => <Cell key={i} fill={e.color} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {/* Leyenda eventos */}
-        <div className='bg-white rounded-xl border border-gray-200 p-4'>
-          <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3'>Tipos de evento</p>
-          <div className='space-y-2'>
-            {Object.entries(EVENT_CFG).map(([k, v]) => (
-              <div key={k} className='flex items-center justify-between px-2 py-1.5 rounded-lg'
-                style={{ backgroundColor: v.bg }}>
-                <span className='text-xs flex items-center gap-1.5' style={{ color: v.color }}>
-                  <span>{v.icono}</span> {v.label}
-                </span>
-                <span className='text-xs font-bold' style={{ color: v.color }}>
-                  {blocks.filter(b => b.eventType === k).length}
-                </span>
-              </div>
-            ))}
+        <div className="bg-white rounded-xl border border-gray-200 p-3">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Eventos</p>
+          <div className="space-y-1.5">
+            {Object.entries(EVENT_CFG).map(([k, v]) => {
+              const count = blocks.filter(b => b.eventType === k).length;
+              const pct = blocks.length > 0 ? Math.round((count / blocks.length) * 100) : 0;
+              return (
+                <div key={k} className="flex items-center gap-2">
+                  <span className="text-xs w-4">{v.icono}</span>
+                  <div className="flex-1">
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 rounded-full" style={{ width: pct + "%", backgroundColor: v.color }} />
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold w-6 text-right" style={{ color: v.color }}>{count}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
+
+        {/* Ultimo bloque */}
+        {blocks[0] && (
+          <div className="bg-white rounded-xl border border-gray-200 p-3">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ultimo bloque</p>
+            <div className="space-y-1">
+              {[
+                { label: "N°",      val: "#" + blocks[0].blockIndex },
+                { label: "Tipo",    val: EVENT_CFG[blocks[0].eventType]?.label ?? blocks[0].eventType },
+                { label: "Hora",    val: new Date(blocks[0].timestamp).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"}) },
+              ].map((s, i) => (
+                <div key={i} className="flex justify-between text-xs">
+                  <span className="text-gray-400">{s.label}</span>
+                  <span className="font-medium text-gray-700">{s.val}</span>
+                </div>
+              ))}
+              <p className="text-xs font-mono text-gray-400 truncate mt-1">{blocks[0].currentHash?.substring(0,20)}...</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
