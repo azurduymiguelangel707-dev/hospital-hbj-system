@@ -797,37 +797,64 @@ export default function EnfermeriaDashboard() {
               </table>
             )}
           </div>
-          {/* Grafico historial vitales paciente seleccionado */}
+          {/* Resumen estado vitales por paciente */}
           {selected && (() => {
             const pv = vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id);
             if (pv.length === 0) return null;
-            const data = pv.slice(0, 6).reverse().map((v: any, i: number) => ({
-              name: "R" + (i + 1),
-              PA: Number(String(v.presionArterial ?? "").split("/")[0]) || 0,
-              FC: Number(v.frecuenciaCardiaca) || 0,
-              SpO2: Number(v.saturacionOxigeno) || 0,
-            }));
+            const sem = (val: number, min: number, max: number) => {
+              if (val === 0) return { color: "#94a3b8", bg: "#f8fafc", label: "—" };
+              if (val < min || val > max) return { color: "#ef4444", bg: "#fef2f2", label: "Alerta" };
+              if (val < min * 1.05 || val > max * 0.97) return { color: "#f59e0b", bg: "#fffbeb", label: "Precaucion" };
+              return { color: "#10b981", bg: "#f0fdf4", label: "Normal" };
+            };
             return (
-              <div className="border-t border-gray-100 px-3 py-3">
-                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 flex items-center gap-1">
-                  <Activity size={11} className="text-teal-500" />
-                  Tendencia — {selected.patient?.nombre?.split(" ")[0]}
-                </p>
-                <ResponsiveContainer width="100%" height={140}>
-                  <BarChart data={data} barSize={10} barGap={1}>
-                    <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                    <YAxis hide />
-                    <Tooltip contentStyle={{ fontSize: 10, borderRadius: 6 }} />
-                    <Bar dataKey="PA" name="PAS" fill="#0d9488" radius={[3,3,0,0]} />
-                    <Bar dataKey="FC" name="FC" fill="#6366f1" radius={[3,3,0,0]} />
-                    <Bar dataKey="SpO2" name="SpO2" fill="#f59e0b" radius={[3,3,0,0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-                <div className="flex gap-3 justify-center mt-1">
-                  <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-sm bg-teal-600 inline-block"/>PAS</span>
-                  <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-sm bg-indigo-500 inline-block"/>FC</span>
-                  <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-sm bg-amber-400 inline-block"/>SpO2</span>
+              <div className="border-t border-gray-100">
+                <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-gray-600 flex items-center gap-1">
+                    <Activity size={11} className="text-teal-500" />
+                    Estado actual — {selected.patient?.nombre?.split(" ").slice(0,2).join(" ")}
+                  </span>
+                  <span className="text-xs text-gray-400">{pv.length} reg.</span>
                 </div>
+                <div className="p-2 space-y-1.5">
+                  {[
+                    { label: "Presion arterial", icono: "🫀", val: Number(String(pv[0].presionArterial ?? "").split("/")[0]), unidad: "mmHg", min: 90, max: 140, extra: pv[0].presionArterial },
+                    { label: "Pulso",            icono: "💓", val: Number(pv[0].frecuenciaCardiaca ?? 0),  unidad: "lpm", min: 60,  max: 100 },
+                    { label: "Oxigeno en sangre",icono: "🫁", val: Number(pv[0].saturacionOxigeno ?? 0),  unidad: "%",   min: 95,  max: 100 },
+                    { label: "Temperatura",      icono: "🌡️", val: Number(pv[0].temperatura ?? 0),        unidad: "°C",  min: 36,  max: 37.5 },
+                    { label: "Respiracion",      icono: "🌬️", val: Number(pv[0].frecuenciaRespiratoria ?? 0), unidad: "rpm", min: 12, max: 20 },
+                  ].map((s, i) => {
+                    const st = sem(s.val, s.min, s.max);
+                    const pct = s.val > 0 ? Math.min(((s.val - s.min * 0.8) / (s.max * 1.2 - s.min * 0.8)) * 100, 100) : 0;
+                    return (
+                      <div key={i} className="rounded-lg px-2.5 py-2 flex items-center gap-2" style={{ backgroundColor: st.bg }}>
+                        <span className="text-sm w-5 text-center">{s.icono}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className="text-xs text-gray-600 font-medium">{s.label}</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-bold" style={{ color: st.color }}>
+                                {s.extra ?? (s.val > 0 ? s.val : "—")} {s.val > 0 ? s.unidad : ""}
+                              </span>
+                              <span className="text-xs px-1.5 py-0.5 rounded-full font-medium" style={{ color: st.color, backgroundColor: st.color + "20" }}>
+                                {st.label}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="relative h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                            <div className="absolute h-1.5 bg-emerald-200 rounded-full" style={{ left: "20%", width: "45%" }} />
+                            {s.val > 0 && <div className="absolute h-1.5 w-2 rounded-full" style={{ left: "calc(" + pct + "% - 4px)", backgroundColor: st.color }} />}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {pv.length > 1 && (
+                  <div className="px-3 pb-2 text-xs text-gray-400 text-center">
+                    Ultimo registro — {new Date(pv[0].registradoEn ?? pv[0].registrado_en ?? pv[0].createdAt).toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" })}
+                  </div>
+                )}
               </div>
             );
           })()}
