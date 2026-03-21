@@ -293,12 +293,13 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
       </div>
     </div>
   );
-}
-export function PacientesPanel() {
+}export function PacientesPanel() {
   const [pacientes, setPacientes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<any>(null);
+  const [pagina, setPagina] = useState(0);
+  const POR_PAGINA = 20;
   const cargar = useCallback(async () => {
     setLoading(true);
     try {
@@ -314,14 +315,16 @@ export function PacientesPanel() {
     p.ci?.includes(search) ||
     p.numeroHistorial?.includes(search)
   );
+  const totalPaginas = Math.ceil(filtrados.length / POR_PAGINA);
+  const paginados = filtrados.slice(pagina * POR_PAGINA, (pagina + 1) * POR_PAGINA);
   if (selected) return <FichaPaciente paciente={selected} onBack={() => setSelected(null)} />;
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-sm">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" placeholder="Buscar por nombre, CI o historial..."
-            value={search} onChange={e => setSearch(e.target.value)}
+            value={search} onChange={e => { setSearch(e.target.value); setPagina(0); }}
             className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
         </div>
         <button onClick={cargar} className="px-3 py-2 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 transition">Actualizar</button>
@@ -329,23 +332,35 @@ export function PacientesPanel() {
       </div>
       {loading ? <p className="text-center text-gray-400 py-12 text-sm">Cargando pacientes...</p> :
         filtrados.length === 0 ? <p className="text-center text-gray-400 py-12 text-sm">Sin resultados</p> :
-        <div className="grid grid-cols-1 gap-1.5 pr-1 overflow-y-auto" style={{ height: 'calc(100vh - 220px)' }}>
-          {filtrados.map(p => (
-            <button key={p.id} onClick={() => setSelected(p)}
-              className="bg-white border border-gray-100 rounded-lg px-4 py-2.5 text-left hover:border-blue-300 hover:bg-blue-50 transition flex items-center gap-3 w-full">
-              <div className="w-7 h-7 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
-                <User size={13} className="text-blue-500" />
+        <div>
+          <div className="grid grid-cols-1 gap-1.5 mb-3">
+            {paginados.map(p => (
+              <button key={p.id} onClick={() => setSelected(p)}
+                className="bg-white border border-gray-100 rounded-lg px-4 py-2.5 text-left hover:border-blue-300 hover:bg-blue-50 transition flex items-center gap-3 w-full">
+                <div className="w-7 h-7 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User size={13} className="text-blue-500" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 truncate">{p.nombre}</p>
+                  <p className="text-xs text-gray-400">CI: {p.ci} · Hist: {p.numeroHistorial ?? '-'} · {p.edad} anos · {p.genero}</p>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {p.especialidadRequerida && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs">{p.especialidadRequerida}</span>}
+                  <ChevronRight size={13} className="text-gray-300" />
+                </div>
+              </button>
+            ))}
+          </div>
+          {totalPaginas > 1 && (
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+              <span className="text-xs text-gray-400">{pagina * POR_PAGINA + 1}-{Math.min((pagina + 1) * POR_PAGINA, filtrados.length)} de {filtrados.length}</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPagina(p => Math.max(0, p - 1))} disabled={pagina === 0} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">Anterior</button>
+                <span className="text-xs text-gray-500 px-2">{pagina + 1} / {totalPaginas}</span>
+                <button onClick={() => setPagina(p => Math.min(totalPaginas - 1, p + 1))} disabled={pagina >= totalPaginas - 1} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">Siguiente</button>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">{p.nombre}</p>
-                <p className="text-xs text-gray-400">CI: {p.ci} Â· Hist: {p.numeroHistorial ?? '-'} Â· {p.edad} anos Â· {p.genero}</p>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {p.especialidadRequerida && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs">{p.especialidadRequerida}</span>}
-                <ChevronRight size={13} className="text-gray-300" />
-              </div>
-            </button>
-          ))}
+            </div>
+          )}
         </div>
       }
     </div>
