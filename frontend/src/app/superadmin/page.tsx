@@ -284,11 +284,11 @@ export default function SuperAdminPage() {
           {/* USUARIOS */}
           {activePanel === 'usuarios' && (
           <div className="flex-1 overflow-auto">
-              <div className="mb-5">
+          <div className="mb-4 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-gray-800">Gestion global de usuarios</h2>
                 <p className="text-sm text-gray-500">{users.length} usuarios en el sistema — acceso completo</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
                 <GlobalUserManager users={users} onRefresh={loadAll} />
               </div>
             </div>
@@ -297,11 +297,11 @@ export default function SuperAdminPage() {
           {/* BLOCKCHAIN */}
           {activePanel === 'blockchain' && (
           <div className="flex-1 overflow-auto">
-              <div className="mb-5">
+          <div className="mb-4 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-gray-800">Blockchain Audit Log</h2>
                 <p className="text-sm text-gray-500">{blockchainCount} bloques registrados — SHA-256 CryptoJS</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
                 <BlockchainViewer />
               </div>
             </div>
@@ -310,11 +310,11 @@ export default function SuperAdminPage() {
           {/* REPORTES */}
           {activePanel === 'reportes' && (
           <div className="flex-1 overflow-auto">
-              <div className="mb-5">
+          <div className="mb-4 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-gray-800">Reportes y estadisticas</h2>
                 <p className="text-sm text-gray-500">Reportes exportables en PDF</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
                 <ReportesPanel />
               </div>
             </div>
@@ -325,12 +325,12 @@ export default function SuperAdminPage() {
             <BackupPanel />
           )}
           {activePanel === 'sistema' && (
-          <div className="flex-1 overflow-auto">
-              <div className="mb-5">
+          <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="mb-4 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-gray-800">Monitor del sistema</h2>
                 <p className="text-sm text-gray-500">Estado en tiempo real de todos los servicios</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
                 <SystemMonitor />
               </div>
             </div>
