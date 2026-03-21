@@ -92,6 +92,7 @@ export default function SuperAdminPage() {
   const blockchainCount = dbStats.find(d => d.table === 'blockchain_audit')?.count ?? 0;
   const patientsCount = dbStats.find(d => d.table === 'patients')?.count ?? 0;
 
+  const [dashTab, setDashTab] = useState<'resumen'|'servicios'>('resumen');
   return (
     <div className="flex flex-col h-screen bg-gray-950 overflow-hidden">
       {/* Top bar — dark theme para distinguir del admin */}
@@ -199,7 +200,6 @@ export default function SuperAdminPage() {
               { label: "Total registros BD",  val: totalRegistros,              color: "#6b7280", bg: "#f9fafb", icono: KpiIcons.database,  sub: "en PostgreSQL" },
             ];
 
-            const [dashTab, setDashTab] = React.useState('resumen');
             return (
               <div className="overflow-y-auto" style={{ maxHeight: "calc(100vh - 130px)" }}><div className="space-y-5">
                 {/* Header */}
@@ -219,7 +219,7 @@ export default function SuperAdminPage() {
                 {/* Tabs navigation */}
                 <div className="flex gap-1 bg-gray-100 p-1 rounded-xl mb-2">
                   {([['resumen','📊 Resumen'],['bd','🗄️ Base de datos'],['servicios','🖥️ Servicios']] as [string,string][]).map(([k,l]) => (
-                    <button key={k} onClick={() => setDashTab(k)}
+                    <button key={k} onClick={() => setDashTab(k as 'resumen' | 'servicios')}
                       className={'flex-1 py-2 rounded-lg text-xs font-medium transition ' + (dashTab === k ? 'bg-white shadow-sm text-gray-800' : 'text-gray-500 hover:text-gray-700')}>
                       {l}
                     </button>
