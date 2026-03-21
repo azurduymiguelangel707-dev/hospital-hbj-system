@@ -87,132 +87,222 @@ export function SystemMonitor() {
   const invalidBlocks = auditBlocks.filter(b => !b.isValid);
   const chainIntegrity = invalidBlocks.length === 0;
 
+
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-gray-500">{lastCheck ? `Ultima verificacion: ${lastCheck.toLocaleTimeString('es-ES')}` : 'Verificando...'}</p>
-        <button onClick={loadData} disabled={loading}
-          className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 disabled:opacity-50 transition">
-          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Actualizar
-        </button>
-      </div>
+    <div className="flex gap-5">
+      {/* Columna principal */}
+      <div className="flex-1 min-w-0 space-y-4">
 
-      {/* Estado de servicios */}
-      <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Estado de servicios</p>
-        <div className="space-y-2">
-          {services.map(s => (
-            <div key={s.name} className={`flex items-center justify-between border rounded-lg px-4 py-3 ${s.status === 'ok' ? 'bg-green-50 border-green-200' : s.status === 'warn' ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200'}`}>
-              <div className="flex items-center gap-3">
-                <Server size={14} className="text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium text-gray-800">{s.name}</p>
-                  <p className="text-xs text-gray-500">{s.detail}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {s.latency && <span className="text-xs text-gray-400">{s.latency}ms</span>}
-                {s.status === 'ok' ? <CheckCircle size={14} className="text-green-500" /> : s.status === 'warn' ? <AlertTriangle size={14} className="text-amber-500" /> : <XCircle size={14} className="text-red-500" />}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Integridad del sistema */}
-      <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Integridad del sistema</p>
-        <div className={`border rounded-xl p-4 mb-3 flex items-start gap-3 ${chainIntegrity ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-          {chainIntegrity
-            ? <ShieldCheck size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
-            : <ShieldAlert size={18} className="text-red-600 mt-0.5 flex-shrink-0" />}
-          <div className="flex-1">
-            <p className={`text-sm font-semibold ${chainIntegrity ? 'text-green-800' : 'text-red-800'}`}>
-              Cadena blockchain - {chainIntegrity ? 'INTEGRA' : 'COMPROMETIDA'}
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-gray-400" suppressHydrationWarning>
+              {lastCheck ? "Ultima verificacion: " + lastCheck.toLocaleTimeString("es-ES") : "Sin verificar"}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5">{totalEvents} bloques registrados - {invalidBlocks.length} bloques invalidos</p>- 
-            {lastBlock && (
-              <p className="text-xs font-mono text-gray-400 mt-1">Ultimo hash: {lastBlock.currentHash?.substring(0, 24)}...</p>
-            )}
+          </div>
+          <button onClick={loadData} disabled={loading}
+            className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-xs text-gray-600 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition">
+            <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Actualizar
+          </button>
+        </div>
+
+        {/* Estado servicios */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado de servicios</p>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {services.map(s => {
+              const statusCfg = {
+                ok:    { color: "#10b981", bg: "#f0fdf4", border: "#bbf7d0", label: "Operativo",  dot: "bg-emerald-500" },
+                warn:  { color: "#f59e0b", bg: "#fffbeb", border: "#fde68a", label: "Lento",       dot: "bg-amber-400" },
+                error: { color: "#ef4444", bg: "#fef2f2", border: "#fecaca", label: "Error",       dot: "bg-red-500" },
+              }[s.status as string] ?? { color: "#6b7280", bg: "#f9fafb", border: "#e5e7eb", label: "Desconocido", dot: "bg-gray-400" };
+              return (
+                <div key={s.name} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition">
+                  <div className="flex items-center gap-3">
+                    <div className={"w-2 h-2 rounded-full " + statusCfg.dot} />
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{s.name}</p>
+                      <p className="text-xs text-gray-400">{s.detail}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {s.latency && (
+                      <div className="text-right">
+                        <span className="text-xs font-mono font-bold" style={{ color: statusCfg.color }}>{s.latency}ms</span>
+                        <div className="w-16 h-1 bg-gray-100 rounded-full overflow-hidden mt-0.5">
+                          <div className="h-1 rounded-full" style={{ width: Math.min((s.latency / 1000) * 100, 100) + "%", backgroundColor: statusCfg.color }} />
+                        </div>
+                      </div>
+                    )}
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold" style={{ color: statusCfg.color, backgroundColor: statusCfg.bg, border: "1px solid " + statusCfg.border }}>
+                      {statusCfg.label}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {lastBlock && (
-          <div className="bg-white border border-gray-200 rounded-xl p-3">
-            <p className="text-xs text-gray-400 mb-1">Ultimo evento registrado</p>
-            <div className="flex items-center justify-between">
-              <div>
-<p className="text-sm font-medium text-gray-700">{lastBlock.resourceType==='AUTH'?'Autenticacion':lastBlock.resourceType==='MEDICAL_RECORD'?'Historial medico':lastBlock.resourceType==='VITAL_SIGNS'?'Signos vitales':lastBlock.resourceType==='DOCUMENTS'?'Documentos':lastBlock.resourceType==='USERS'?'Usuarios':lastBlock.resourceType} --  {lastBlock.eventType==='CREATE'?'Creacion':lastBlock.eventType==='UPDATE'?'Modificacion':lastBlock.eventType==='DELETE'?'Eliminacion':lastBlock.eventType==='ACCESS'?'Acceso':lastBlock.eventType}</p>
-                <p className="text-xs text-gray-400">{new Date(lastBlock.timestamp).toLocaleString('es-ES')}</p>
-              </div>
-              <span className="text-xs font-mono text-gray-400">Bloque #{lastBlock.blockIndex}</span>
+        {/* Actividad auditoria */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Actividad de auditoria</p>
+            <span className="text-xs text-gray-400">{totalEvents} eventos totales</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {Object.entries(EVENT_LABELS).map(([key, { label, color, bg }]) => {
+              const count = eventCounts[key] ?? 0;
+              const pct = totalEvents > 0 ? Math.round((count / totalEvents) * 100) : 0;
+              return (
+                <div key={key} className="rounded-xl p-3 border" style={{ backgroundColor: bg, borderColor: "#e5e7eb" }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-700">{label}</span>
+                    <span className="text-lg font-bold text-gray-800">{count}</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mb-1">
+                    <div className={"h-1.5 rounded-full transition-all " + color} style={{ width: pct + "%" }} />
+                  </div>
+                  <span className="text-xs text-gray-500">{pct}% del total</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Registros por tabla */}
+        {sysInfo && (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Registros en base de datos</p>
+              <span className="text-xs text-gray-400">{(sysInfo?.dbStats ?? []).reduce((a: number, s: DbStat) => a + s.count, 0)} total</span>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {(sysInfo?.dbStats ?? []).map((s: DbStat) => {
+                const total = (sysInfo?.dbStats ?? []).reduce((a: number, x: DbStat) => a + x.count, 0);
+                const pct = total > 0 ? Math.round((s.count / total) * 100) : 0;
+                const tableColors: Record<string, string> = {
+                  patients: "#3b82f6", appointments: "#10b981", doctors: "#8b5cf6",
+                  users: "#f59e0b", medical_records: "#ec4899", vital_signs: "#06b6d4",
+                  documents: "#f97316", blockchain_audit: "#ef4444",
+                };
+                const color = tableColors[s.table] ?? "#6b7280";
+                return (
+                  <div key={s.table} className="flex items-center gap-4 px-4 py-2.5 hover:bg-gray-50 transition">
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-0.5">
+                        <span className="text-xs font-medium text-gray-700">{TABLE_LABELS[s.table] ?? s.table}</span>
+                        <span className="text-xs font-bold" style={{ color }}>{s.count}</span>
+                      </div>
+                      <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-1 rounded-full" style={{ width: pct + "%", backgroundColor: color }} />
+                      </div>
+                    </div>
+                    <span className="text-xs text-gray-400 w-8 text-right">{pct}%</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
       </div>
 
-      {/* Eventos por tipo */}
-      <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Actividad de auditoria por tipo</p>
-        <div className="space-y-2">
-          {Object.entries(EVENT_LABELS).map(([key, { label, color, bg }]) => {
-            const count = eventCounts[key] ?? 0;
-            const pct = totalEvents > 0 ? Math.round((count / totalEvents) * 100) : 0;
-            return (
-              <div key={key} className={`${bg} border border-gray-100 rounded-xl px-4 py-3`}>
-                <div className="flex items-center justify-between mb-1.5">
-                  <p className="text-xs font-medium text-gray-700">{label}</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">{pct}%</span>
-                    <span className="text-sm font-bold text-gray-800">{count}</span>
-                  </div>
+      {/* Panel lateral */}
+      <div className="w-64 flex-shrink-0 space-y-4">
+
+        {/* Integridad blockchain */}
+        <div className={"rounded-xl border p-4 " + (chainIntegrity ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
+          <div className="flex items-center gap-2 mb-2">
+            {chainIntegrity
+              ? <ShieldCheck size={16} className="text-emerald-600" />
+              : <ShieldAlert size={16} className="text-red-600" />}
+            <p className={"text-sm font-bold " + (chainIntegrity ? "text-emerald-800" : "text-red-800")}>
+              Blockchain {chainIntegrity ? "INTEGRA ✓" : "COMPROMETIDA ✕"}
+            </p>
+          </div>
+          <p className="text-xs text-gray-500">{totalEvents} bloques registrados</p>
+          <p className={"text-xs font-medium mt-0.5 " + (invalidBlocks.length > 0 ? "text-red-600" : "text-emerald-600")}>
+            {invalidBlocks.length === 0 ? "Sin bloques invalidos" : invalidBlocks.length + " bloque(s) invalido(s)"}
+          </p>
+          {lastBlock && (
+            <div className="mt-2 pt-2 border-t border-gray-200">
+              <p className="text-xs text-gray-400 mb-1">Ultimo hash</p>
+              <p className="text-xs font-mono text-gray-600 break-all">{lastBlock.currentHash?.substring(0,20)}...</p>
+            </div>
+          )}
+        </div>
+
+        {/* Ultimo evento */}
+        {lastBlock && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Ultimo evento</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">Tipo</span>
+                <span className={"px-2 py-0.5 rounded-full text-xs font-semibold " + (EVENT_LABELS[lastBlock.eventType]?.bg ?? "")} style={{ color: lastBlock.eventType === "CREATE" ? "#10b981" : lastBlock.eventType === "ACCESS" ? "#8b5cf6" : lastBlock.eventType === "DELETE" ? "#ef4444" : "#3b82f6" }}>
+                  {EVENT_LABELS[lastBlock.eventType]?.label ?? lastBlock.eventType}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">Recurso</span>
+                <span className="text-xs font-medium text-gray-700">
+                  {lastBlock.resourceType === "AUTH" ? "Autenticacion" : lastBlock.resourceType === "MEDICAL_RECORD" ? "Historial" : lastBlock.resourceType}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">Bloque</span>
+                <span className="text-xs font-mono font-bold text-gray-700">#{lastBlock.blockIndex}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">Hora</span>
+                <span className="text-xs text-gray-600">{new Date(lastBlock.timestamp).toLocaleTimeString("es-ES")}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Runtime */}
+        {sysInfo && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Runtime del servidor</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">⏱️</span>
+                  <span className="text-xs text-gray-500">Tiempo activo</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-1.5">
-                  <div className={`${color} h-1.5 rounded-full transition-all`} style={{ width: `${pct}%` }} />
+                <span className="text-xs font-bold text-emerald-600">{formatUptime(sysInfo?.uptime ?? 0)}</span>
+              </div>
+              <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">🧠</span>
+                  <span className="text-xs text-gray-500">Memoria usada</span>
+                </div>
+                <span className="text-xs font-bold text-blue-600">{formatBytes(sysInfo?.memoryUsage?.heapUsed ?? 0)}</span>
+              </div>
+              <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">💻</span>
+                  <span className="text-xs text-gray-500">Node.js</span>
+                </div>
+                <span className="text-xs font-bold text-gray-600">{sysInfo?.nodeVersion ?? ""}</span>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-gray-500">Heap usado</span>
+                  <span className="text-xs text-gray-600">{formatBytes(sysInfo?.memoryUsage?.heapUsed ?? 0)} / {formatBytes(sysInfo?.memoryUsage?.heapTotal ?? 0)}</span>
+                </div>
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-blue-500 rounded-full" style={{ width: sysInfo?.memoryUsage?.heapTotal > 0 ? Math.round((sysInfo.memoryUsage.heapUsed / sysInfo.memoryUsage.heapTotal) * 100) + "%" : "0%" }} />
                 </div>
               </div>
-            );
-          })}
-        </div>
-        <p className="text-xs text-gray-400 mt-2 text-right">Total eventos: {totalEvents}</p>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Registros por tabla */}
-      {sysInfo && (
-        <div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Registros por tabla</p>
-          <div className="grid grid-cols-4 gap-2">
-            {(sysInfo?.dbStats ?? []).map(s => (
-              <div key={s.table} className="bg-white border border-gray-200 rounded-xl p-3">
-                <p className="text-xs text-gray-500">{TABLE_LABELS[s.table] ?? s.table}</p>
-                <p className="text-xl font-bold text-gray-800 mt-1">{s.count}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Runtime */}
-      {sysInfo && (
-        <div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Runtime del servidor</p>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white border border-gray-200 rounded-xl p-3">
-              <p className="text-xs text-gray-500">Tiempo activo</p>
-              <p className="text-sm font-semibold text-gray-800 mt-1">{formatUptime((sysInfo?.uptime ?? 0))}</p>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-xl p-3">
-              <p className="text-xs text-gray-500">Memoria usada</p>
-              <p className="text-sm font-semibold text-gray-800 mt-1">{formatBytes((sysInfo?.memoryUsage?.heapUsed ?? 0))}</p>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-xl p-3">
-              <p className="text-xs text-gray-500">Node.js</p>
-              <p className="text-sm font-semibold text-gray-800 mt-1">{(sysInfo?.nodeVersion ?? '')}</p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-
