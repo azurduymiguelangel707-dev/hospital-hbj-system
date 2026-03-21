@@ -649,95 +649,271 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
   form: ConsultaForm; onChange: (f: ConsultaForm) => void;
   onComplete: () => void; onAdjuntarDocs: () => void;
 }) {
-  const alergia = patientDetail?.alerts.find(a => a.tipo === 'danger');
-  const ESTUDIOS = ['ECG','Glucemia','HbA1c','Perfil lipidico','Ecocardiograma','Radiografia torax','Hemograma'];
+  const [newMed, setNewMed] = useState({ medicamento: "", dosis: "", duracion: "" });
+  const [showMedForm, setShowMedForm] = useState(false);
+  const alergia = patientDetail?.alerts?.find(a => a.tipo === "danger");
+  const ESTUDIOS = [
+    { id: "ECG",              label: "ECG",                  desc: "Electrocardiograma" },
+    { id: "Glucemia",         label: "Glucemia",             desc: "Azucar en sangre" },
+    { id: "HbA1c",            label: "HbA1c",                desc: "Hemoglobina glicada" },
+    { id: "Perfil lipidico",  label: "Perfil lipidico",      desc: "Colesterol y trigliceridos" },
+    { id: "Ecocardiograma",   label: "Ecocardiograma",       desc: "Imagen del corazon" },
+    { id: "Radiografia torax",label: "Rx torax",             desc: "Radiografia de torax" },
+    { id: "Hemograma",        label: "Hemograma",            desc: "Conteo de celulas" },
+    { id: "Orina completa",   label: "Orina completa",       desc: "Analisis de orina" },
+  ];
   function set<K extends keyof ConsultaForm>(k: K, v: ConsultaForm[K]) { onChange({ ...form, [k]: v }); }
   function toggleEstudio(e: string) {
-    set('estudiosSolicitados', form.estudiosSolicitados.includes(e) ? form.estudiosSolicitados.filter(x=>x!==e) : [...form.estudiosSolicitados, e]);
+    set("estudiosSolicitados", form.estudiosSolicitados.includes(e)
+      ? form.estudiosSolicitados.filter(x => x !== e)
+      : [...form.estudiosSolicitados, e]);
   }
+  function addMed() {
+    if (!newMed.medicamento) return;
+    set("prescripciones", [...form.prescripciones, { ...newMed }]);
+    setNewMed({ medicamento: "", dosis: "", duracion: "" });
+    setShowMedForm(false);
+  }
+  function removeMed(i: number) {
+    set("prescripciones", form.prescripciones.filter((_, idx) => idx !== i));
+  }
+
+  const camposCompletos = [form.motivoConsulta, form.diagnostico, form.tratamiento].filter(Boolean).length;
+  const progreso = Math.round((camposCompletos / 3) * 100);
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-800">Consulta activa - {patientDetail?.nombre ?? 'Paciente'}</h2>
-          <p className="text-xs text-gray-500">
-            {(appointment.appointmentTime ?? '--:--').substring(0,5)}
-            {alergia ? ` - Alerta: ${alergia.mensaje}` : ''}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={onAdjuntarDocs} className="px-3 py-2 border border-gray-300 text-sm rounded-lg hover:bg-gray-50 transition">Adjuntar docs</button>
-          <button onClick={onComplete} className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition font-medium">Completar y sellar</button>
-        </div>
-      </div>
-      {alergia && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm text-amber-700 flex items-center gap-2 mb-4">
-          <AlertTriangle size={14} /> {alergia.mensaje}
-        </div>
-      )}
-      <div className="grid grid-cols-2 gap-5">
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Motivo de consulta</label>
-            <textarea value={form.motivoConsulta} onChange={e=>set('motivoConsulta',e.target.value)} rows={3}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none" placeholder="Motivo..." />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Diagnostico *</label>
-            <input value={form.diagnostico} onChange={e=>set('diagnostico',e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Diagnostico principal..." />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Tratamiento</label>
-            <textarea value={form.tratamiento} onChange={e=>set('tratamiento',e.target.value)} rows={3}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none" placeholder="Tratamiento indicado..." />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Notas internas</label>
-            <textarea value={form.notasInternas} onChange={e=>set('notasInternas',e.target.value)} rows={2}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none text-gray-500" placeholder="Notas privadas (no visibles al paciente)..." />
-          </div>
-        </div>
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Prescripcion</label>
-            <div className="border border-gray-200 rounded-xl p-3 space-y-2">
-              {form.prescripciones.length === 0 ?
-                <p className="text-xs text-gray-400 text-center py-2">Sin medicamentos agregados</p> :
-                form.prescripciones.map((p,i) => (
-                  <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 text-xs">
-                    <span className="font-medium">{p.medicamento}</span>
-                    <span className="text-gray-500">{p.dosis} - {p.duracion}</span>
-                  </div>
-                ))
-              }
-              <button onClick={() => {
-                const med = prompt('Medicamento (ej: Losartan 100mg):');
-                const dosis = prompt('Dosis (ej: 1/dia):');
-                const dur = prompt('Duracion (ej: 30 dias):');
-                if (med) set('prescripciones', [...form.prescripciones, { medicamento: med, dosis: dosis??'', duracion: dur??'' }]);
-              }} className="w-full border border-dashed border-gray-300 text-xs text-gray-500 rounded-lg py-2 hover:bg-gray-50 transition">
-                + Agregar medicamento
+    <div className="flex gap-5">
+      {/* Columna izquierda - formulario */}
+      <div className="flex-1 min-w-0 space-y-4">
+
+        {/* Header con progreso */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-gray-800">
+                {patientDetail?.nombre ?? appointment.patient?.nombre ?? "Paciente"}
+              </h2>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs text-gray-400 font-mono">{(appointment.appointmentTime ?? "--:--").substring(0,5)}</span>
+                <span className="text-xs text-gray-300">·</span>
+                <span className="text-xs text-gray-500">{appointment.reason}</span>
+                {alergia && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
+                    <AlertTriangle size={10} /> {alergia.mensaje}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
+              <button onClick={onAdjuntarDocs} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5">
+                <FileText size={12} /> Adjuntar docs
+              </button>
+              <button onClick={onComplete}
+                className={"px-3 py-2 text-xs font-semibold rounded-lg transition flex items-center gap-1.5 " + (form.diagnostico ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-100 text-gray-400 cursor-not-allowed")}
+                disabled={!form.diagnostico}
+              >
+                <ClipboardList size={12} /> Completar y sellar
               </button>
             </div>
           </div>
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Proximo control</label>
-            <input type="date" value={form.fechaControl} onChange={e=>set('fechaControl',e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-1">Solicitar estudios</label>
-            <div className="flex flex-wrap gap-2">
-              {ESTUDIOS.map(e => (
-                <button key={e} onClick={() => toggleEstudio(e)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium border transition ${form.estudiosSolicitados.includes(e) ? 'bg-blue-100 text-blue-700 border-blue-300' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}>
-                  {e}
-                </button>
+          {/* Barra de progreso */}
+          <div className="mt-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-gray-400">Progreso de la consulta</span>
+              <span className="text-xs font-semibold" style={{ color: progreso === 100 ? "#10b981" : "#3b82f6" }}>{progreso}%</span>
+            </div>
+            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-1.5 rounded-full transition-all" style={{ width: progreso + "%", backgroundColor: progreso === 100 ? "#10b981" : "#3b82f6" }} />
+            </div>
+            <div className="flex gap-3 mt-1.5">
+              {[["Motivo", form.motivoConsulta], ["Diagnostico", form.diagnostico], ["Tratamiento", form.tratamiento]].map(([label, val], i) => (
+                <span key={i} className={"flex items-center gap-1 text-xs " + (val ? "text-emerald-600" : "text-gray-300")}>
+                  <span>{val ? "✓" : "○"}</span> {label}
+                </span>
               ))}
             </div>
           </div>
         </div>
+
+        {/* Motivo y diagnostico */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Informacion clinica</p>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Motivo de consulta</label>
+            <textarea value={form.motivoConsulta} onChange={e => set("motivoConsulta", e.target.value)} rows={2}
+              placeholder="Describe el motivo principal de la consulta..."
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">
+              Diagnostico <span className="text-red-500">*</span>
+            </label>
+            <input value={form.diagnostico} onChange={e => set("diagnostico", e.target.value)}
+              placeholder="Ej: Hipertension arterial estadio I (I10)"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Tratamiento indicado</label>
+            <textarea value={form.tratamiento} onChange={e => set("tratamiento", e.target.value)} rows={3}
+              placeholder="Describe el plan de tratamiento..."
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Notas internas <span className="text-gray-400 font-normal">(no visible al paciente)</span></label>
+            <textarea value={form.notasInternas} onChange={e => set("notasInternas", e.target.value)} rows={2}
+              placeholder="Observaciones privadas..."
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none bg-amber-50"
+            />
+          </div>
+        </div>
+
+        {/* Prescripciones */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Prescripcion de medicamentos</p>
+            <button onClick={() => setShowMedForm(!showMedForm)}
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition">
+              + Agregar
+            </button>
+          </div>
+          {/* Formulario inline agregar medicamento */}
+          {showMedForm && (
+            <div className="bg-blue-50 rounded-xl p-3 mb-3 space-y-2 border border-blue-100">
+              <p className="text-xs font-semibold text-blue-700">Nuevo medicamento</p>
+              <input
+                value={newMed.medicamento}
+                onChange={e => setNewMed(m => ({ ...m, medicamento: e.target.value }))}
+                placeholder="Nombre del medicamento (ej: Losartan 100mg)"
+                className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  value={newMed.dosis}
+                  onChange={e => setNewMed(m => ({ ...m, dosis: e.target.value }))}
+                  placeholder="Dosis (ej: 1 vez al dia)"
+                  className="border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                />
+                <input
+                  value={newMed.duracion}
+                  onChange={e => setNewMed(m => ({ ...m, duracion: e.target.value }))}
+                  placeholder="Duracion (ej: 30 dias)"
+                  className="border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button onClick={addMed} className="flex-1 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition">
+                  Confirmar medicamento
+                </button>
+                <button onClick={() => setShowMedForm(false)} className="px-3 py-2 border border-gray-200 text-gray-500 text-xs rounded-lg hover:bg-gray-50 transition">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+          {/* Lista medicamentos */}
+          {form.prescripciones.length === 0 ? (
+            <div className="text-center py-4 text-gray-300 text-xs border border-dashed border-gray-200 rounded-lg">
+              Sin medicamentos agregados
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {form.prescripciones.map((p, i) => (
+                <div key={i} className="flex items-center justify-between bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">💊</span>
+                    <div>
+                      <p className="text-xs font-semibold text-blue-800">{p.medicamento}</p>
+                      <p className="text-xs text-blue-500">{p.dosis} · {p.duracion}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => removeMed(i)} className="text-red-400 hover:text-red-600 text-xs px-2 py-1 hover:bg-red-50 rounded transition">
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Columna derecha */}
+      <div className="w-72 flex-shrink-0 space-y-4">
+
+        {/* Proximo control */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Proximo control</p>
+          <input type="date" value={form.fechaControl ?? ""} onChange={e => set("fechaControl", e.target.value)}
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {form.fechaControl && (
+            <p className="text-xs text-emerald-600 mt-1.5 flex items-center gap-1">
+              <span>📅</span>
+              Control agendado: {new Date(form.fechaControl).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}
+            </p>
+          )}
+        </div>
+
+        {/* Estudios solicitados */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            Solicitar estudios
+            {form.estudiosSolicitados.length > 0 && (
+              <span className="ml-2 px-1.5 py-0.5 bg-blue-100 text-blue-600 rounded-full text-xs">{form.estudiosSolicitados.length}</span>
+            )}
+          </p>
+          <div className="space-y-1.5">
+            {ESTUDIOS.map(e => {
+              const selected = form.estudiosSolicitados.includes(e.id);
+              return (
+                <button key={e.id} onClick={() => toggleEstudio(e.id)}
+                  className={"w-full flex items-center justify-between px-3 py-2 rounded-lg border text-xs transition " + (selected ? "bg-blue-50 border-blue-200 text-blue-700" : "bg-gray-50 border-gray-100 text-gray-600 hover:border-gray-200")}
+                >
+                  <div className="flex items-center gap-2 text-left">
+                    <span>{selected ? "✓" : "○"}</span>
+                    <div>
+                      <div className="font-semibold">{e.label}</div>
+                      <div className="text-xs opacity-60">{e.desc}</div>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Vitales del paciente */}
+        {patientDetail?.vitalSigns && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Vitales registrados</p>
+            <div className="space-y-1.5">
+              {[
+                { label: "Presion arterial", val: patientDetail.vitalSigns.presionArterial, unidad: "mmHg" },
+                { label: "Pulso",            val: patientDetail.vitalSigns.frecuenciaCardiaca, unidad: "lpm" },
+                { label: "Temperatura",      val: patientDetail.vitalSigns.temperatura, unidad: "°C" },
+                { label: "Oxigeno",          val: patientDetail.vitalSigns.saturacionOxigeno, unidad: "%" },
+              ].filter(s => s.val).map((s, i) => (
+                <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-gray-50 rounded-lg">
+                  <span className="text-xs text-gray-500">{s.label}</span>
+                  <span className="text-xs font-bold text-gray-700">{String(s.val)} {s.unidad}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Alerta peligro */}
+        {alergia && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <AlertTriangle size={14} className="text-red-500" />
+              <p className="text-xs font-bold text-red-700">Alerta clinica</p>
+            </div>
+            <p className="text-xs text-red-600">{alergia.mensaje}</p>
+          </div>
+        )}
       </div>
     </div>
   );
