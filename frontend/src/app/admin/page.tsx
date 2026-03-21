@@ -165,7 +165,7 @@ export default function AdminDashboard() {
         </aside>
 
         {/* Main */}
-        <main className='flex-1 overflow-auto p-6'>
+        <main className='flex-1 overflow-hidden flex flex-col'>
 
           {/* DASHBOARD */}
           {activePanel === 'dashboard' && (
@@ -234,7 +234,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {activePanel === 'pacientes' && <PacientesPanel />}
+          {activePanel === 'pacientes' && <div className='flex-1 overflow-auto p-6'><PacientesPanel /></div>}
 
           {activePanel === 'usuarios' && (
             <div className='space-y-4'>
