@@ -2673,3 +2673,74 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
     </svg>
   );
 }
+
+
+// Dashboard - pantalla con ECG
+export function IconDashboard({ size = 24, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="2" y="3" width="20" height="14" rx="2"/>
+      <path d="M8 21h8M12 17v4"/>
+      <path d="M6 10l2-3 2 4 2-2 2 3"/>
+    </svg>
+  );
+}
+
+// Usuarios - grupo de personas
+export function IconDoctor({ size = 24, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="8" cy="7" r="3"/>
+      <path d="M2 21v-1a5 5 0 0 1 5-5h2"/>
+      <circle cx="17" cy="10" r="3"/>
+      <path d="M14 21v-1a5 5 0 0 1 5-5h0a5 5 0 0 1 5 5v1"/>
+    </svg>
+  );
+}
+
+// Blockchain - cadena de bloques con verificacion
+export function IconShieldCheck({ size = 24, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 2l8 3v6c0 5-4 9-8 11C8 20 4 16 4 11V5l8-3z"/>
+      <path d="M9 12l2 2 4-4"/>
+    </svg>
+  );
+}
+
+// Reportes - grafica de barras
+export function IconReportes({ size = 24, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 3v18h18"/>
+      <rect x="7" y="10" width="3" height="8" rx="1"/>
+      <rect x="12" y="6" width="3" height="12" rx="1"/>
+      <rect x="17" y="13" width="3" height="5" rx="1"/>
+    </svg>
+  );
+}
+
+// Sistema - servidor con pulso
+export function IconSistema({ size = 24, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="2" y="3" width="20" height="8" rx="2"/>
+      <rect x="2" y="13" width="20" height="8" rx="2"/>
+      <circle cx="6" cy="7" r="1" fill="currentColor"/>
+      <circle cx="6" cy="17" r="1" fill="currentColor"/>
+      <path d="M10 17h8"/>
+    </svg>
+  );
+}
+
+// Backup - base de datos con flecha
+export function IconDatabase({ size = 24, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <ellipse cx="12" cy="5" rx="9" ry="3"/>
+      <path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/>
+      <path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/>
+      <path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/>
+    </svg>
+  );
+}
