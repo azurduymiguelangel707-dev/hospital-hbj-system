@@ -93,6 +93,7 @@ export default function EnfermeriaDashboard() {
   const [savedMsg, setSavedMsg] = useState('');
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'done'>('pending');
+  const [search, setSearch] = useState('');
   const [vitalsHistory, setVitalsHistory] = useState<any[]>([]);
   const [enfermeraInfo, setEnfermeraInfo] = useState({ nombre: "Enfermeria", especialidad: "", fechaHoy: "" });
   useEffect(() => {
@@ -205,11 +206,11 @@ export default function EnfermeriaDashboard() {
     }
   }
 
-  const filtered = appointments.filter(a =>
-    filter === 'pending' ? a.status !== 'COMPLETADA' && a.status !== 'ANULADA' :
-    filter === 'done' ? a.status === 'COMPLETADA' : true
-  ).sort((a, b) => (a.appointmentTime ?? '').localeCompare(b.appointmentTime ?? ''));
-
+  const filtered = appointments.filter(a => {
+    const matchFilter = filter === 'pending' ? a.status !== 'COMPLETADA' && a.status !== 'ANULADA' : filter === 'done' ? a.status === 'COMPLETADA' : true;
+    const matchSearch = !search || (a.patient?.nombre ?? '').toLowerCase().includes(search.toLowerCase()) || (a.patient?.ci ?? '').includes(search);
+    return matchFilter && matchSearch;
+  });
   const stats = {
     total: appointments.length,
     pending: appointments.filter(a => a.flowStatus === 'waiting_vitals').length,
@@ -277,6 +278,13 @@ export default function EnfermeriaDashboard() {
       <div className="flex flex-1 overflow-hidden">
         {/* Lista de pacientes */}
         <div className="w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+          <div className="flex items-center gap-2 px-3 pt-3 pb-2">
+            <div className="relative flex-1">
+              <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="text" placeholder="Buscar paciente por nombre o CI..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+            {search && <button onClick={() => setSearch('')} className="text-xs text-gray-400 hover:text-gray-600">Limpiar</button>}
+          </div>
           <div className="flex gap-1 p-3 border-b border-gray-100">
             {([['pending','Pendientes'],['all','Todos'],['done','Completados']] as const).map(([k,l]) => (
               <button key={k} onClick={() => setFilter(k)}
