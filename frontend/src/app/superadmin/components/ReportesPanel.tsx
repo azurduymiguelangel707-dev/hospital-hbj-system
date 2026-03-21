@@ -256,15 +256,15 @@ export function ReportesPanel() {
             <div className='space-y-4'>
               <div className='grid grid-cols-2 gap-4'>
                 <div className='bg-white border border-gray-200 rounded-xl p-4'>
-                  <p className='text-xs text-gray-500 mb-1'>Total citas — {data.especialidad}</p>
+              <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1'>Total citas — {data.especialidad}</p>
                   <p className='text-3xl font-bold text-blue-600'>{data.total}</p>
-                  <p className='text-xs text-gray-400 mt-1'>{data.fechaInicio} al {data.fechaFin}</p>
+              <p className='text-xs text-gray-400 mt-1'>{new Date(data.fechaInicio).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})} al {new Date(data.fechaFin).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}</p>
                 </div>
                 <div className='bg-white border border-gray-200 rounded-xl p-4'>
                   <p className='text-xs font-semibold text-gray-500 mb-2'>Manana vs Tarde</p>
                   <ResponsiveContainer width='100%' height={100}>
                     <BarChart data={data.porDia?.slice(-7)}>
-                      <XAxis dataKey='fecha' tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
+                <XAxis dataKey='fecha' tick={{ fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={(v) => new Date(v).toLocaleDateString('es-ES',{day:'2-digit',month:'short'})} />
                       <YAxis hide />
                       <Tooltip contentStyle={{ fontSize: 10, borderRadius: 8 }} />
                       <Bar dataKey='manana' name='Manana' fill='#3b82f6' radius={[4,4,0,0]} />
@@ -279,9 +279,9 @@ export function ReportesPanel() {
                   <ResponsiveContainer width='100%' height={200}>
                     <LineChart data={data.porDia}>
                       <CartesianGrid strokeDasharray='3 3' stroke='#f3f4f6' />
-                      <XAxis dataKey='fecha' tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey='fecha' tick={{ fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => new Date(v).toLocaleDateString('es-ES',{day:'2-digit',month:'short'})} />
                       <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} labelFormatter={(v) => new Date(v).toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})} />
                       <Legend />
                       <Line type='monotone' dataKey='total'      stroke='#3b82f6' name='Total'      strokeWidth={2} dot={false} />
                       <Line type='monotone' dataKey='completadas' stroke='#10b981' name='Completadas' strokeWidth={2} dot={false} />
