@@ -180,13 +180,22 @@ export default function SuperAdminPage() {
 
             const totalRegistros = dbStats.reduce((acc, d) => acc + d.count, 0);
 
+
+        const KpiIcons = {
+          usuarios:   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="19" cy="7" r="2"/><path d="M22 21v-1a2 2 0 0 0-2-2h-1"/></svg>,
+          medicos:    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2h8v4a4 4 0 0 1-4 4 4 4 0 0 1-4-4V2z"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M9 15h6M12 12v6"/></svg>,
+          pacientes:  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+          citas:      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>,
+          blockchain: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>,
+          database:   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>,
+        };
             const kpis = [
-              { label: "Usuarios totales",    val: stats.totalUsers ?? 0,      color: "#3b82f6", bg: "#eff6ff", icono: "👥", sub: (stats.activeUsers ?? 0) + " activos" },
-              { label: "Medicos",             val: stats.totalDoctors ?? 0,     color: "#10b981", bg: "#f0fdf4", icono: "🩺", sub: "en el sistema" },
-              { label: "Pacientes",           val: patientsCount,               color: "#8b5cf6", bg: "#f5f3ff", icono: "🏥", sub: "registrados" },
-              { label: "Citas hoy",           val: apptStats.totalHoy ?? 0,     color: "#f59e0b", bg: "#fffbeb", icono: "📅", sub: (apptStats.completadasHoy ?? 0) + " completadas" },
-              { label: "Bloques audit",       val: blockchainCount,             color: "#ef4444", bg: "#fef2f2", icono: "🔗", sub: "SHA-256" },
-              { label: "Total registros BD",  val: totalRegistros,              color: "#6b7280", bg: "#f9fafb", icono: "🗄️", sub: "en PostgreSQL" },
+              { label: "Usuarios totales",    val: stats.totalUsers ?? 0,      color: "#3b82f6", bg: "#eff6ff", icono: KpiIcons.usuarios,  sub: (stats.activeUsers ?? 0) + " activos" },
+              { label: "Medicos",             val: stats.totalDoctors ?? 0,     color: "#10b981", bg: "#f0fdf4", icono: KpiIcons.medicos,   sub: "en el sistema" },
+              { label: "Pacientes",           val: patientsCount,               color: "#8b5cf6", bg: "#f5f3ff", icono: KpiIcons.pacientes, sub: "registrados" },
+              { label: "Citas hoy",           val: apptStats.totalHoy ?? 0,     color: "#f59e0b", bg: "#fffbeb", icono: KpiIcons.citas,     sub: (apptStats.completadasHoy ?? 0) + " completadas" },
+              { label: "Bloques audit",       val: blockchainCount,             color: "#ef4444", bg: "#fef2f2", icono: KpiIcons.blockchain, sub: "SHA-256" },
+              { label: "Total registros BD",  val: totalRegistros,              color: "#6b7280", bg: "#f9fafb", icono: KpiIcons.database,  sub: "en PostgreSQL" },
             ];
 
             return (
