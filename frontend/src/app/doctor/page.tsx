@@ -102,7 +102,7 @@ export default function DoctorDashboard() {
       setActivePanel('consulta');
       return;
     }
-    await submitConsulta(selectedAppt.id, consultaForm, selectedAppt.patient?.id, selectedAppt.doctorId.doctorId);
+    await submitConsulta(selectedAppt.id, consultaForm, selectedAppt.patient?.id, selectedAppt.doctorId);
     loadAppointments();
     setActivePanel('agenda');
   }
@@ -402,6 +402,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
   detail: PatientDetail | null; loading: boolean;
   onIniciarConsulta: () => void; onVerDocumentos: () => void;
 }) {
+  const [expandedRecord, setExpandedRecord] = useState<string | null>(null);
   if (loading) return <div className="text-center py-16 text-gray-400">Cargando ficha...</div>;
   if (!detail) return (
     <div className="text-center py-16 text-gray-400">
@@ -409,66 +410,236 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
       <p className="text-sm">Selecciona un paciente desde la agenda</p>
     </div>
   );
+
+  const semaforo = (val: number, min: number, max: number) => {
+    if (val === 0) return { color: "#94a3b8", bg: "#f8fafc", label: "Sin dato" };
+    if (val < min || val > max) return { color: "#ef4444", bg: "#fef2f2", label: "Fuera de rango" };
+    if (val < min * 1.05 || val > max * 0.97) return { color: "#f59e0b", bg: "#fffbeb", label: "Precaucion" };
+    return { color: "#10b981", bg: "#f0fdf4", label: "Normal" };
+  };
+
+  const vs = detail.vitalSigns;
+  const paVal = Number(String(vs?.presionArterial ?? "").split("/")[0]) || 0;
+  const signos = vs ? [
+    { nombre: "Presion arterial", icono: "🫀", val: paVal,                       unidad: "mmHg", min: 90,  max: 140, extra: vs.presionArterial },
+    { nombre: "Pulso",            icono: "💓", val: Number(vs.frecuenciaCardiaca)||0, unidad: "lpm",  min: 60,  max: 100 },
+    { nombre: "Oxigeno en sangre",icono: "🫁", val: Number(vs.saturacionOxigeno)||0, unidad: "%",    min: 95,  max: 100 },
+    { nombre: "Temperatura",      icono: "🌡️", val: Number(vs.temperatura)||0,       unidad: "°C",   min: 36,  max: 37.5 },
+    { nombre: "Respiracion",      icono: "🌬️", val: Number(vs.frecuenciaRespiratoria)||0, unidad: "rpm", min: 12, max: 20 },
+    { nombre: "Peso",             icono: "⚖️", val: Number(vs.peso)||0,               unidad: "kg",   min: 40,  max: 120 },
+  ] : [];
+
+  const alertColor: Record<string,string> = { danger: "#ef4444", warning: "#f59e0b", info: "#3b82f6" };
+  const alertBg:    Record<string,string> = { danger: "#fef2f2", warning: "#fffbeb", info: "#eff6ff" };
+
+  const initials = detail.nombre.split(" ").filter(Boolean).slice(0,2).map((w:string) => w[0]).join("");
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-800">{detail.nombre}</h2>
-          <p className="text-xs text-gray-500">
-            {detail.historialNumero} - {detail.edad} anos - {detail.genero} - {detail.tipoSangre}
-            {detail.ci ? ` - CI: ${detail.ci}` : ''}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={onVerDocumentos} className="px-3 py-2 border border-gray-300 text-sm rounded-lg hover:bg-gray-50 transition">Ver documentos</button>
-          <button onClick={onIniciarConsulta} className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition font-medium">Iniciar consulta</button>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4 mb-5">
-        <div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Signos vitales hoy</p>
-          {detail.vitalSigns ? <VitalSignsGrid vitals={detail.vitalSigns} /> :
-            <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-400 text-center">Sin vitales registrados</div>}
-        </div>
-        <div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Alertas clinicas</p>
-          {detail.alerts.length === 0 ?
-            <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-400 text-center">Sin alertas activas</div> :
-            detail.alerts.map((a, i) => (
-              <div key={i} className={`flex items-start gap-2 px-3 py-2 rounded-lg mb-2 text-xs ${a.tipo === 'danger' ? 'bg-red-50 text-red-700' : a.tipo === 'warning' ? 'bg-amber-50 text-amber-700' : 'bg-blue-50 text-blue-700'}`}>
-                <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />{a.mensaje}
+    <div className="flex gap-5">
+      {/* Columna izquierda */}
+      <div className="flex-1 min-w-0 space-y-4">
+
+        {/* Header paciente */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xl font-bold flex-shrink-0">
+                {initials}
               </div>
-            ))
-          }
-        </div>
-      </div>
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Historial reciente</p>
-      <div className="border border-gray-200 rounded-xl overflow-hidden mb-4">
-        <div className="grid grid-cols-4 gap-2 px-4 py-2 bg-gray-50 text-xs font-medium text-gray-500 border-b border-gray-200">
-          <span>Fecha</span><span className="col-span-2">Diagnostico</span><span className="text-right">Docs</span>
-        </div>
-        {detail.recentRecords.length === 0 ?
-          <div className="px-4 py-6 text-xs text-gray-400 text-center">Sin historial previo</div> :
-          detail.recentRecords.map(r => (
-            <div key={r.id} className="grid grid-cols-4 gap-2 px-4 py-3 border-b border-gray-100 last:border-0">
-              <span className="text-xs text-gray-500">{new Date(r.fecha).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})}</span>
-              <div className="col-span-2">
-                <div className="text-sm font-medium text-gray-800">{r.diagnostico}</div>
-                <div className="text-xs text-gray-500 truncate">{r.tratamiento}</div>
-              </div>
-              <div className="text-right">
-                {r.docsCount ? <button onClick={onVerDocumentos} className="text-xs text-blue-600 hover:underline">{r.docsCount} doc(s)</button> : <span className="text-xs text-gray-300">-</span>}
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">{detail.nombre}</h2>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {[
+                    { label: detail.historialNumero, color: "#3b82f6" },
+                    { label: detail.edad + " anos",  color: "#6b7280" },
+                    { label: detail.genero,          color: "#6b7280" },
+                    { label: detail.tipoSangre,      color: "#ef4444" },
+                    detail.ci ? { label: "CI: " + detail.ci, color: "#6b7280" } : null,
+                    detail.telefono ? { label: "📞 " + detail.telefono, color: "#10b981" } : null,
+                  ].filter(Boolean).map((chip: any, i: number) => (
+                    <span key={i} className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ color: chip.color, backgroundColor: chip.color + "15", border: "1px solid " + chip.color + "30" }}>
+                      {chip.label}
+                    </span>
+                  ))}
+                </div>
+                {detail.condicionesCronicas && detail.condicionesCronicas.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {detail.condicionesCronicas.map((c: string, i: number) => (
+                      <span key={i} className="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-full text-xs">
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          ))
-        }
+            <div className="flex gap-2 flex-shrink-0">
+              <button onClick={onVerDocumentos} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition">
+                Ver documentos
+              </button>
+              <button onClick={onIniciarConsulta} className="px-3 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition">
+                Iniciar consulta
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Vitales con semaforo */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Signos vitales recientes</p>
+          {!vs ? (
+            <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-400 text-center">Sin vitales registrados hoy</div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {signos.map((s, i) => {
+                const st = semaforo(s.val, s.min, s.max);
+                const pct = s.val > 0 ? Math.min(((s.val - s.min * 0.8) / (s.max * 1.2 - s.min * 0.8)) * 100, 100) : 0;
+                return (
+                  <div key={i} className="rounded-lg border px-3 py-2" style={{ borderColor: st.color + "30", backgroundColor: st.bg }}>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">{s.icono}</span>
+                        <span className="text-xs text-gray-600 font-medium">{s.nombre}</span>
+                      </div>
+                      <span className="text-xs px-1.5 py-0.5 rounded-full font-medium" style={{ color: st.color, backgroundColor: st.color + "20" }}>{st.label}</span>
+                    </div>
+                    <div className="flex items-baseline gap-1 mb-1">
+                      <span className="text-xl font-bold" style={{ color: st.color }}>{s.extra ?? (s.val || "—")}</span>
+                      <span className="text-xs text-gray-400">{s.unidad}</span>
+                    </div>
+                    <div className="relative h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                      <div className="absolute h-1.5 bg-emerald-200 rounded-full" style={{ left: "20%", width: "45%" }} />
+                      {s.val > 0 && <div className="absolute h-1.5 w-2 rounded-full" style={{ left: "calc(" + pct + "% - 4px)", backgroundColor: st.color }} />}
+                    </div>
+                    <div className="text-xs text-gray-300 mt-0.5">rango: {s.min}–{s.max} {s.unidad}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Historial reciente */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Historial reciente</p>
+          </div>
+          {detail.recentRecords.length === 0 ? (
+            <div className="px-4 py-6 text-xs text-gray-400 text-center">Sin historial previo</div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {detail.recentRecords.map(r => (
+                <div key={r.id} className="px-4 py-3 hover:bg-gray-50 transition cursor-pointer" onClick={() => setExpandedRecord(expandedRecord === r.id ? null : r.id)}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-xs text-gray-400 font-mono">{new Date(r.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                        {r.medicoNombre && <span className="text-xs text-blue-500">Dr. {r.medicoNombre}</span>}
+                      </div>
+                      <p className="text-sm font-semibold text-gray-800">{r.diagnostico}</p>
+                      {expandedRecord === r.id && (
+                        <div className="mt-2 space-y-1.5">
+                          {r.tratamiento && <p className="text-xs text-gray-600"><span className="font-medium">Tratamiento:</span> {r.tratamiento}</p>}
+                          {r.medicamentos && <p className="text-xs text-gray-600"><span className="font-medium">Medicamentos:</span> {r.medicamentos}</p>}
+                          {r.notasInternas && <p className="text-xs text-gray-400 italic">{r.notasInternas}</p>}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {r.docsCount ? (
+                        <button onClick={(e) => { e.stopPropagation(); onVerDocumentos(); }} className="text-xs text-blue-600 hover:underline px-2 py-1 bg-blue-50 rounded-lg">
+                          {r.docsCount} doc(s)
+                        </button>
+                      ) : null}
+                      <span className="text-gray-300 text-xs">{expandedRecord === r.id ? "▲" : "▼"}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-      {detail.activeMedications.length > 0 && (
-        <><p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Medicacion activa</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {detail.activeMedications.map((m,i) => <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">{m.nombre}</span>)}
-        </div></>
-      )}
+
+      {/* Columna derecha */}
+      <div className="w-72 flex-shrink-0 space-y-4">
+
+        {/* Alertas clinicas */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Alertas clinicas</p>
+            <span className={"text-xs font-bold px-2 py-0.5 rounded-full " + (detail.alerts.length > 0 ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600")}>
+              {detail.alerts.length > 0 ? detail.alerts.length + " alerta(s)" : "Sin alertas"}
+            </span>
+          </div>
+          <div className="p-3 space-y-2">
+            {detail.alerts.length === 0 ? (
+              <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 rounded-lg">
+                <span className="text-base">✅</span>
+                <span className="text-xs text-emerald-700 font-medium">Paciente sin alertas activas</span>
+              </div>
+            ) : (
+              detail.alerts.map((a, i) => (
+                <div key={i} className="flex items-start gap-2 px-3 py-2 rounded-lg text-xs" style={{ backgroundColor: alertBg[a.tipo], color: alertColor[a.tipo] }}>
+                  <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
+                  <span className="font-medium">{a.mensaje}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Medicacion activa */}
+        {detail.activeMedications.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Medicacion activa</p>
+            </div>
+            <div className="p-3 space-y-2">
+              {detail.activeMedications.map((m, i) => (
+                <div key={i} className="flex items-start gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
+                  <span className="text-base">💊</span>
+                  <div>
+                    <p className="text-xs font-semibold text-blue-800">{m.nombre}</p>
+                    <p className="text-xs text-blue-600">{m.dosis} · {m.frecuencia}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Proximos controles */}
+        {detail.upcomingControls.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Proximos controles</p>
+            </div>
+            <div className="p-3 space-y-2">
+              {detail.upcomingControls.map((u, i) => (
+                <div key={i} className="flex items-start gap-2 px-3 py-2 bg-amber-50 rounded-lg border border-amber-100">
+                  <span className="text-base">📅</span>
+                  <div>
+                    <p className="text-xs font-semibold text-amber-800">{u.titulo}</p>
+                    <p className="text-xs text-amber-600">{u.tipo} · {new Date(u.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Acciones rapidas */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Acciones rapidas</p>
+          <button onClick={onIniciarConsulta} className="w-full px-3 py-2.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
+            <ClipboardList size={13} /> Iniciar consulta
+          </button>
+          <button onClick={onVerDocumentos} className="w-full px-3 py-2.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-2">
+            <FileText size={13} /> Ver documentos
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
