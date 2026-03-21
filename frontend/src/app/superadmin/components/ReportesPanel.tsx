@@ -297,48 +297,100 @@ export function ReportesPanel() {
             <div className='space-y-4'>
               <div className='grid grid-cols-4 gap-3'>
                 {[
-                  { label: 'Nuevos pacientes', val: data.stats?.total ?? 0,                                icono: '👥' },
-                  { label: 'Masculinos',        val: data.stats?.masculinos ?? 0,                          icono: '👨' },
-                  { label: 'Femeninos',         val: data.stats?.femeninos ?? 0,                           icono: '👩' },
-                  { label: 'Edad promedio',     val: parseFloat(data.stats?.edad_promedio ?? 0).toFixed(1) + ' anos', icono: '📊' },
+                  { label: 'Nuevos pacientes', val: data.stats?.total ?? 0,                                    color: '#3b82f6', bg: '#eff6ff', icono: '👥', desc: 'en el periodo' },
+                  { label: 'Masculinos',        val: data.stats?.masculinos ?? 0,                              color: '#6366f1', bg: '#f5f3ff', icono: '👨', desc: (data.stats?.total ?? 0) > 0 ? Math.round((data.stats.masculinos / data.stats.total) * 100) + '%' : '0%' },
+                  { label: 'Femeninas',         val: data.stats?.femeninos ?? 0,                               color: '#ec4899', bg: '#fdf2f8', icono: '👩', desc: (data.stats?.total ?? 0) > 0 ? Math.round((data.stats.femeninos / data.stats.total) * 100) + '%' : '0%' },
+                  { label: 'Edad promedio',     val: parseFloat(data.stats?.edad_promedio ?? 0).toFixed(1) + ' anos', color: '#f59e0b', bg: '#fffbeb', icono: '📊', desc: 'rango del periodo' },
                 ].map((s, i) => (
-                  <div key={i} className='bg-white border border-gray-200 rounded-xl p-3 text-center'>
-                    <div className='text-xl mb-1'>{s.icono}</div>
-                    <div className='text-xl font-bold text-gray-800'>{s.val}</div>
-                    <div className='text-xs text-gray-500 mt-0.5'>{s.label}</div>
+                  <div key={i} className='rounded-xl p-4 border' style={{ backgroundColor: s.bg, borderColor: s.color + '30' }}>
+                    <div className='text-2xl mb-2'>{s.icono}</div>
+                    <div className='text-2xl font-bold' style={{ color: s.color }}>{s.val}</div>
+                    <div className='text-xs font-semibold mt-0.5' style={{ color: s.color }}>{s.label}</div>
+                    <div className='text-xs text-gray-400 mt-0.5'>{s.desc}</div>
                   </div>
                 ))}
               </div>
-              {data.porEspecialidad?.length > 0 && (
-                <div className='bg-white border border-gray-200 rounded-xl p-4'>
-                  <p className='text-xs font-semibold text-gray-500 mb-3'>Pacientes por especialidad requerida</p>
-                  <div className='flex items-center gap-4'>
-                    <ResponsiveContainer width='50%' height={200}>
-                      <PieChart>
-                        <Pie data={data.porEspecialidad} dataKey='total' nameKey='especialidad' cx='50%' cy='50%' outerRadius={80} label={({ name, percent }) => `${name} ${(percent*100).toFixed(0)}%`}>
-                          {data.porEspecialidad.map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                        </Pie>
-                        <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className='flex-1 space-y-2'>
-                      {data.porEspecialidad.map((e: any, i: number) => (
-                        <div key={i} className='flex items-center justify-between px-3 py-2 rounded-lg' style={{ backgroundColor: COLORS[i % COLORS.length] + '15' }}>
-                          <div className='flex items-center gap-2'>
-                            <div className='w-2.5 h-2.5 rounded-full' style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                            <span className='text-xs text-gray-600'>{e.especialidad}</span>
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='bg-white rounded-xl border border-gray-200 p-4'>
+                  <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1'>Distribucion por genero</p>
+                  <p className='text-xs text-gray-400 mb-3'>Proporcion de pacientes nuevos</p>
+                  {(data.stats?.total ?? 0) > 0 ? (
+                    <div className='flex items-center gap-4'>
+                      <ResponsiveContainer width='55%' height={160}>
+                        <PieChart>
+                          <Pie data={[{ name: 'Masculinos', value: data.stats?.masculinos ?? 0 },{ name: 'Femeninas', value: data.stats?.femeninos ?? 0 }]} cx='50%' cy='50%' innerRadius={45} outerRadius={70} paddingAngle={3} dataKey='value'>
+                            <Cell fill='#6366f1' />
+                            <Cell fill='#ec4899' />
+                          </Pie>
+                          <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className='flex-1 space-y-3'>
+                        {[{ label: 'Masculinos', val: data.stats?.masculinos ?? 0, color: '#6366f1' },{ label: 'Femeninas', val: data.stats?.femeninos ?? 0, color: '#ec4899' }].map((g, i) => (
+                          <div key={i}>
+                            <div className='flex items-center justify-between mb-1'>
+                              <span className='text-xs text-gray-600 flex items-center gap-1.5'><span className='w-2.5 h-2.5 rounded-full inline-block' style={{ backgroundColor: g.color }}/>{g.label}</span>
+                              <span className='text-xs font-bold' style={{ color: g.color }}>{g.val}</span>
+                            </div>
+                            <div className='h-1.5 bg-gray-100 rounded-full overflow-hidden'>
+                              <div className='h-1.5 rounded-full' style={{ width: ((data.stats?.total ?? 0) > 0 ? Math.round((g.val / data.stats.total) * 100) : 0) + '%', backgroundColor: g.color }} />
+                            </div>
                           </div>
-                          <span className='text-xs font-bold' style={{ color: COLORS[i % COLORS.length] }}>{e.total}</span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
+                  ) : <div className='text-center py-8 text-gray-300 text-xs'>Sin datos</div>}
+                </div>
+                <div className='bg-white rounded-xl border border-gray-200 p-4'>
+                  <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1'>Especialidades mas requeridas</p>
+                  <p className='text-xs text-gray-400 mb-3'>Pacientes atendidos por especialidad</p>
+                  {(data.porEspecialidad ?? []).length > 0 ? (
+                    <ResponsiveContainer width='100%' height={160}>
+                      <BarChart data={data.porEspecialidad} layout='vertical' barSize={14}>
+                        <XAxis type='number' allowDecimals={false} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                        <YAxis type='category' dataKey='especialidad' tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={120} />
+                        <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                        <Bar dataKey='total' name='Pacientes' radius={[0,6,6,0]}>
+                          {(data.porEspecialidad ?? []).map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : <div className='text-center py-8 text-gray-300 text-xs'>Sin datos</div>}
+                </div>
+              </div>
+              {(data.porEspecialidad ?? []).length > 0 && (
+                <div className='bg-white rounded-xl border border-gray-200 overflow-hidden'>
+                  <div className='px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between'>
+                    <p className='text-xs font-semibold text-gray-600'>Detalle por especialidad</p>
+                    <span className='text-xs text-gray-400'>{data.stats?.total ?? 0} pacientes totales</span>
+                  </div>
+                  <div className='divide-y divide-gray-50'>
+                    {(data.porEspecialidad ?? []).map((e: any, i: number) => {
+                      const pct = (data.stats?.total ?? 0) > 0 ? Math.round((e.total / data.stats.total) * 100) : 0;
+                      return (
+                        <div key={i} className='flex items-center gap-4 px-4 py-3 hover:bg-gray-50 transition'>
+                          <div className='w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0' style={{ backgroundColor: COLORS[i % COLORS.length] }}>
+                            {e.especialidad.substring(0,2).toUpperCase()}
+                          </div>
+                          <div className='flex-1 min-w-0'>
+                            <div className='flex items-center justify-between mb-1'>
+                              <span className='text-sm font-semibold text-gray-700'>{e.especialidad}</span>
+                              <span className='text-sm font-bold' style={{ color: COLORS[i % COLORS.length] }}>{e.total}</span>
+                            </div>
+                            <div className='h-1.5 bg-gray-100 rounded-full overflow-hidden'>
+                              <div className='h-1.5 rounded-full' style={{ width: pct + '%', backgroundColor: COLORS[i % COLORS.length] }} />
+                            </div>
+                            <p className='text-xs text-gray-400 mt-0.5'>{pct}% del total</p>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
             </div>
           )}
-        </div>
-      </div>
+
 
       {/* Panel lateral */}
       <div className='w-56 flex-shrink-0 space-y-4'>
