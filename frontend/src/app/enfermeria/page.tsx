@@ -277,7 +277,7 @@ export default function EnfermeriaDashboard() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Lista de pacientes */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+        <div className="w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 min-h-0">
           <div className="flex items-center gap-2 px-3 pt-3 pb-2">
             <div className="relative flex-1">
               <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
