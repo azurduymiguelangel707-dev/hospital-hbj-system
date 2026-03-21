@@ -524,11 +524,11 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Historial reciente</p>
           </div>
-          {detail.recentRecords.length === 0 ? (
+          {(detail.recentRecords ?? []).length === 0 ? (
             <div className="px-4 py-6 text-xs text-gray-400 text-center">Sin historial previo</div>
           ) : (
             <div className="divide-y divide-gray-50">
-              {detail.recentRecords.map(r => (
+              {(detail.recentRecords ?? []).map(r => (
                 <div key={r.id} className="px-4 py-3 hover:bg-gray-50 transition cursor-pointer" onClick={() => setExpandedRecord(expandedRecord === r.id ? null : r.id)}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
@@ -569,17 +569,17 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Alertas clinicas</p>
             <span className={"text-xs font-bold px-2 py-0.5 rounded-full " + (detail.alerts.length > 0 ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600")}>
-              {detail.alerts.length > 0 ? detail.alerts.length + " alerta(s)" : "Sin alertas"}
+              {(detail.alerts ?? []).length > 0 ? (detail.alerts ?? []).length + " alerta(s)" : "Sin alertas"}
             </span>
           </div>
           <div className="p-3 space-y-2">
-            {detail.alerts.length === 0 ? (
+            {(detail.alerts ?? []).length === 0 ? (
               <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 rounded-lg">
                 <span className="text-base">✅</span>
                 <span className="text-xs text-emerald-700 font-medium">Paciente sin alertas activas</span>
               </div>
             ) : (
-              detail.alerts.map((a, i) => (
+              (detail.alerts ?? []).map((a, i) => (
                 <div key={i} className="flex items-start gap-2 px-3 py-2 rounded-lg text-xs" style={{ backgroundColor: alertBg[a.tipo], color: alertColor[a.tipo] }}>
                   <AlertTriangle size={13} className="mt-0.5 flex-shrink-0" />
                   <span className="font-medium">{a.mensaje}</span>
@@ -590,13 +590,13 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
         </div>
 
         {/* Medicacion activa */}
-        {detail.activeMedications.length > 0 && (
+        {(detail.activeMedications ?? []).length > 0 && (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Medicacion activa</p>
             </div>
             <div className="p-3 space-y-2">
-              {detail.activeMedications.map((m, i) => (
+              {(detail.activeMedications ?? []).map((m, i) => (
                 <div key={i} className="flex items-start gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
                   <span className="text-base">💊</span>
                   <div>
@@ -610,13 +610,13 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
         )}
 
         {/* Proximos controles */}
-        {detail.upcomingControls.length > 0 && (
+        {(detail.upcomingControls ?? []).length > 0 && (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Proximos controles</p>
             </div>
             <div className="p-3 space-y-2">
-              {detail.upcomingControls.map((u, i) => (
+              {(detail.upcomingControls ?? []).map((u, i) => (
                 <div key={i} className="flex items-start gap-2 px-3 py-2 bg-amber-50 rounded-lg border border-amber-100">
                   <span className="text-base">📅</span>
                   <div>
