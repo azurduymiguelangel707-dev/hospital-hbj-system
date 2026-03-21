@@ -342,7 +342,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-800 truncate">{p.nombre}</p>
-                  <p className="text-xs text-gray-400">CI: {p.ci} · Hist: {p.numeroHistorial ?? '-'} · {p.edad} anos · {p.genero}</p>
+                  <p className="text-xs text-gray-400">CI: {p.ci} - Hist: {p.numeroHistorial ?? '-'} - {p.edad} anos - {p.genero}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {p.especialidadRequerida && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs">{p.especialidadRequerida}</span>}
