@@ -149,7 +149,7 @@ export default function SuperAdminPage() {
         </aside>
 
         {/* Main content — light */}
-        <main className="flex-1 overflow-auto bg-gray-50 p-6">
+        <main className="flex-1 overflow-hidden bg-gray-50 p-6 flex flex-col">
 
           {/* DASHBOARD */}
           {activePanel === 'dashboard' && (() => {
@@ -179,7 +179,7 @@ export default function SuperAdminPage() {
             ];
 
             return (
-              <div className="space-y-5">
+              <div className="overflow-y-auto" style={{ maxHeight: "calc(100vh - 130px)" }}><div className="space-y-5">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                   <div>
@@ -278,12 +278,12 @@ export default function SuperAdminPage() {
                   </div>
                 </div>
               </div>
-            );
+              </div>);
           })()}
 
           {/* USUARIOS */}
           {activePanel === 'usuarios' && (
-            <div>
+          <div className="flex-1 overflow-auto">
               <div className="mb-5">
                 <h2 className="text-xl font-semibold text-gray-800">Gestion global de usuarios</h2>
                 <p className="text-sm text-gray-500">{users.length} usuarios en el sistema — acceso completo</p>
@@ -296,7 +296,7 @@ export default function SuperAdminPage() {
 
           {/* BLOCKCHAIN */}
           {activePanel === 'blockchain' && (
-            <div>
+          <div className="flex-1 overflow-auto">
               <div className="mb-5">
                 <h2 className="text-xl font-semibold text-gray-800">Blockchain Audit Log</h2>
                 <p className="text-sm text-gray-500">{blockchainCount} bloques registrados — SHA-256 CryptoJS</p>
@@ -309,7 +309,7 @@ export default function SuperAdminPage() {
 
           {/* REPORTES */}
           {activePanel === 'reportes' && (
-            <div>
+          <div className="flex-1 overflow-auto">
               <div className="mb-5">
                 <h2 className="text-xl font-semibold text-gray-800">Reportes y estadisticas</h2>
                 <p className="text-sm text-gray-500">Reportes exportables en PDF</p>
@@ -325,7 +325,7 @@ export default function SuperAdminPage() {
             <BackupPanel />
           )}
           {activePanel === 'sistema' && (
-            <div>
+          <div className="flex-1 overflow-auto">
               <div className="mb-5">
                 <h2 className="text-xl font-semibold text-gray-800">Monitor del sistema</h2>
                 <p className="text-sm text-gray-500">Estado en tiempo real de todos los servicios</p>
