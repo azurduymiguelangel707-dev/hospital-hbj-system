@@ -920,32 +920,219 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
 }
 
 function SeguimientoPanel({ followUps, onRefresh }: { followUps: FollowUpPatient[]; onRefresh: () => void }) {
+  const [filter, setFilter] = useState<"all"|"danger"|"warning">("all");
+  const [search, setSearch] = useState("");
+
+  const filtered = followUps
+    .filter(f => filter === "all" ? true : f.severidad === filter)
+    .filter(f => search === "" ? true : f.nombre.toLowerCase().includes(search.toLowerCase()) || f.diagnostico.toLowerCase().includes(search.toLowerCase()));
+
+  const stats = {
+    total:   followUps.length,
+    criticos: followUps.filter(f => f.severidad === "danger").length,
+    atencion: followUps.filter(f => f.severidad === "warning").length,
+    conDocs:  followUps.filter(f => f.tieneDocsNuevos).length,
+    vencidos: followUps.filter(f => (f.diasVencido ?? 0) > 7).length,
+  };
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">Seguimiento de pacientes</h2>
-        <button onClick={onRefresh} className="px-3 py-2 border border-gray-300 text-sm rounded-lg hover:bg-gray-50 transition">Actualizar</button>
-      </div>
-      {followUps.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
-          <ClipboardList size={40} className="mx-auto mb-3 opacity-30" />
-          <p className="text-sm">Sin pacientes pendientes de seguimiento</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {followUps.map(f => (
-            <div key={f.id} className={`border rounded-xl px-4 py-3 ${f.severidad==='danger'?'border-red-200 bg-red-50':'border-amber-200 bg-amber-50'}`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className={`text-sm font-semibold ${f.severidad==='danger'?'text-red-800':'text-amber-800'}`}>{f.nombre} - {f.diagnostico}</p>
-                  <p className={`text-xs mt-0.5 ${f.severidad==='danger'?'text-red-600':'text-amber-600'}`}>{f.motivo}{f.diasVencido ? ` - Vencido hace ${f.diasVencido} dias` : ''}</p>
-                </div>
-                <button className="px-3 py-1.5 bg-white border border-gray-300 text-xs rounded-lg hover:bg-gray-50 transition">Agendar</button>
-              </div>
+    <div className="flex gap-5">
+      {/* Columna principal */}
+      <div className="flex-1 min-w-0 space-y-4">
+
+        {/* Header */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h2 className="text-lg font-bold text-gray-800">Seguimiento de pacientes</h2>
+              <p className="text-xs text-gray-400 mt-0.5">Pacientes que requieren control o atencion posterior</p>
             </div>
+            <button onClick={onRefresh}
+              className="flex items-center gap-2 px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition">
+              <Activity size={12} /> Actualizar
+            </button>
+          </div>
+          {/* Stats */}
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { label: "Total",       val: stats.total,    color: "#6b7280", bg: "#f9fafb", icono: "👥" },
+              { label: "Criticos",    val: stats.criticos, color: "#ef4444", bg: "#fef2f2", icono: "🚨" },
+              { label: "En atencion", val: stats.atencion, color: "#f59e0b", bg: "#fffbeb", icono: "⚠️" },
+              { label: "Docs nuevos", val: stats.conDocs,  color: "#3b82f6", bg: "#eff6ff", icono: "📄" },
+            ].map((s, i) => (
+              <div key={i} className="rounded-lg p-2.5 text-center" style={{ backgroundColor: s.bg }}>
+                <div className="text-base">{s.icono}</div>
+                <div className="text-xl font-bold" style={{ color: s.color }}>{s.val}</div>
+                <div className="text-xs" style={{ color: s.color }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Buscador y filtros */}
+        <div className="flex gap-2">
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar por nombre o diagnostico..."
+            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {[
+            { key: "all",     label: "Todos",      count: stats.total },
+            { key: "danger",  label: "Criticos",   count: stats.criticos },
+            { key: "warning", label: "En atencion",count: stats.atencion },
+          ].map(f => (
+            <button key={f.key} onClick={() => setFilter(f.key as typeof filter)}
+              className={"px-3 py-2 rounded-lg text-xs font-medium transition border flex items-center gap-1.5 " +
+                (filter === f.key ? (f.key === "danger" ? "bg-red-600 text-white border-red-600" : f.key === "warning" ? "bg-amber-500 text-white border-amber-500" : "bg-blue-600 text-white border-blue-600") : "bg-white text-gray-500 border-gray-200 hover:border-gray-300")}
+            >
+              {f.label}
+              <span className={"px-1.5 py-0.5 rounded-full text-xs " + (filter === f.key ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500")}>
+                {f.count}
+              </span>
+            </button>
           ))}
         </div>
-      )}
+
+        {/* Lista pacientes */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-16 border-2 border-dashed border-gray-100 rounded-xl text-gray-300">
+            <div className="text-4xl mb-2">✅</div>
+            <p className="text-sm font-medium text-gray-400">
+              {followUps.length === 0 ? "Sin pacientes pendientes de seguimiento" : "Sin resultados para esta busqueda"}
+            </p>
+            <p className="text-xs text-gray-300 mt-1">
+              {followUps.length === 0 ? "Los pacientes con control pendiente apareceran aqui" : "Prueba con otros terminos"}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filtered.map(f => (
+              <div key={f.id}
+                className="bg-white rounded-xl border overflow-hidden"
+                style={{ borderColor: f.severidad === "danger" ? "#fecaca" : "#fde68a", borderLeftWidth: "4px", borderLeftColor: f.severidad === "danger" ? "#ef4444" : "#f59e0b" }}
+              >
+                <div className="px-4 py-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      {/* Nombre y badge */}
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className={"w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 " + (f.severidad === "danger" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700")}>
+                          {f.nombre.split(" ").slice(0,2).map((w: string) => w[0]).join("")}
+                        </div>
+                        <p className="text-sm font-semibold text-gray-800">{f.nombre}</p>
+                        <span className={"px-2 py-0.5 rounded-full text-xs font-semibold " + (f.severidad === "danger" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700")}>
+                          {f.severidad === "danger" ? "🚨 Critico" : "⚠️ Atencion"}
+                        </span>
+                        {f.tieneDocsNuevos && (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                            📄 Docs nuevos
+                          </span>
+                        )}
+                      </div>
+                      {/* Diagnostico y motivo */}
+                      <p className="text-xs font-medium text-gray-700 ml-9">{f.diagnostico}</p>
+                      {f.motivo && <p className="text-xs text-gray-400 ml-9 mt-0.5 italic">"{f.motivo}"</p>}
+                    </div>
+                    {/* Dias vencido */}
+                    {(f.diasVencido ?? 0) > 0 && (
+                      <div className={"flex-shrink-0 text-center px-3 py-2 rounded-lg " + (f.diasVencido! > 7 ? "bg-red-50" : "bg-amber-50")}>
+                        <div className={"text-lg font-bold " + (f.diasVencido! > 7 ? "text-red-600" : "text-amber-600")}>{f.diasVencido}</div>
+                        <div className={"text-xs " + (f.diasVencido! > 7 ? "text-red-400" : "text-amber-400")}>dias</div>
+                        <div className={"text-xs font-medium " + (f.diasVencido! > 7 ? "text-red-500" : "text-amber-500")}>vencido</div>
+                      </div>
+                    )}
+                  </div>
+                  {/* Barra urgencia */}
+                  <div className="mt-2 ml-9">
+                    <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                      <div className={"h-1 rounded-full " + (f.severidad === "danger" ? "bg-red-400" : "bg-amber-400")}
+                        style={{ width: Math.min(((f.diasVencido ?? 0) / 30) * 100, 100) + "%" }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {(f.diasVencido ?? 0) === 0 ? "Control pendiente" :
+                       (f.diasVencido ?? 0) <= 3 ? "Requiere atencion pronto" :
+                       (f.diasVencido ?? 0) <= 7 ? "Control vencido" : "Control muy vencido — prioridad alta"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Panel lateral */}
+      <div className="w-64 flex-shrink-0 space-y-4">
+
+        {/* Resumen criticos */}
+        {stats.criticos > 0 && (
+          <div className="bg-red-50 rounded-xl border border-red-200 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle size={14} className="text-red-500" />
+              <p className="text-xs font-bold text-red-700">{stats.criticos} paciente(s) critico(s)</p>
+            </div>
+            <div className="space-y-1.5">
+              {followUps.filter(f => f.severidad === "danger").slice(0, 4).map((f, i) => (
+                <div key={i} className="flex items-center gap-2 px-2 py-1.5 bg-white rounded-lg border border-red-100">
+                  <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-xs font-bold text-red-700 flex-shrink-0">
+                    {f.nombre.split(" ")[0][0]}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-red-800 truncate">{f.nombre.split(" ").slice(0,2).join(" ")}</p>
+                    <p className="text-xs text-red-400 truncate">{f.diagnostico}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Vencidos hace mas de 7 dias */}
+        {stats.vencidos > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Controles muy vencidos</p>
+            <div className="space-y-1.5">
+              {followUps.filter(f => (f.diasVencido ?? 0) > 7).slice(0, 5).map((f, i) => (
+                <div key={i} className="flex items-center justify-between px-2 py-1.5 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-700 truncate flex-1">{f.nombre.split(" ").slice(0,2).join(" ")}</p>
+                  <span className="text-xs font-bold text-red-500 ml-2">{f.diasVencido}d</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Info panel vacio */}
+        {followUps.length === 0 && (
+          <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-4 text-center">
+            <div className="text-3xl mb-2">✅</div>
+            <p className="text-xs font-semibold text-emerald-700">Sin pendientes</p>
+            <p className="text-xs text-emerald-500 mt-1">Todos los pacientes estan al dia con sus controles</p>
+          </div>
+        )}
+
+        {/* Leyenda */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Referencia</p>
+          <div className="space-y-2">
+            {[
+              { color: "#ef4444", bg: "#fef2f2", label: "Critico", desc: "Requiere atencion urgente" },
+              { color: "#f59e0b", bg: "#fffbeb", label: "Atencion", desc: "Control pendiente o vencido" },
+              { color: "#3b82f6", bg: "#eff6ff", label: "Docs nuevos", desc: "Tiene documentos recientes" },
+            ].map((s, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <div className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0" style={{ backgroundColor: s.color }} />
+                <div>
+                  <p className="text-xs font-medium text-gray-700">{s.label}</p>
+                  <p className="text-xs text-gray-400">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
