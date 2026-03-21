@@ -174,7 +174,7 @@ export default function DoctorDashboard() {
         </aside>
 
         {/* Main */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-hidden p-6">
 
           {/* AGENDA */}
           {activePanel === 'agenda' && (
@@ -265,9 +265,9 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
   const next = appointments.find(a => a.flowStatus === "ready" || a.flowStatus === "in_progress");
 
   return (
-    <div className="flex gap-5 h-full">
+    <div className="flex gap-5 h-full overflow-hidden">
       {/* Columna izquierda - lista citas */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -302,7 +302,7 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
             <p className="text-sm">No hay citas en esta categoria</p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2 overflow-y-auto flex-1 pr-1" style={{ maxHeight: "calc(100vh - 220px)" }}>
             {filtered.map(a => (
               <PatientCard key={a.id} appointment={a} selected={a.id === selectedId}
                 onSelect={() => onSelect(a)} onStart={() => onStart(a.id)} onComplete={() => onComplete()} />
@@ -312,7 +312,7 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
       </div>
 
       {/* Columna derecha - resumen turno */}
-      <div className="w-72 flex-shrink-0 space-y-4">
+      <div className="w-72 flex-shrink-0 space-y-4 overflow-y-auto" style={{ maxHeight: "calc(100vh - 160px)" }}>
         {/* Progreso del turno */}
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Progreso del turno</p>
