@@ -1,6 +1,7 @@
 // src/app/enfermeria/page.tsx
 'use client';
 import { useRouter } from 'next/navigation';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 import { useState, useEffect, useCallback } from 'react';
 import {
@@ -513,7 +514,49 @@ export default function EnfermeriaDashboard() {
                 )}
               </div>
 
-              {savedMsg && (
+              {/* Grafico comparativo vitales */}
+      {(() => {
+        const patientVitals = vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id);
+        if (patientVitals.length === 0) return null;
+        const latest = patientVitals[0];
+        const data = [
+          { name: "PAS", actual: Number(String(vitals.presionArterial).split('/')[0])||0, previo: Number(String(latest.systolic_pressure||latest.presionArterial||'').split('/')[0])||0, min:90, max:140 },
+          { name: "PAD", actual: Number(String(vitals.presionArterial).split('/')[1])||0, previo: Number(String(latest.diastolic_pressure||latest.presionArterial||'').split('/')[1])||0, min:60, max:90 },
+          { name: "FC",  actual: Number(vitals.frecuenciaCardiaca)||0, previo: Number(latest.heart_rate||latest.frecuenciaCardiaca)||0, min:60, max:100 },
+          { name: "FR",  actual: Number(vitals.frecuenciaRespiratoria)||0, previo: Number(latest.respiratory_rate||latest.frecuenciaRespiratoria)||0, min:12, max:20 },
+          { name: "SpO2",actual: Number(vitals.saturacionOxigeno)||0, previo: Number(latest.oxygen_saturation||latest.saturacionOxigeno)||0, min:95, max:100 },
+          { name: "Temp",actual: Number(vitals.temperatura)||0, previo: Number(latest.temperature||latest.temperatura)||0, min:36, max:37.5 },
+        ].filter(d => d.actual > 0 || d.previo > 0);
+        const getColor = (d: {actual:number,min:number,max:number}) =>
+          d.actual < d.min || d.actual > d.max ? "#ef4444" : "#0d9488";
+        return (
+          <div className="mb-4 bg-gray-50 rounded-xl p-3">
+            <div className="text-xs font-medium text-gray-600 mb-2 flex items-center gap-1">
+              <Activity size={12} className="text-teal-600" />
+              Comparativo vs registro anterior
+            </div>
+            <ResponsiveContainer width="100%" height={160}>
+              <BarChart data={data} barSize={14} barGap={2}>
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis hide />
+                <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }}
+                />
+                <Bar dataKey="previo" name="previo" fill="#cbd5e1" radius={[3,3,0,0]} />
+                <Bar dataKey="actual" name="actual" radius={[3,3,0,0]}>
+                  {data.map((d, i) => <Cell key={i} fill={getColor(d)} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="flex gap-3 mt-1 justify-center">
+              <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-sm bg-slate-300 inline-block"/>Anterior</span>
+              <span className="flex items-center gap-1 text-xs text-teal-600"><span className="w-2 h-2 rounded-sm bg-teal-600 inline-block"/>Normal</span>
+              <span className="flex items-center gap-1 text-xs text-red-500"><span className="w-2 h-2 rounded-sm bg-red-500 inline-block"/>Fuera de rango</span>
+            </div>
+          </div>
+        );
+      })()}
+
+      {savedMsg && (
                 <div className={`rounded-xl px-4 py-3 text-sm mb-4 flex items-center gap-2 ${savedMsg.startsWith('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
                   {savedMsg.startsWith('Error') ? <AlertTriangle size={14} /> : <CheckCircle size={14} />}
                   {savedMsg}
