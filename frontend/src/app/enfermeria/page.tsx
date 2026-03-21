@@ -740,127 +740,118 @@ export default function EnfermeriaDashboard() {
           )}
         </div>
 
-        {/* Tabla resumen vitales del dia */}
-        <div className="w-96 bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Vitales registrados hoy</p>
-            <p className="text-xs text-gray-400 mt-0.5">{vitalsHistory.length} registro(s)</p>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {vitalsHistory.length === 0 ? (
+      {/* Panel derecho - alertas vitales del turno */}
+      <div className="w-96 bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
+        {/* Header */}
+        <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+          <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide flex items-center gap-1.5">
+            <Activity size={12} className="text-teal-600" />
+            Estado del turno
+          </p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            {appointments.length} pacientes · {vitalsHistory.length} registros · {appointments.filter(a => a.flowStatus === "waiting_vitals").length} sin vitales
+          </p>
+        </div>
+        {/* Lista pacientes con semaforo */}
+        <div className="flex-1 overflow-y-auto">
+          {(() => {
+            const sem = (val: number, min: number, max: number) => {
+              if (val === 0) return { color: "#94a3b8", label: "—", dot: "bg-gray-300" };
+              if (val < min || val > max) return { color: "#ef4444", label: "Alerta", dot: "bg-red-500" };
+              if (val < min * 1.05 || val > max * 0.97) return { color: "#f59e0b", label: "Precaucion", dot: "bg-amber-400" };
+              return { color: "#10b981", label: "Normal", dot: "bg-emerald-500" };
+            };
+            // agrupar ultimo vital por paciente
+            const pacientes = appointments.map(a => {
+              const pvs = vitalsHistory.filter((v: any) => v.patientId === a.patient?.id);
+              const ultimo = pvs[0];
+              const pas = Number(String(ultimo?.presionArterial ?? "").split("/")[0]) || 0;
+              const fc  = Number(ultimo?.frecuenciaCardiaca ?? 0) || 0;
+              const sp  = Number(ultimo?.saturacionOxigeno ?? 0) || 0;
+              const tp  = Number(ultimo?.temperatura ?? 0) || 0;
+              const fr  = Number(ultimo?.frecuenciaRespiratoria ?? 0) || 0;
+              const estados = [
+                sem(pas, 90, 140),
+                sem(fc,  60, 100),
+                sem(sp,  95, 100),
+                sem(tp,  36, 37.5),
+                sem(fr,  12, 20),
+              ];
+              const tieneAlerta    = estados.some(e => e.label === "Alerta");
+              const tienePrecaucion= estados.some(e => e.label === "Precaucion");
+              const globalColor    = tieneAlerta ? "#ef4444" : tienePrecaucion ? "#f59e0b" : ultimo ? "#10b981" : "#94a3b8";
+              const globalLabel    = tieneAlerta ? "Alerta" : tienePrecaucion ? "Precaucion" : ultimo ? "Normal" : "Sin vitales";
+              const globalBg       = tieneAlerta ? "#fef2f2" : tienePrecaucion ? "#fffbeb" : ultimo ? "#f0fdf4" : "#f8fafc";
+              return { a, ultimo, pvs, pas, fc, sp, tp, fr, estados, globalColor, globalLabel, globalBg };
+            });
+            // ordenar: alertas primero
+            const sorted = [...pacientes].sort((a, b) => {
+              const order = { "Alerta": 0, "Precaucion": 1, "Sin vitales": 2, "Normal": 3 };
+              return (order[a.globalLabel as keyof typeof order] ?? 3) - (order[b.globalLabel as keyof typeof order] ?? 3);
+            });
+            if (sorted.length === 0) return (
               <div className="text-center py-8 text-gray-400">
                 <Activity size={28} className="mx-auto mb-2 opacity-20" />
-                <p className="text-xs">Sin registros aun</p>
+                <p className="text-xs">Sin pacientes en el turno</p>
               </div>
-            ) : (
-              <table className="w-full text-xs">
-                <thead className="bg-gray-50 sticky top-0">
-                  <tr>
-                    <th className="px-3 py-2 text-left text-gray-500 font-medium">Paciente</th>
-                    <th className="px-2 py-2 text-center text-gray-500 font-medium">PA</th>
-                    <th className="px-2 py-2 text-center text-gray-500 font-medium">FC</th>
-                    <th className="px-2 py-2 text-center text-gray-500 font-medium">T°</th>
-                    <th className="px-2 py-2 text-center text-gray-500 font-medium">SpO2</th>
-                    <th className="px-2 py-2 text-center text-gray-500 font-medium">Hora</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {vitalsHistory.map((v: any, i: number) => {
-                    const appt = appointments.find(a => a.patient?.id === v.patientId);
-                    const nombre = appt?.patient?.nombre ?? 'Paciente';
-                    const hora = new Date(v.registradoEn ?? v.registrado_en ?? v.createdAt).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', timeZone: 'America/La_Paz' });
-                    const fcSt = numStatus(v.frecuenciaCardiaca ?? '', 60, 100);
-                    const tSt = numStatus(v.temperatura ?? '', 36, 37.5);
-                    const spSt = numStatus(v.saturacionOxigeno ?? '', 94, 100);
-                    return (
-                      <tr key={i} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                        <td className="px-3 py-2">
-                          <p className="font-medium text-gray-700 text-xs leading-tight">{nombre.split(' ').slice(0,3).join(' ')}</p>
-                        </td>
-                        <td className={`px-2 py-2 text-center font-medium ${paStatus(v.presionArterial ?? '') === 'danger' ? 'text-red-600' : paStatus(v.presionArterial ?? '') === 'warn' ? 'text-amber-600' : 'text-gray-700'}`}>
-                          {v.presionArterial ?? '-'}
-                        </td>
-                        <td className={`px-2 py-2 text-center font-medium ${STATUS_CLASS[fcSt]}`}>
-                          {v.frecuenciaCardiaca ? Math.round(Number(v.frecuenciaCardiaca)) : '-'}
-                        </td>
-                        <td className={`px-2 py-2 text-center font-medium ${STATUS_CLASS[tSt]}`}>
-                          {v.temperatura ? Number(v.temperatura).toFixed(1) : '-'}
-                        </td>
-                        <td className={`px-2 py-2 text-center font-medium ${STATUS_CLASS[spSt]}`}>
-                          {v.saturacionOxigeno ? Math.round(Number(v.saturacionOxigeno)) : '-'}
-                        </td>
-                        <td className="px-2 py-2 text-center text-gray-400">{hora}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            )}
-          </div>
-          {/* Resumen estado vitales por paciente */}
-          {selected && (() => {
-            const pv = vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id);
-            if (pv.length === 0) return null;
-            const sem = (val: number, min: number, max: number) => {
-              if (val === 0) return { color: "#94a3b8", bg: "#f8fafc", label: "—" };
-              if (val < min || val > max) return { color: "#ef4444", bg: "#fef2f2", label: "Alerta" };
-              if (val < min * 1.05 || val > max * 0.97) return { color: "#f59e0b", bg: "#fffbeb", label: "Precaucion" };
-              return { color: "#10b981", bg: "#f0fdf4", label: "Normal" };
-            };
+            );
             return (
-              <div className="border-t border-gray-100">
-                <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-gray-600 flex items-center gap-1">
-                    <Activity size={11} className="text-teal-500" />
-                    Estado actual — {selected.patient?.nombre?.split(" ").slice(0,2).join(" ")}
-                  </span>
-                  <span className="text-xs text-gray-400">{pv.length} reg.</span>
-                </div>
-                <div className="p-2 space-y-1.5">
-                  {[
-                    { label: "Presion arterial", icono: "🫀", val: Number(String(pv[0].presionArterial ?? "").split("/")[0]), unidad: "mmHg", min: 90, max: 140, extra: pv[0].presionArterial },
-                    { label: "Pulso",            icono: "💓", val: Number(pv[0].frecuenciaCardiaca ?? 0),  unidad: "lpm", min: 60,  max: 100 },
-                    { label: "Oxigeno en sangre",icono: "🫁", val: Number(pv[0].saturacionOxigeno ?? 0),  unidad: "%",   min: 95,  max: 100 },
-                    { label: "Temperatura",      icono: "🌡️", val: Number(pv[0].temperatura ?? 0),        unidad: "°C",  min: 36,  max: 37.5 },
-                    { label: "Respiracion",      icono: "🌬️", val: Number(pv[0].frecuenciaRespiratoria ?? 0), unidad: "rpm", min: 12, max: 20 },
-                  ].map((s, i) => {
-                    const st = sem(s.val, s.min, s.max);
-                    const pct = s.val > 0 ? Math.min(((s.val - s.min * 0.8) / (s.max * 1.2 - s.min * 0.8)) * 100, 100) : 0;
-                    return (
-                      <div key={i} className="rounded-lg px-2.5 py-2 flex items-center gap-2" style={{ backgroundColor: st.bg }}>
-                        <span className="text-sm w-5 text-center">{s.icono}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-0.5">
-                            <span className="text-xs text-gray-600 font-medium">{s.label}</span>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-bold" style={{ color: st.color }}>
-                                {s.extra ?? (s.val > 0 ? s.val : "—")} {s.val > 0 ? s.unidad : ""}
-                              </span>
-                              <span className="text-xs px-1.5 py-0.5 rounded-full font-medium" style={{ color: st.color, backgroundColor: st.color + "20" }}>
-                                {st.label}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="relative h-1.5 rounded-full bg-gray-200 overflow-hidden">
-                            <div className="absolute h-1.5 bg-emerald-200 rounded-full" style={{ left: "20%", width: "45%" }} />
-                            {s.val > 0 && <div className="absolute h-1.5 w-2 rounded-full" style={{ left: "calc(" + pct + "% - 4px)", backgroundColor: st.color }} />}
-                          </div>
-                        </div>
+              <div className="divide-y divide-gray-50">
+                {sorted.map(({ a, ultimo, pvs, pas, fc, sp, tp, fr, estados, globalColor, globalLabel, globalBg }, i) => (
+                  <div key={i}
+                    className="px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition"
+                    style={{ borderLeft: "3px solid " + globalColor }}
+                    onClick={() => selectAppointment(a)}
+                  >
+                    {/* Fila principal */}
+                    <div className="flex items-center justify-between mb-1">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-700 leading-tight">
+                          {a.patient?.nombre?.split(" ").slice(0,2).join(" ")}
+                        </p>
+                        <p className="text-xs text-gray-400">{a.reason ?? ""}</p>
                       </div>
-                    );
-                  })}
-                </div>
-                {pv.length > 1 && (
-                  <div className="px-3 pb-2 text-xs text-gray-400 text-center">
-                    Ultimo registro — {new Date(pv[0].registradoEn ?? pv[0].registrado_en ?? pv[0].createdAt).toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" })}
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ color: globalColor, backgroundColor: globalColor + "18" }}>
+                        {globalLabel}
+                      </span>
+                    </div>
+                    {/* Semaforos compactos */}
+                    {ultimo ? (
+                      <div className="grid grid-cols-5 gap-1 mt-1">
+                        {[
+                          { icono: "🫀", val: pas > 0 ? String(ultimo.presionArterial) : "—", st: estados[0] },
+                          { icono: "💓", val: fc > 0 ? fc + " lpm" : "—", st: estados[1] },
+                          { icono: "🫁", val: sp > 0 ? sp + "%" : "—", st: estados[2] },
+                          { icono: "🌡️", val: tp > 0 ? tp + "°" : "—", st: estados[3] },
+                          { icono: "🌬️", val: fr > 0 ? fr + " rpm" : "—", st: estados[4] },
+                        ].map((s, j) => (
+                          <div key={j} className="rounded p-1 text-center" style={{ backgroundColor: s.st.color + "12" }}>
+                            <div className="text-xs">{s.icono}</div>
+                            <div className="text-xs font-medium leading-tight" style={{ color: s.st.color }}>{s.val}</div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-gray-300 mt-1 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 inline-block"/>
+                        Esperando registro de vitales
+                      </div>
+                    )}
+                    {/* Hora ultimo registro */}
+                    {ultimo && (
+                      <div className="text-xs text-gray-300 mt-1">
+                        {pvs.length} reg. · ultimo: {new Date(ultimo.registradoEn ?? ultimo.registrado_en ?? ultimo.createdAt).toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" })}
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
             );
           })()}
         </div>
       </div>
     </div>
+  </div>
   );
 }
 
