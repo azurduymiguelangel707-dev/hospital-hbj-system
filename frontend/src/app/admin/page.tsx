@@ -204,6 +204,7 @@ export default function AdminDashboard() {
               )}
             </div>
             </div>
+          )}
 
           {/* REGISTRO */}
           {activePanel === 'registro' && (
