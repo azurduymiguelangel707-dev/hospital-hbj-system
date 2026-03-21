@@ -36,7 +36,7 @@ export function IconHistorialMedico({ size = 24, className = '', primaryColor = 
 export function IconDashboard({ size = 24, className = '' }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M513.000000,179.000000
       C513.000000,290.639526 513.000000,401.779053 513.000000,512.959290
@@ -72,7 +72,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C484.430298,409.721954 497.332123,397.784973 497.735748,380.789490
       C498.557159,346.200165 497.910889,311.575989 497.967560,276.036041
       z"/>
-      <path fill="#4E6575" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M325.809326,439.918488
       C331.459015,448.052704 337.108704,456.186920 342.467102,464.793091
@@ -110,7 +110,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C252.738174,372.223846 249.849640,375.357605 249.311050,377.960358
       C248.431671,382.210052 251.788986,384.745483 256.633545,385.951080
       z"/>
-      <path fill="#7A8A95" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M136.882782,67.762932
       C136.927368,57.536209 136.971954,47.309490 137.048187,36.625568
@@ -131,7 +131,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C223.285156,68.019135 219.463577,67.980286 215.641922,67.969765
       C189.388885,67.897507 163.135834,67.831177 136.882782,67.762932
       z"/>
-      <path fill="#E2E2E2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M170.468262,464.955414
       C172.405411,465.086670 173.879715,465.406128 175.354156,465.406769
@@ -146,7 +146,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C126.955811,467.182617 128.996735,465.026886 133.511063,465.012451
       C145.675751,464.973511 157.840652,464.996521 170.468262,464.955414
       z"/>
-      <path fill="#7A8A95" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M325.725403,439.583466
       C300.987274,439.940369 276.164612,440.075592 251.343384,439.942169
@@ -156,7 +156,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C308.353790,409.086304 309.826691,409.496246 311.691895,409.872498
       C316.603058,419.768463 321.122253,429.508453 325.725403,439.583466
       z"/>
-      <path fill="#7CB5E8" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M466.093414,201.032806
       C466.138336,223.415329 466.178192,245.797882 466.234802,268.180359
@@ -238,7 +238,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C99.734192,321.972198 119.552078,321.970001 139.369904,321.942963
       C142.633316,321.938507 145.298782,320.933319 145.982529,316.411652
       z"/>
-      <path fill="#7BB3E5" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M256.240662,385.913635
       C251.788986,384.745483 248.431671,382.210052 249.311050,377.960358
@@ -246,7 +246,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C259.655060,369.673004 263.444550,372.345062 264.038086,376.081024
       C264.997803,382.121796 262.967743,384.827820 256.240662,385.913635
       z"/>
-      <path fill="#A3CBEF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M310.985718,200.167374
       C291.117157,198.812943 273.996216,190.962524 259.300781,177.799683
@@ -290,7 +290,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C325.668060,115.886024 327.671234,115.736717 330.765137,118.905571
       C342.756500,131.187561 354.983643,143.239395 367.622620,155.877289
       z"/>
-      <path fill="#D1E5F7" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M466.304749,125.654274
       C452.270355,124.415520 445.049377,116.380287 444.993835,102.471687
@@ -302,14 +302,14 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C461.559448,67.936539 463.691040,67.936531 466.433929,67.936531
       C466.433929,87.409668 466.433929,106.338165 466.304749,125.654274
       z"/>
-      <path fill="#FFC44E" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M141.078140,99.141678
       C174.365097,99.342628 203.132278,126.636459 201.440582,160.548660
       C180.965942,160.959305 161.012650,160.912735 141.043655,160.408844
       C141.044678,139.681580 141.061401,119.411629 141.078140,99.141678
       z"/>
-      <path fill="#8ABA55" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M311.055542,200.614838
       C310.985718,192.738251 310.985718,185.309143 310.985718,177.084839
@@ -324,7 +324,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C311.275360,276.684967 311.208313,242.870392 311.202179,209.056122
       C311.201691,206.391510 311.152130,203.726913 311.055542,200.614838
       z"/>
-      <path fill="#8ABA56" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M96.855606,204.638245
       C86.946053,194.936066 81.483620,183.138916 78.928322,169.513657
@@ -334,7 +334,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C123.006065,178.503540 122.965317,178.920563 122.681366,179.097076
       C113.883476,187.728485 105.369537,196.183365 96.855606,204.638245
       z"/>
-      <path fill="#EF4B52" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M96.965164,204.925537
       C105.369537,196.183365 113.883476,187.728485 122.982941,179.255600
@@ -344,7 +344,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C184.157837,209.251648 168.542465,219.623322 149.022232,222.624252
       C129.256424,225.662933 111.551392,219.495316 96.965164,204.925537
       z"/>
-      <path fill="#F48085" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M194.558685,191.528687
       C189.873444,192.828781 185.419983,193.931259 180.972076,195.055725
@@ -356,7 +356,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C161.012650,160.912735 180.965942,160.959305 201.377075,161.005493
       C202.821533,171.891037 199.873901,181.863708 194.558685,191.528687
       z"/>
-      <path fill="#ADCF88" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M140.122498,161.165955
       C134.626266,166.693192 129.130051,172.220413 123.343475,177.917419
@@ -365,7 +365,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C119.702980,101.407768 129.202011,99.433151 139.575897,99.577904
       C140.048294,120.442680 140.085388,140.804321 140.122498,161.165955
       z"/>
-      <path fill="#8ABA55" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M279.986084,292.982147
       C280.047638,299.307068 280.040283,305.633789 280.201569,311.956146
@@ -380,7 +380,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C265.518707,289.989929 268.511536,292.772522 275.502075,292.972504
       C276.995605,293.015259 278.491364,292.980927 279.986084,292.982147
       z"/>
-      <path fill="#ADCF88" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M342.097748,292.516998
       C340.700317,292.981628 339.371033,293.005859 338.042633,292.980713
@@ -390,7 +390,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C342.011261,193.532303 342.105347,196.822998 342.260620,200.576996
       C342.297607,231.378098 342.231934,261.715942 342.097748,292.516998
       z"/>
-      <path fill="#FFFFFF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M90.014694,259.926025
       C86.687500,259.924500 83.856392,259.955811 81.026344,259.914490
@@ -403,7 +403,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C201.607346,260.030273 199.737045,259.917725 197.908707,259.918274
       C162.109558,259.928589 126.310417,259.925964 90.014694,259.926025
       z"/>
-      <path fill="#FEFEFF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M74.310509,281.359344
       C76.417114,280.435242 78.257462,279.275238 80.100838,279.270416
@@ -414,7 +414,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C159.859833,290.971954 120.083603,290.978607 80.307396,290.955902
       C73.899223,290.952240 71.780014,287.734344 74.310509,281.359344
       z"/>
-      <path fill="#8ABA55" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M404.084503,292.967957
       C404.151550,299.287537 404.163361,305.608398 404.310547,311.926147
@@ -428,7 +428,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C389.988403,290.002533 392.615753,292.624542 398.633667,292.942627
       C400.445984,293.038422 402.267303,292.964264 404.084503,292.967957
       z"/>
-      <path fill="#ADCF88" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M280.051331,292.518921
       C278.491364,292.980927 276.995605,293.015259 275.502075,292.972504
@@ -439,7 +439,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C279.059052,222.686569 280.284271,224.435684 280.259613,228.233139
       C280.121399,249.506729 280.146942,270.781372 280.051331,292.518921
       z"/>
-      <path fill="#FEFEFF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M145.968140,316.813293
       C145.298782,320.933319 142.633316,321.938507 139.369904,321.942963
@@ -449,7 +449,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C99.662781,310.169464 119.480759,310.162201 139.298218,310.235046
       C143.219971,310.249512 146.182114,311.728668 145.968140,316.813293
       z"/>
-      <path fill="#ADCF88" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M404.155762,292.505554
       C402.267303,292.964264 400.445984,293.038422 398.633667,292.942627
@@ -459,7 +459,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C403.127350,253.696381 404.425629,255.472473 404.369385,259.245667
       C404.206543,270.176453 404.259033,281.110413 404.155762,292.505554
       z"/>
-      <path fill="#C8CA8A" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M140.358856,161.097672
       C140.085388,140.804321 140.048294,120.442680 140.013916,99.623825
@@ -467,7 +467,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
       C141.061401,119.411629 141.044678,139.681580 141.043655,160.408844
       C141.059372,160.866150 140.595200,161.029388 140.358856,161.097672
       z"/>
-      <path fill="#F3F8FB" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M367.372803,155.627106
       C354.983643,143.239395 342.756500,131.187561 330.765137,118.905571
@@ -504,7 +504,7 @@ export function IconDashboard({ size = 24, className = '' }: { size?: number; cl
 export function IconDoctor({ size = 24, className = '' }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M286.000000,513.000000
       C192.022812,513.000000 98.545601,512.979492 5.068528,513.085144
@@ -517,7 +517,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C513.103699,512.593262 512.247681,513.092896 508.945099,513.087830
       C434.796844,512.973389 360.648407,513.000000 286.000000,513.000000
       z"/>
-      <path fill="#2F4069" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M406.080261,421.833954
       C406.038971,431.215027 405.960297,440.206604 406.006836,449.197510
@@ -555,7 +555,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C380.803680,337.049438 400.712433,360.352173 406.172729,395.568756
       C407.491425,404.073639 407.206329,412.820496 406.080261,421.833954
       z"/>
-      <path fill="#B6F0FA" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M406.356567,422.052307
       C404.069733,417.276306 405.229950,412.112366 405.231964,407.076447
@@ -576,7 +576,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C452.715607,352.021240 441.552277,376.913940 425.761292,399.460266
       C420.137360,407.490112 413.940216,415.191101 406.356567,422.052307
       z"/>
-      <path fill="#B6F0FA" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M128.592560,189.944809
       C130.159561,198.054672 132.172668,205.855179 137.761505,212.300751
@@ -598,7 +598,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C99.249863,199.609131 112.162842,194.805771 125.272858,190.340454
       C126.177795,190.032242 127.210243,190.098404 128.592560,189.944809
       z"/>
-      <path fill="#02BEFF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M110.378738,146.098633
       C105.299171,150.935562 100.296165,151.402924 96.171967,147.670609
@@ -607,7 +607,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C111.012924,134.766693 112.542168,139.039902 111.164963,143.416794
       C110.920135,144.194901 110.831207,145.022095 110.378738,146.098633
       z"/>
-      <path fill="#06D506" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M401.820190,90.659607
       C402.005646,100.592575 395.915222,105.291954 388.357788,101.793060
@@ -616,7 +616,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C392.922577,83.120483 396.658752,83.734093 399.494324,87.025085
       C400.343353,88.010452 400.973358,89.184525 401.820190,90.659607
       z"/>
-      <path fill="#FF5892" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M474.504486,408.982880
       C464.729218,410.679382 461.209076,401.594452 463.649750,395.728699
@@ -625,7 +625,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C482.123840,401.877106 480.689575,405.245728 477.560181,407.741394
       C476.822266,408.329865 475.806183,408.569489 474.504486,408.982880
       z"/>
-      <path fill="#B5EFF9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M111.259125,438.408478
       C110.770378,437.689972 110.234489,437.286102 110.240128,436.889954
@@ -685,7 +685,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C156.025726,464.829498 135.641266,454.307251 115.677856,442.768677
       C113.946922,441.768280 112.247612,440.721466 111.259125,438.408478
       z"/>
-      <path fill="#B5EFF9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M329.606384,150.672302
       C331.575531,152.138733 330.939972,153.945496 330.943298,155.514145
@@ -712,7 +712,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C308.969879,156.671616 317.839783,153.411423 326.819214,150.455551
       C327.613647,150.194046 328.452484,150.205902 329.606384,150.672302
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M345.328796,146.193817
       C342.793793,138.108765 339.932526,130.726608 334.336670,124.454353
@@ -728,7 +728,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C356.415314,135.809494 356.603180,138.962280 356.975464,142.497925
       C353.936768,146.485291 349.869690,146.708557 345.328796,146.193817
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M329.964294,150.484238
       C319.363831,154.681076 308.782684,158.482208 297.979736,162.601746
@@ -745,7 +745,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C234.392731,123.863373 266.843750,123.873924 299.292480,124.045578
       C315.443115,124.130997 328.151855,134.920090 329.964294,150.484238
       z"/>
-      <path fill="#B5EFF9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M285.271820,324.719940
       C285.485382,327.596741 284.844727,329.628235 283.335876,331.651459
@@ -759,7 +759,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C284.777618,304.675720 285.518036,305.623199 285.334656,309.262482
       C285.083344,314.249115 285.271912,319.257904 285.271820,324.719940
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M111.027611,438.551941
       C132.177460,451.373749 154.593475,461.757507 178.894363,468.614136
@@ -767,7 +767,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C119.075081,468.959320 111.151817,461.065796 111.005356,451.973511
       C110.935791,447.654694 110.998665,443.333679 111.027611,438.551941
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M330.424469,468.985229
       C339.291870,464.987885 348.863525,461.463562 357.910553,456.899414
@@ -776,7 +776,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C391.077423,459.620880 382.354950,469.774689 370.721741,469.164429
       C357.479919,468.469757 344.173828,468.999146 330.424469,468.985229
       z"/>
-      <path fill="#03BBFC" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M166.814087,392.946838
       C173.993896,394.579254 177.412125,398.672821 177.030701,404.714081
@@ -784,7 +784,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C162.446304,415.621155 157.307068,412.320190 155.573578,407.141388
       C153.213455,400.090485 158.104172,393.673248 166.814087,392.946838
       z"/>
-      <path fill="#03BCFC" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M347.050171,208.403839
       C344.181244,209.128967 345.001801,207.123245 344.995636,206.093201
@@ -793,7 +793,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C346.804108,169.675293 347.718536,170.864304 348.621552,171.479416
       C361.550385,180.286163 360.925568,198.530869 347.050171,208.403839
       z"/>
-      <path fill="#03BCFC" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M146.783890,201.063507
       C140.870514,189.521301 143.610703,177.032562 152.995682,171.197708
@@ -802,7 +802,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C156.276321,206.200485 156.128937,207.344818 156.027924,208.794769
       C151.689362,207.660568 149.271408,204.597656 146.783890,201.063507
       z"/>
-      <path fill="#B1EAF5" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M314.854706,324.012909
       C310.901154,324.012909 307.389709,323.710297 303.953796,324.090393
@@ -812,7 +812,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C313.804810,312.357788 319.135925,316.846100 323.134369,324.012909
       C320.123993,324.012909 317.727142,324.012909 314.854706,324.012909
       z"/>
-      <path fill="#B5EEF9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M184.348526,324.000580
       C182.268509,324.000580 180.636688,324.000580 178.232040,324.000580
@@ -822,14 +822,14 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C202.142776,324.197083 200.503235,324.011536 198.789673,324.005127
       C194.125412,323.987701 189.461044,324.000031 184.348526,324.000580
       z"/>
-      <path fill="#B2EBF6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M344.844818,146.362259
       C348.723053,144.954849 352.441803,143.975906 356.560272,142.959045
       C358.948639,148.411270 357.496613,154.065796 358.041565,159.712860
       C347.333008,156.897064 344.992432,154.596878 344.844818,146.362259
       z"/>
-      <path fill="#2F416A" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M184.989929,180.423355
       C187.409439,170.603149 193.691635,164.738983 202.944305,163.201065
@@ -839,7 +839,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C190.541443,206.921158 182.651169,195.441315 184.805527,182.314255
       C184.886108,181.823303 184.934479,181.327072 184.989929,180.423355
       z"/>
-      <path fill="#2F416A" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M278.088074,168.373505
       C283.619781,163.787460 289.984558,162.367920 297.316406,162.895416
@@ -850,7 +850,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C268.238373,189.836685 269.225220,179.185013 276.257721,171.010803
       C276.903137,170.260605 277.520691,169.486404 278.088074,168.373505
       z"/>
-      <path fill="#31436B" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M237.768997,253.996323
       C241.447937,261.010162 246.181183,263.778381 252.653748,262.981476
@@ -863,7 +863,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C232.807327,243.367142 235.801315,245.669479 236.883148,250.248962
       C237.149002,251.374313 237.383392,252.507111 237.768997,253.996323
       z"/>
-      <path fill="#32446C" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M243.833344,225.463898
       C243.790115,219.045517 243.706711,213.073929 243.795471,207.104904
@@ -873,7 +873,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C257.674622,228.170990 255.895370,231.312531 251.591812,231.854050
       C247.360840,232.386444 244.673477,230.195190 243.833344,225.463898
       z"/>
-      <path fill="#03BAFA" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M199.582977,191.241669
       C197.214615,186.406662 198.141205,182.438919 201.866928,179.303696
@@ -882,7 +882,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
       C216.414444,191.891327 213.984528,194.572281 210.146973,195.611664
       C205.836700,196.779037 202.350632,195.193207 199.582977,191.241669
       z"/>
-      <path fill="#03BAFA" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M291.629791,177.399994
       C297.118408,176.771484 300.813354,178.840393 302.499268,183.690369
@@ -898,7 +898,7 @@ export function IconDoctor({ size = 24, className = '' }: { size?: number; class
 export function IconShieldCheck({ size = 24, className = '' }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M513.000000,193.000000
       C513.000000,299.973999 513.000000,406.447998 513.000000,512.960999
@@ -938,7 +938,7 @@ export function IconShieldCheck({ size = 24, className = '' }: { size?: number; 
       C55.208057,253.387878 56.541668,262.597229 58.042561,271.771332
       C59.512142,280.754089 61.327187,289.680328 62.999775,299.502197
       z"/>
-      <path fill="#009CFF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M62.995190,299.066772
       C61.327187,289.680328 59.512142,280.754089 58.042561,271.771332
@@ -998,7 +998,7 @@ export function IconShieldCheck({ size = 24, className = '' }: { size?: number; 
       C405.357361,340.293427 415.021515,315.939728 419.988007,289.360687
       C421.687500,280.265625 423.230835,271.141388 425.045532,261.217682
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M424.845520,262.030487
       C423.230835,271.141388 421.687500,280.265625 419.988007,289.360687
@@ -1032,7 +1032,7 @@ export function IconShieldCheck({ size = 24, className = '' }: { size?: number; 
       C387.186462,276.349731 396.585938,274.094574 405.658600,270.908783
       C412.277344,268.584656 418.465454,265.034241 424.845520,262.030487
       z"/>
-      <path fill="#64DDFF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M424.945557,261.624084
       C418.465454,265.034241 412.277344,268.584656 405.658600,270.908783
@@ -1050,7 +1050,7 @@ export function IconShieldCheck({ size = 24, className = '' }: { size?: number; 
       C431.009888,204.697418 429.466187,221.667999 427.964172,238.630417
       C427.295135,246.186417 426.036530,253.690201 424.945557,261.624084
       z"/>
-      <path fill="#005FC1" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M241.547806,113.938370
       C255.189117,113.132385 268.331726,113.035416 281.411835,115.769310
@@ -1096,7 +1096,7 @@ export function IconShieldCheck({ size = 24, className = '' }: { size?: number; 
       C299.714722,152.696869 280.607849,145.500839 259.313507,145.380356
       C250.870544,145.332565 242.413498,147.776993 233.179901,149.023010
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M340.954773,279.156891
       C336.325928,290.644745 328.805664,299.942444 319.649200,308.167725
@@ -1119,7 +1119,7 @@ export function IconShieldCheck({ size = 24, className = '' }: { size?: number; 
       C274.103851,266.029358 278.750061,261.114288 283.997192,256.147400
       C301.228973,269.107666 320.143372,276.451538 340.954773,279.156891
       z"/>
-      <path fill="#64DCFF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M260.368683,232.193024
       C249.160049,218.908844 242.232925,203.625656 237.970505,187.000366
@@ -1131,7 +1131,7 @@ export function IconShieldCheck({ size = 24, className = '' }: { size?: number; 
       C286.755249,205.032608 274.888092,217.635925 263.004517,230.223785
       C262.331177,230.937012 261.473083,231.475769 260.368683,232.193024
       z"/>
-      <path fill="#63DCFF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M341.292297,279.036896
       C320.143372,276.451538 301.228973,269.107666 284.295227,255.984894
@@ -1150,7 +1150,7 @@ export function IconShieldCheck({ size = 24, className = '' }: { size?: number; 
 export function IconDatabase({ size = 24, className = '' }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M295.000000,513.000000
       C196.690536,513.000000 98.881065,513.000000 1.035801,513.000000
@@ -1256,7 +1256,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C179.963928,240.936157 174.867950,245.799927 174.896027,254.638809
       C175.094940,317.258667 175.001740,379.879486 175.001663,443.500000
       z"/>
-      <path fill="#3A65CD" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M64.883774,420.035339
       C56.387199,420.021790 47.887142,419.851746 39.395096,420.041046
@@ -1426,7 +1426,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C127.120697,201.225006 127.352081,211.008987 127.352081,221.252121
       C129.763779,221.252121 131.566818,221.252121 134.287949,221.166382
       z"/>
-      <path fill="#3762CC" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M488.000000,287.000000
       C488.000000,354.470764 487.873688,421.442017 488.149628,488.411652
@@ -1449,7 +1449,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C410.779999,136.009857 410.009674,136.794128 410.006683,143.542130
       C409.994049,171.861420 410.001251,200.180710 410.001221,229.500000
       z"/>
-      <path fill="#3964CD" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M374.996246,435.000000
       C374.996185,452.829773 375.007263,470.159515 374.991241,487.489288
@@ -1474,7 +1474,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C296.973938,491.035889 298.732147,493.174591 302.389465,493.167938
       C322.543610,493.131226 342.697571,493.010254 363.686859,492.588715
       z"/>
-      <path fill="#F9A7A7" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M229.311661,200.275620
       C249.344559,190.598389 269.060547,181.133545 288.789856,171.696640
@@ -1505,7 +1505,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C210.276505,213.086945 210.867432,209.094040 214.920288,207.036133
       C219.531143,204.694901 224.300049,202.664902 229.311661,200.275620
       z"/>
-      <path fill="#3864CC" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M175.001663,443.000000
       C175.001740,379.879486 175.094940,317.258667 174.896027,254.638809
@@ -1529,14 +1529,14 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C183.507980,249.845505 183.239304,250.099564 183.237473,258.514404
       C183.229996,292.842926 183.234818,327.171478 183.234482,362.500000
       z"/>
-      <path fill="#2B55D5" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M64.930786,420.499451
       C65.206642,420.599060 65.814285,421.164581 65.810677,421.726196
       C65.723671,435.266754 65.571327,448.806885 65.155327,462.657593
       C64.912491,448.966553 64.945145,434.965088 64.930786,420.499451
       z"/>
-      <path fill="#A3C8FF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M74.000038,338.180725
       C67.166779,338.177521 60.832348,338.102264 54.500778,338.204315
@@ -1577,7 +1577,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C118.928581,336.684204 116.062347,338.055603 114.497604,338.076599
       C101.167015,338.255402 87.833008,338.179840 74.000038,338.180725
       z"/>
-      <path fill="#DCE8FB" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M42.364101,315.000061
       C42.364738,331.165741 42.332108,346.831451 42.378826,362.496979
@@ -1602,7 +1602,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C42.292435,155.499542 42.367939,157.511551 42.367744,159.510513
       C42.362709,211.173691 42.363838,262.836884 42.364101,315.000061
       z"/>
-      <path fill="#4671C6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M34.046398,476.524139
       C35.846867,474.722229 37.611877,472.195496 39.396832,472.181335
@@ -1613,7 +1613,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C34.785866,492.992523 34.035385,492.198914 34.006191,485.456726
       C33.993942,482.627411 34.014549,479.797943 34.046398,476.524139
       z"/>
-      <path fill="#DBE7FB" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M135.768921,407.385406
       C134.285553,408.978058 132.886841,411.066071 131.417755,411.116791
@@ -1626,7 +1626,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C130.153931,309.456787 132.551987,309.456787 135.821075,309.456787
       C135.821075,341.879974 135.821075,374.409576 135.768921,407.385406
       z"/>
-      <path fill="#4570C6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M89.000000,346.004883
       C97.665649,346.005280 105.833855,346.125122 113.995758,345.950470
@@ -1637,7 +1637,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C51.028767,346.006409 50.862465,346.004852 64.502968,346.004852
       C72.501976,346.004852 80.500992,346.004883 89.000000,346.004883
       z"/>
-      <path fill="#DDE9FB" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M95.948730,127.762772
       C85.187798,127.762688 74.917671,127.762688 64.047356,127.762688
@@ -1648,7 +1648,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C106.057449,111.243462 105.901604,119.052841 105.901604,127.762863
       C102.574287,127.762863 99.506912,127.762863 95.948730,127.762772
       z"/>
-      <path fill="#6ADADD" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M95.949356,458.708496
       C96.395782,462.676880 94.779243,463.939240 91.363571,463.800110
@@ -1660,7 +1660,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C95.094627,418.938110 96.061188,420.386841 96.012459,423.789001
       C95.847984,435.271576 95.950104,446.757935 95.949356,458.708496
       z"/>
-      <path fill="#6BDCDD" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M93.665939,411.099915
       C88.055222,411.160400 82.907166,411.083069 77.764450,411.214813
@@ -1672,7 +1672,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C95.882851,387.364685 95.975815,397.657471 95.846046,407.947754
       C95.832916,408.988556 94.728691,410.015656 93.665939,411.099915
       z"/>
-      <path fill="#D2E0F8" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M127.281586,246.992035
       C127.281746,240.913101 127.281746,235.331451 127.281746,229.478790
@@ -1681,7 +1681,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C132.845337,260.889648 130.425446,260.889648 127.281418,260.889648
       C127.281418,256.324554 127.281418,251.906937 127.281586,246.992035
       z"/>
-      <path fill="#D3E0F8" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M134.619095,269.282501
       C135.326324,273.982452 135.741211,278.554871 135.852676,283.134644
@@ -1690,7 +1690,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C127.698425,290.401123 127.698425,280.051514 127.698425,269.158234
       C129.979630,269.158234 132.085831,269.158234 134.619095,269.282501
       z"/>
-      <path fill="#D2E0F8" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M133.828903,221.209259
       C131.566818,221.252121 129.763779,221.252121 127.352081,221.252121
@@ -1699,7 +1699,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C135.721680,199.820541 135.738541,209.884445 135.661072,219.947601
       C135.657928,220.357361 134.765854,220.760284 133.828903,221.209259
       z"/>
-      <path fill="#4671C6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M410.001221,229.000000
       C410.001251,200.180710 409.994049,171.861420 410.006683,143.542130
@@ -1712,7 +1712,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C410.780792,492.991608 410.006409,492.181030 410.005859,485.372864
       C409.998901,400.081909 410.001251,314.790955 410.001221,229.000000
       z"/>
-      <path fill="#A3C8FF" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M363.269226,492.753418
       C342.697571,493.010254 322.543610,493.131226 302.389465,493.167938
@@ -1725,7 +1725,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
       C366.326996,300.888153 366.341309,393.201263 366.211426,485.514160
       C366.208099,487.873505 364.565125,490.230560 363.269226,492.753418
       z"/>
-      <path fill="#6BDCDD" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M183.234802,362.000000
       C183.234818,327.171478 183.229996,292.842926 183.237473,258.514404
@@ -1746,7 +1746,7 @@ export function IconDatabase({ size = 24, className = '' }: { size?: number; cla
 export function IconReportes({ size = 24, className = '' }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M1.000000,188.000000
       C1.000000,125.333336 1.000000,63.166668 1.000000,1.000000
@@ -1879,7 +1879,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C370.387207,138.897705 368.131927,143.142914 369.247772,147.083359
       C370.589600,151.821823 374.742310,153.716187 381.106201,151.847031
       z"/>
-      <path fill="#E1E6F5" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M29.638903,439.758484
       C36.362900,430.011993 45.311905,425.154419 56.824512,424.993408
@@ -1894,7 +1894,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C121.339836,489.116730 88.356583,489.305786 55.385162,488.853455
       C30.887430,488.517426 17.246670,462.350647 29.638903,439.758484
       z"/>
-      <path fill="#5E86C9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M318.968964,309.040466
       C376.763519,315.739685 433.547974,315.814148 488.972260,294.883362
@@ -1907,7 +1907,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C265.224670,320.282593 264.998688,307.353912 264.998688,293.828644
       C282.265961,302.475494 300.272369,306.196472 318.968964,309.040466
       z"/>
-      <path fill="#4C6BB4" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M441.102783,372.091248
       C457.654968,369.347260 473.472595,365.620392 489.001099,357.783234
@@ -1921,7 +1921,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C265.214294,384.319214 264.998901,371.488647 264.998901,358.932617
       C322.370667,380.298920 381.221771,380.112335 441.102783,372.091248
       z"/>
-      <path fill="#3B5891" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M387.938904,488.924194
       C357.587067,489.353027 327.838165,488.077301 298.718292,480.882385
@@ -1935,7 +1935,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C472.452484,475.052795 462.025818,479.141266 451.289551,481.800262
       C430.708527,486.897522 409.565002,488.119568 387.938904,488.924194
       z"/>
-      <path fill="#779FD2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M356.425964,249.463211
       C393.816162,248.187866 430.529694,249.398743 466.253357,260.077637
@@ -1948,7 +1948,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C280.957428,260.671967 294.095978,257.278076 307.390686,255.188950
       C323.480591,252.660599 339.760468,251.341125 356.425964,249.463211
       z"/>
-      <path fill="#C8CDED" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M232.983551,25.166128
       C238.123886,25.166128 243.264236,25.166128 248.701401,25.166128
@@ -1963,7 +1963,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C230.563843,56.987343 232.987076,54.619328 232.996994,46.494587
       C233.005661,39.385120 232.989014,32.275616 232.983551,25.166128
       z"/>
-      <path fill="#C8CDED" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M232.983551,217.166122
       C238.123825,217.166122 243.264084,217.166122 248.701401,217.166122
@@ -1978,7 +1978,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C230.563843,248.987396 232.987091,246.619370 232.996994,238.494583
       C233.005646,231.385117 232.989014,224.275604 232.983551,217.166122
       z"/>
-      <path fill="#C8CDED" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M232.983521,121.166122
       C238.123810,121.166122 243.264084,121.166122 248.701401,121.166122
@@ -1993,7 +1993,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C230.563843,152.987381 232.987091,150.619370 232.996994,142.494583
       C233.005661,135.385117 232.988998,128.275604 232.983521,121.166122
       z"/>
-      <path fill="#E2E7F6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M41.100979,56.964542
       C36.093777,56.974098 31.086573,56.983658 25.622742,56.988274
@@ -2010,7 +2010,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C126.043182,41.276100 83.648384,41.276100 41.100979,41.276100
       C41.100979,46.688377 41.100979,51.826458 41.100979,56.964542
       z"/>
-      <path fill="#E2E7F6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M185.101028,248.964600
       C180.015976,248.971497 174.930923,248.978394 169.419067,248.511841
@@ -2027,7 +2027,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C206.042404,233.278748 195.643326,233.278748 185.101028,233.278748
       C185.101028,238.692047 185.101028,243.828339 185.101028,248.964600
       z"/>
-      <path fill="#E2E7F6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M232.521347,121.090157
       C232.988998,128.275604 233.005661,135.385117 232.996994,142.494583
@@ -2044,7 +2044,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C25.166117,142.526733 25.166117,132.070114 25.166117,121.014191
       C94.151543,121.014191 163.105362,121.014191 232.521347,121.090157
       z"/>
-      <path fill="#C6CBEA" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M168.163986,396.516296
       C171.936935,395.626740 175.250717,394.524994 178.642593,393.777802
@@ -2056,7 +2056,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C142.337830,359.452759 157.031281,370.636536 160.096283,386.818085
       C160.977631,391.471130 162.099869,395.695496 168.163986,396.516296
       z"/>
-      <path fill="#3B5891" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M272.960114,185.160309
       C275.425201,185.160309 277.890320,185.160309 280.676636,185.160309
@@ -2066,7 +2066,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C126.380562,192.991837 194.687683,193.000595 262.994812,192.996658
       C269.667206,192.996262 271.784698,191.293655 272.960114,185.160309
       z"/>
-      <path fill="#3B5891" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M272.960114,89.160301
       C275.425201,89.160301 277.890289,89.160301 280.676636,89.160301
@@ -2076,7 +2076,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C126.380569,96.991837 194.687714,97.000595 262.994843,96.996651
       C269.667328,96.996262 271.784790,95.293655 272.960114,89.160301
       z"/>
-      <path fill="#4C6BB4" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M272.497986,185.096069
       C271.784698,191.293655 269.667206,192.996262 262.994812,192.996658
@@ -2084,7 +2084,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C57.158401,190.497635 57.158401,188.035110 57.158401,185.031845
       C128.932465,185.031845 200.484161,185.031845 272.497986,185.096069
       z"/>
-      <path fill="#4C6BB4" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M272.497986,89.096085
       C271.784790,95.293655 269.667328,96.996262 262.994843,96.996651
@@ -2092,7 +2092,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C57.158409,94.496284 57.158409,92.032372 57.158409,89.031860
       C128.932449,89.031860 200.484146,89.031860 272.497986,89.096085
       z"/>
-      <path fill="#5E86C9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M296.980774,121.161743
       C302.105560,121.161743 307.230316,121.161743 312.677368,121.161743
@@ -2103,7 +2103,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C294.054932,152.924469 296.922485,150.093048 296.981689,144.124313
       C297.057587,136.470886 296.987793,128.815994 296.980774,121.161743
       z"/>
-      <path fill="#5E86C9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M296.980774,25.161743
       C302.105560,25.161743 307.230347,25.161743 312.677399,25.161743
@@ -2114,7 +2114,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C294.054871,56.924484 296.922455,54.093109 296.981689,48.124313
       C297.057587,40.470879 296.987793,32.815998 296.980774,25.161743
       z"/>
-      <path fill="#779FD2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M296.518005,25.090965
       C296.987793,32.815998 297.057587,40.470879 296.981689,48.124313
@@ -2123,7 +2123,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C265.161682,46.522339 265.161682,36.064190 265.161682,25.020187
       C275.543091,25.020187 285.799194,25.020187 296.518005,25.090965
       z"/>
-      <path fill="#779FD2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M296.518005,121.090965
       C296.987793,128.815994 297.057587,136.470886 296.981689,144.124313
@@ -2132,7 +2132,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C265.161713,142.522385 265.161713,132.064194 265.161713,121.020187
       C275.543091,121.020187 285.799164,121.020187 296.518005,121.090965
       z"/>
-      <path fill="#779FD2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M297.284760,240.621826
       C286.644318,244.139282 276.003906,247.656738 265.239746,251.215088
@@ -2140,7 +2140,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C275.594971,217.020172 285.824646,217.020172 296.524109,217.548920
       C297.090851,225.592377 297.187805,233.107101 297.284760,240.621826
       z"/>
-      <path fill="#5E86C9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M297.701233,240.575516
       C297.187805,233.107101 297.090851,225.592377 296.986694,217.619659
@@ -2148,7 +2148,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C312.679077,224.018051 312.679077,230.738831 312.679077,237.674088
       C307.816895,238.627441 302.967316,239.578323 297.701233,240.575516
       z"/>
-      <path fill="#E9A139" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M380.746887,152.006042
       C374.742310,153.716187 370.589600,151.821823 369.247772,147.083359
@@ -2156,7 +2156,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C378.424896,135.965286 383.039795,138.107574 384.489838,142.305801
       C385.874084,146.313477 384.454010,149.453201 380.746887,152.006042
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M41.563122,56.980930
       C41.100979,51.826458 41.100979,46.688377 41.100979,41.276100
@@ -2164,7 +2164,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C168.992279,46.167397 168.992279,51.102886 168.945618,56.501480
       C126.607735,56.975494 84.316498,56.986408 41.563122,56.980930
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M185.563141,56.980934
       C185.100983,51.828289 185.100983,46.692036 185.100983,41.278725
@@ -2172,7 +2172,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C216.992279,46.170586 216.992279,51.104481 216.945618,56.501480
       C206.607742,56.975494 196.316513,56.986408 185.563141,56.980934
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M41.563213,248.980988
       C41.101082,243.826599 41.101082,238.688538 41.101082,233.276154
@@ -2180,7 +2180,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C168.992279,238.167404 168.992279,243.102905 168.945618,248.501526
       C126.607750,248.975525 84.316551,248.986435 41.563213,248.980988
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M185.563171,248.980957
       C185.101028,243.828339 185.101028,238.692047 185.101028,233.278748
@@ -2188,7 +2188,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C216.992279,238.170593 216.992279,243.104492 216.945618,248.501511
       C206.607742,248.975510 196.316528,248.986404 185.563171,248.980957
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M41.563213,152.980988
       C41.101082,147.826599 41.101082,142.688538 41.101082,137.276154
@@ -2196,7 +2196,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
       C168.992279,142.167404 168.992279,147.102905 168.945618,152.501526
       C126.607750,152.975525 84.316551,152.986420 41.563213,152.980988
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M185.563171,152.980957
       C185.101028,147.828308 185.101028,142.692017 185.101028,137.278748
@@ -2212,7 +2212,7 @@ export function IconReportes({ size = 24, className = '' }: { size?: number; cla
 export function IconSistema({ size = 24, className = '' }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M1.000000,188.000000
       C1.000000,125.333336 1.000000,63.166668 1.000000,1.000000
@@ -2345,7 +2345,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C370.387207,138.897705 368.131927,143.142914 369.247772,147.083359
       C370.589600,151.821823 374.742310,153.716187 381.106201,151.847031
       z"/>
-      <path fill="#E1E6F5" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M29.638903,439.758484
       C36.362900,430.011993 45.311905,425.154419 56.824512,424.993408
@@ -2360,7 +2360,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C121.339836,489.116730 88.356583,489.305786 55.385162,488.853455
       C30.887430,488.517426 17.246670,462.350647 29.638903,439.758484
       z"/>
-      <path fill="#5E86C9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M318.968964,309.040466
       C376.763519,315.739685 433.547974,315.814148 488.972260,294.883362
@@ -2373,7 +2373,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C265.224670,320.282593 264.998688,307.353912 264.998688,293.828644
       C282.265961,302.475494 300.272369,306.196472 318.968964,309.040466
       z"/>
-      <path fill="#4C6BB4" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M441.102783,372.091248
       C457.654968,369.347260 473.472595,365.620392 489.001099,357.783234
@@ -2387,7 +2387,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C265.214294,384.319214 264.998901,371.488647 264.998901,358.932617
       C322.370667,380.298920 381.221771,380.112335 441.102783,372.091248
       z"/>
-      <path fill="#3B5891" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M387.938904,488.924194
       C357.587067,489.353027 327.838165,488.077301 298.718292,480.882385
@@ -2401,7 +2401,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C472.452484,475.052795 462.025818,479.141266 451.289551,481.800262
       C430.708527,486.897522 409.565002,488.119568 387.938904,488.924194
       z"/>
-      <path fill="#779FD2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M356.425964,249.463211
       C393.816162,248.187866 430.529694,249.398743 466.253357,260.077637
@@ -2414,7 +2414,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C280.957428,260.671967 294.095978,257.278076 307.390686,255.188950
       C323.480591,252.660599 339.760468,251.341125 356.425964,249.463211
       z"/>
-      <path fill="#C8CDED" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M232.983551,25.166128
       C238.123886,25.166128 243.264236,25.166128 248.701401,25.166128
@@ -2429,7 +2429,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C230.563843,56.987343 232.987076,54.619328 232.996994,46.494587
       C233.005661,39.385120 232.989014,32.275616 232.983551,25.166128
       z"/>
-      <path fill="#C8CDED" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M232.983551,217.166122
       C238.123825,217.166122 243.264084,217.166122 248.701401,217.166122
@@ -2444,7 +2444,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C230.563843,248.987396 232.987091,246.619370 232.996994,238.494583
       C233.005646,231.385117 232.989014,224.275604 232.983551,217.166122
       z"/>
-      <path fill="#C8CDED" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M232.983521,121.166122
       C238.123810,121.166122 243.264084,121.166122 248.701401,121.166122
@@ -2459,7 +2459,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C230.563843,152.987381 232.987091,150.619370 232.996994,142.494583
       C233.005661,135.385117 232.988998,128.275604 232.983521,121.166122
       z"/>
-      <path fill="#E2E7F6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M41.100979,56.964542
       C36.093777,56.974098 31.086573,56.983658 25.622742,56.988274
@@ -2476,7 +2476,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C126.043182,41.276100 83.648384,41.276100 41.100979,41.276100
       C41.100979,46.688377 41.100979,51.826458 41.100979,56.964542
       z"/>
-      <path fill="#E2E7F6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M185.101028,248.964600
       C180.015976,248.971497 174.930923,248.978394 169.419067,248.511841
@@ -2493,7 +2493,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C206.042404,233.278748 195.643326,233.278748 185.101028,233.278748
       C185.101028,238.692047 185.101028,243.828339 185.101028,248.964600
       z"/>
-      <path fill="#E2E7F6" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M232.521347,121.090157
       C232.988998,128.275604 233.005661,135.385117 232.996994,142.494583
@@ -2510,7 +2510,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C25.166117,142.526733 25.166117,132.070114 25.166117,121.014191
       C94.151543,121.014191 163.105362,121.014191 232.521347,121.090157
       z"/>
-      <path fill="#C6CBEA" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M168.163986,396.516296
       C171.936935,395.626740 175.250717,394.524994 178.642593,393.777802
@@ -2522,7 +2522,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C142.337830,359.452759 157.031281,370.636536 160.096283,386.818085
       C160.977631,391.471130 162.099869,395.695496 168.163986,396.516296
       z"/>
-      <path fill="#3B5891" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M272.960114,185.160309
       C275.425201,185.160309 277.890320,185.160309 280.676636,185.160309
@@ -2532,7 +2532,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C126.380562,192.991837 194.687683,193.000595 262.994812,192.996658
       C269.667206,192.996262 271.784698,191.293655 272.960114,185.160309
       z"/>
-      <path fill="#3B5891" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M272.960114,89.160301
       C275.425201,89.160301 277.890289,89.160301 280.676636,89.160301
@@ -2542,7 +2542,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C126.380569,96.991837 194.687714,97.000595 262.994843,96.996651
       C269.667328,96.996262 271.784790,95.293655 272.960114,89.160301
       z"/>
-      <path fill="#4C6BB4" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M272.497986,185.096069
       C271.784698,191.293655 269.667206,192.996262 262.994812,192.996658
@@ -2550,7 +2550,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C57.158401,190.497635 57.158401,188.035110 57.158401,185.031845
       C128.932465,185.031845 200.484161,185.031845 272.497986,185.096069
       z"/>
-      <path fill="#4C6BB4" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M272.497986,89.096085
       C271.784790,95.293655 269.667328,96.996262 262.994843,96.996651
@@ -2558,7 +2558,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C57.158409,94.496284 57.158409,92.032372 57.158409,89.031860
       C128.932449,89.031860 200.484146,89.031860 272.497986,89.096085
       z"/>
-      <path fill="#5E86C9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M296.980774,121.161743
       C302.105560,121.161743 307.230316,121.161743 312.677368,121.161743
@@ -2569,7 +2569,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C294.054932,152.924469 296.922485,150.093048 296.981689,144.124313
       C297.057587,136.470886 296.987793,128.815994 296.980774,121.161743
       z"/>
-      <path fill="#5E86C9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M296.980774,25.161743
       C302.105560,25.161743 307.230347,25.161743 312.677399,25.161743
@@ -2580,7 +2580,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C294.054871,56.924484 296.922455,54.093109 296.981689,48.124313
       C297.057587,40.470879 296.987793,32.815998 296.980774,25.161743
       z"/>
-      <path fill="#779FD2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M296.518005,25.090965
       C296.987793,32.815998 297.057587,40.470879 296.981689,48.124313
@@ -2589,7 +2589,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C265.161682,46.522339 265.161682,36.064190 265.161682,25.020187
       C275.543091,25.020187 285.799194,25.020187 296.518005,25.090965
       z"/>
-      <path fill="#779FD2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M296.518005,121.090965
       C296.987793,128.815994 297.057587,136.470886 296.981689,144.124313
@@ -2598,7 +2598,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C265.161713,142.522385 265.161713,132.064194 265.161713,121.020187
       C275.543091,121.020187 285.799164,121.020187 296.518005,121.090965
       z"/>
-      <path fill="#779FD2" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M297.284760,240.621826
       C286.644318,244.139282 276.003906,247.656738 265.239746,251.215088
@@ -2606,7 +2606,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C275.594971,217.020172 285.824646,217.020172 296.524109,217.548920
       C297.090851,225.592377 297.187805,233.107101 297.284760,240.621826
       z"/>
-      <path fill="#5E86C9" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M297.701233,240.575516
       C297.187805,233.107101 297.090851,225.592377 296.986694,217.619659
@@ -2614,7 +2614,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C312.679077,224.018051 312.679077,230.738831 312.679077,237.674088
       C307.816895,238.627441 302.967316,239.578323 297.701233,240.575516
       z"/>
-      <path fill="#E9A139" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M380.746887,152.006042
       C374.742310,153.716187 370.589600,151.821823 369.247772,147.083359
@@ -2622,7 +2622,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C378.424896,135.965286 383.039795,138.107574 384.489838,142.305801
       C385.874084,146.313477 384.454010,149.453201 380.746887,152.006042
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M41.563122,56.980930
       C41.100979,51.826458 41.100979,46.688377 41.100979,41.276100
@@ -2630,7 +2630,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C168.992279,46.167397 168.992279,51.102886 168.945618,56.501480
       C126.607735,56.975494 84.316498,56.986408 41.563122,56.980930
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M185.563141,56.980934
       C185.100983,51.828289 185.100983,46.692036 185.100983,41.278725
@@ -2638,7 +2638,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C216.992279,46.170586 216.992279,51.104481 216.945618,56.501480
       C206.607742,56.975494 196.316513,56.986408 185.563141,56.980934
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M41.563213,248.980988
       C41.101082,243.826599 41.101082,238.688538 41.101082,233.276154
@@ -2646,7 +2646,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C168.992279,238.167404 168.992279,243.102905 168.945618,248.501526
       C126.607750,248.975525 84.316551,248.986435 41.563213,248.980988
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M185.563171,248.980957
       C185.101028,243.828339 185.101028,238.692047 185.101028,233.278748
@@ -2654,7 +2654,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C216.992279,238.170593 216.992279,243.104492 216.945618,248.501511
       C206.607742,248.975510 196.316528,248.986404 185.563171,248.980957
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M41.563213,152.980988
       C41.101082,147.826599 41.101082,142.688538 41.101082,137.276154
@@ -2662,7 +2662,7 @@ export function IconSistema({ size = 24, className = '' }: { size?: number; clas
       C168.992279,142.167404 168.992279,147.102905 168.945618,152.501526
       C126.607750,152.975525 84.316551,152.986420 41.563213,152.980988
       z"/>
-      <path fill="#000000" opacity="1.000000" stroke="none"
+      <path fill="currentColor" opacity="1.000000" stroke="none"
       d="
       M185.563171,152.980957
       C185.101028,147.828308 185.101028,142.692017 185.101028,137.278748
