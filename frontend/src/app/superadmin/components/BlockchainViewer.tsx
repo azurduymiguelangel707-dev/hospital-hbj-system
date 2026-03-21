@@ -282,10 +282,10 @@ export function BlockchainViewer() {
         {/* Estado cadena */}
         <div className={"rounded-xl border p-3 " + (chainIntegrity ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
           <div className="flex items-center gap-2 mb-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={chainIntegrity ? "#10b981" : "#ef4444"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              {chainIntegrity ? <path d="M9 12l2 2 4-4"/> : <path d="M12 8v4M12 16h.01"/>}
-            </svg>
+            {chainIntegrity
+              ? <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='#10b981' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/><path d='M9 12l2 2 4-4'/></svg>
+              : <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='#ef4444' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><circle cx='12' cy='12' r='10'/><path d='M12 8v4M12 16h.01'/></svg>
+            }
             <p className={"text-xs font-bold " + (chainIntegrity ? "text-emerald-800" : "text-red-800")}>
               {chainIntegrity ? "INTEGRA ✓" : "COMPROMETIDA ✕"}
             </p>
