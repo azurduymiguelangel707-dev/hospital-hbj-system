@@ -172,19 +172,19 @@ export function BlockchainViewer() {
           <div className='ml-auto flex gap-2'>
             <button onClick={verifyChain} disabled={verifying}
               className='flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition'>
-              <Shield size={12} /> {verifying ? 'Verificando...' : 'Verificar integridad'}
+              <span className="text-xs">🛡️</span> {verifying ? 'Verificando...' : 'Verificar integridad'}
             </button>
             <button onClick={exportJSON}
               className='flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition'>
-              <Download size={12} /> JSON
+              <span className="text-xs">⬇️</span> JSON
             </button>
             <button onClick={exportPDF}
               className='flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition'>
-              <Download size={12} /> PDF
+              <span className="text-xs">⬇️</span> PDF
             </button>
             <button onClick={loadBlocks}
               className='p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition'>
-              <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+              <span className="text-sm">🔄</span>
             </button>
           </div>
         </div>
@@ -247,8 +247,8 @@ export function BlockchainViewer() {
                       {/* Estado */}
                       <td className='px-3 py-2.5'>
                         {b.isValid
-                          ? <span className='flex items-center gap-1 text-xs text-emerald-600'><CheckCircle size={12} /> Valido</span>
-                          : <span className='flex items-center gap-1 text-xs text-red-600 font-semibold'><XCircle size={12} /> Invalido</span>
+                          ? <span className='flex items-center gap-1 text-xs text-emerald-600'><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Valido</span>
+                          : <span className='flex items-center gap-1 text-xs text-red-600 font-semibold'><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg> Invalido</span>
                         }
                       </td>
                       {/* Expand */}
@@ -264,11 +264,11 @@ export function BlockchainViewer() {
                         <td colSpan={8} className='px-4 py-3'>
                           <div className='grid grid-cols-2 gap-3'>
                             <div className='bg-white rounded-lg p-3 border border-blue-100'>
-                              <p className='text-xs font-semibold text-gray-500 mb-1 flex items-center gap-1'><Lock size={10} /> Hash actual</p>
+                              <p className='text-xs font-semibold text-gray-500 mb-1 flex items-center gap-1'><span className="text-xs">🔐</span> Hash actual</p>
                               <p className='font-mono text-xs text-gray-700 break-all'>{b.currentHash}</p>
                             </div>
                             <div className='bg-white rounded-lg p-3 border border-blue-100'>
-                              <p className='text-xs font-semibold text-gray-500 mb-1 flex items-center gap-1'><Lock size={10} /> Hash anterior</p>
+                              <p className='text-xs font-semibold text-gray-500 mb-1 flex items-center gap-1'><span className="text-xs">🔐</span> Hash anterior</p>
                               <p className='font-mono text-xs text-gray-700 break-all'>{b.previousHash}</p>
                             </div>
                             <div className='bg-white rounded-lg p-3 border border-blue-100'>
@@ -329,7 +329,7 @@ export function BlockchainViewer() {
         {/* Estado cadena */}
         <div className='bg-white rounded-xl border border-gray-200 p-4'>
           <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5'>
-            <Shield size={12} /> Estado de la cadena
+            <span className="text-xs">🛡️</span> Estado de la cadena
           </p>
           <div className='space-y-2'>
             <div className='flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg'>

@@ -158,7 +158,7 @@ export function BackupPanel() {
         <div className="flex items-center justify-between flex-shrink-0">
           <div>
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-              <Database className="w-5 h-5 text-blue-600" /> Backup y Recuperacion
+              <span className="text-xl">🗄️</span> Backup y Recuperacion
             </h2>
             <p className="text-xs text-gray-400 mt-0.5">Respaldo completo de PostgreSQL — Sistema HBJ</p>
           </div>
@@ -187,7 +187,7 @@ export function BackupPanel() {
         {/* Crear backup */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 flex-shrink-0">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5">
-            <Plus className="w-3.5 h-3.5" /> Crear nuevo backup
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg> Crear nuevo backup
           </p>
           <div className="flex gap-3">
             <input type="text" placeholder="Descripcion del backup (opcional)" value={descripcion}
@@ -199,7 +199,7 @@ export function BackupPanel() {
             </button>
           </div>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-400">
-            <Shield className="w-3.5 h-3.5 text-emerald-500" />
+            <span className="text-sm">🔒</span>
             Incluye {DB_TABLES.length} tablas del sistema — datos cifrados en transito
           </div>
         </div>
@@ -235,16 +235,16 @@ export function BackupPanel() {
                         {i === 0 && <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full flex-shrink-0">Ultimo</span>}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-gray-400">
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{diasDesde(backup.fechaCreacion)}</span>
-                        <span className="flex items-center gap-1"><HardDrive className="w-3 h-3" />{backup.tamanoLegible}</span>
-                        <span className="flex items-center gap-1"><Table className="w-3 h-3" />{backup.tablas} tablas</span>
+                        <span className="flex items-center gap-1"><span className="text-xs">🕐</span>{diasDesde(backup.fechaCreacion)}</span>
+                        <span className="flex items-center gap-1"><span className="text-xs">💾</span>{backup.tamanoLegible}</span>
+                        <span className="flex items-center gap-1"><span className="text-xs">📋</span>{backup.tablas} tablas</span>
                       </div>
                       <p className="text-xs font-mono text-gray-300 mt-0.5 truncate">{backup.filename}</p>
                     </div>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       <button onClick={() => descargarBackup(backup.filename)}
                         className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-medium rounded-lg transition">
-                        <Download className="w-3 h-3" /> Descargar
+                        <span className="text-xs">⬇️</span> Descargar
                       </button>
                       <button onClick={() => restaurarBackup(backup.filename)}
                         className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium rounded-lg transition">
@@ -252,7 +252,7 @@ export function BackupPanel() {
                       </button>
                       <button onClick={() => setConfirmDelete(backup.filename)}
                         className="p-1.5 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg transition">
-                        <Trash2 className="w-3 h-3" />
+                        <span className="text-xs">🗑️</span>
                       </button>
                     </div>
                   </div>
@@ -311,7 +311,7 @@ export function BackupPanel() {
             </div>
             <button onClick={() => descargarBackup(lastBackup.filename)}
               className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition">
-              <Download className="w-3.5 h-3.5" /> Descargar ultimo backup
+              <span className="text-sm">⬇️</span> Descargar ultimo backup
             </button>
           </div>
         )}
@@ -323,7 +323,7 @@ export function BackupPanel() {
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
+                <span className="text-2xl">⚠️</span>
               </div>
               <div>
                 <h3 className="font-bold text-gray-900">Eliminar Backup</h3>

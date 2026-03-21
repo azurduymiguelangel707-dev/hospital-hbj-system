@@ -88,7 +88,7 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 flex items-start justify-between flex-shrink-0">
             <div>
               <p className="text-sm font-semibold text-amber-800 flex items-center gap-2">
-                <Key size={14} /> Nueva contrasena para {resetResult.nombre}
+                <span className="text-sm">🔑</span> Nueva contrasena para {resetResult.nombre}
               </p>
               <p className="text-xs text-amber-600 mt-1">Comparte esto con el usuario de forma segura y privada</p>
               <p className="font-mono text-xl font-bold text-amber-900 mt-2 bg-amber-100 px-3 py-1.5 rounded-lg inline-block">{resetResult.password}</p>
@@ -102,7 +102,7 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
         {/* Buscador y filtros */}
         <div className="flex gap-2 mb-4 flex-shrink-0">
           <div className="relative flex-1">
-            <Search size={14} className="absolute left-3 top-2.5 text-gray-300" />
+            <span className="absolute left-3 top-2.5 text-gray-300 text-sm">🔍</span>
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Buscar por nombre, email o codigo..."
               className="w-full border border-gray-200 rounded-lg pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -220,15 +220,15 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
                           <button onClick={() => handleToggle(u.id)} disabled={loading === u.id}
                             title={u.is_active ? 'Desactivar cuenta' : 'Activar cuenta'}
                             className={`p-1.5 rounded-lg transition ${u.is_active ? 'hover:bg-red-50 text-red-400' : 'hover:bg-emerald-50 text-emerald-500'}`}>
-                            <Power size={13} />
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                           </button>
                           <button onClick={() => handleResetPassword(u.id, `${u.first_name} ${u.last_name}`)} disabled={loading === u.id}
                             title="Resetear contrasena" className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 transition">
-                            <Key size={13} />
+                            <span className="text-xs">🔑</span>
                           </button>
                           <button onClick={() => handleDelete(u.id, `${u.first_name} ${u.last_name}`)} disabled={loading === u.id}
                             title="Eliminar permanentemente" className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 transition">
-                            <Trash2 size={13} />
+                            <span className="text-xs">🗑️</span>
                           </button>
                         </div>
                       </td>
@@ -250,7 +250,7 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
       <div className="w-56 flex-shrink-0 space-y-3">
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5">
-            <Users size={12} /> Distribucion
+            <span className="text-xs">👥</span> Distribucion
           </p>
           <div className="space-y-2">
             {statsByRole.map(s => {
@@ -278,16 +278,16 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Acciones</p>
           <div className="space-y-1.5 text-xs text-gray-500">
             <div className="flex items-center gap-2 px-2 py-1.5 bg-blue-50 rounded-lg">
-              <Shield size={11} className="text-blue-500" /> Cambiar rol del usuario
+              <span className="text-xs">🛡️</span> Cambiar rol del usuario
             </div>
             <div className="flex items-center gap-2 px-2 py-1.5 bg-red-50 rounded-lg">
-              <Power size={11} className="text-red-400" /> Activar / Desactivar cuenta
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Activar / Desactivar cuenta
             </div>
             <div className="flex items-center gap-2 px-2 py-1.5 bg-amber-50 rounded-lg">
-              <Key size={11} className="text-amber-500" /> Resetear contrasena
+              <span className="text-xs">🔑</span> Resetear contrasena
             </div>
             <div className="flex items-center gap-2 px-2 py-1.5 bg-gray-50 rounded-lg">
-              <Trash2 size={11} className="text-gray-400" /> Eliminar permanentemente
+              <span className="text-xs">🗑️</span> Eliminar permanentemente
             </div>
           </div>
         </div>

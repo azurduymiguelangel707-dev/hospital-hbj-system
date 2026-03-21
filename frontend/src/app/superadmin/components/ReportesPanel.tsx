@@ -141,7 +141,7 @@ export function ReportesPanel() {
             {data && (
               <button onClick={exportReportePDF}
                 className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 transition">
-                <Download size={13} /> Exportar PDF
+                <span className="text-xs">⬇️</span> Exportar PDF
               </button>
             )}
           </div>
@@ -149,7 +149,7 @@ export function ReportesPanel() {
         <div className="flex-1 overflow-y-auto space-y-4">
           {loading && (
             <div className="text-center py-16 text-gray-400">
-              <RefreshCw size={28} className="mx-auto mb-3 animate-spin opacity-30" />
+              <span className="text-5xl opacity-30">🔄</span>
               <p className="text-sm">Generando reporte...</p>
             </div>
           )}
@@ -157,13 +157,18 @@ export function ReportesPanel() {
             <div className="space-y-4">
               <div className="grid grid-cols-4 gap-3">
                 {[
-                  { label: "Total citas",  val: data.totales?.total ?? 0,      color: "#3b82f6", bg: "#eff6ff", icono: "📅" },
-                  { label: "Completadas", val: data.totales?.completadas ?? 0, color: "#10b981", bg: "#f0fdf4", icono: "✅" },
-                  { label: "Pendientes",  val: data.totales?.pendientes ?? 0,  color: "#f59e0b", bg: "#fffbeb", icono: "⏳" },
-                  { label: "Canceladas",  val: data.totales?.canceladas ?? 0,  color: "#ef4444", bg: "#fef2f2", icono: "❌" },
+                  { label: "Total citas",  val: data.totales?.total ?? 0,      color: "#3b82f6", bg: "#eff6ff", icono: "cal" },
+                  { label: "Completadas", val: data.totales?.completadas ?? 0, color: "#10b981", bg: "#f0fdf4", icono: "chk" },
+                  { label: "Pendientes",  val: data.totales?.pendientes ?? 0,  color: "#f59e0b", bg: "#fffbeb", icono: "pnd" },
+                  { label: "Canceladas",  val: data.totales?.canceladas ?? 0,  color: "#ef4444", bg: "#fef2f2", icono: "cnl" },
                 ].map((s, i) => (
                   <div key={i} className="rounded-xl p-3 text-center border" style={{ backgroundColor: s.bg, borderColor: s.color + "30" }}>
-                    <div className="text-xl mb-1">{s.icono}</div>
+                    <div className="mb-2 flex justify-center">
+                    {s.icono === "cal" && <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={s.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>}
+                    {s.icono === "chk" && <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={s.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>}
+                    {s.icono === "pnd" && <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={s.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>}
+                    {s.icono === "cnl" && <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={s.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>}
+                  </div>
                     <div className="text-2xl font-bold" style={{ color: s.color }}>{s.val}</div>
                     <div className="text-xs mt-0.5" style={{ color: s.color }}>{s.label}</div>
                   </div>
@@ -171,7 +176,7 @@ export function ReportesPanel() {
               </div>
               {(data.resumen ?? []).length === 0 ? (
                 <div className="text-center py-8 text-gray-400 border-2 border-dashed border-gray-100 rounded-xl">
-                  <FileText size={28} className="mx-auto mb-2 opacity-30" />
+                  <span className="text-5xl opacity-30">📄</span>
                   <p className="text-sm">Sin citas registradas para esta fecha</p>
                 </div>
               ) : (data.resumen ?? []).map((r: any) => {
