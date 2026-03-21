@@ -169,7 +169,7 @@ export default function AdminDashboard() {
 
           {/* DASHBOARD */}
           {activePanel === 'dashboard' && (
-            <div className='space-y-5'>
+            <div className='flex-1 overflow-auto p-6'><div className='space-y-5'>
               <div className='flex items-center justify-between'>
                 <div>
                   <h2 className='text-xl font-bold text-gray-800'>Panel de control hospitalario</h2>
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
-          )}
+            </div></div>
 
           {/* REGISTRO */}
           {activePanel === 'registro' && (
