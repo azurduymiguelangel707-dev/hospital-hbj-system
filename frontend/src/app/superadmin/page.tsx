@@ -2,8 +2,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { LayoutDashboard, UserCog, ShieldCheck, Activity, BarChart2, LogOut, RefreshCw, Terminal } from 'lucide-react';
-import { IconDashboard, IconDoctor, IconShieldCheck, IconDatabase, IconReportes, IconSistema } from '@/components/icons/MedicalIcons';
+import { LayoutDashboard, UserCog, ShieldCheck, HeartPulse, BarChart2, LogOut, RefreshCw, Terminal } from 'lucide-react';
 import { GlobalUserManager } from './components/GlobalUserManager';
 import { BlockchainViewer } from './components/BlockchainViewer';
 import { SystemMonitor } from './components/SystemMonitor';
@@ -20,12 +19,12 @@ function authFetch(url: string, options: RequestInit = {}) {
 type Panel = 'dashboard' | 'usuarios' | 'blockchain' | 'reportes' | 'sistema' | 'backup';
 
 const PANELS: { key: Panel; label: string; icon: any; desc: string }[] = [
-  { key: 'dashboard',  label: 'Resumen ejecutivo',   icon: IconDashboard,   desc: 'Vision general del sistema' },
-  { key: 'usuarios',   label: 'Usuarios',    icon: IconDoctor,      desc: 'Gestion global' },
-  { key: 'blockchain', label: 'Blockchain',  icon: IconShieldCheck, desc: 'Audit log' },
-  { key: 'reportes',   label: 'Reportes',    icon: IconReportes,    desc: 'Estadisticas' },
-  { key: 'sistema',    label: 'Sistema',     icon: IconSistema,     desc: 'Monitor' },
-  { key: 'backup',     label: 'Backup',      icon: IconDatabase,    desc: 'Respaldo y recuperacion' },
+  { key: 'dashboard',  label: 'Resumen ejecutivo',   icon: LayoutDashboard,   desc: 'Vision general del sistema' },
+  { key: 'usuarios',   label: 'Usuarios',    icon: UserCog,      desc: 'Gestion global' },
+  { key: 'blockchain', label: 'Blockchain',  icon: ShieldCheck, desc: 'Audit log' },
+  { key: 'reportes',   label: 'Reportes',    icon: BarChart2,    desc: 'Estadisticas' },
+  { key: 'sistema',    label: 'Sistema',     icon: HeartPulse,     desc: 'Monitor' },
+  { key: 'backup',     label: 'Backup',      icon: Terminal,    desc: 'Respaldo y recuperacion' },
 ];
 
 function useSession() {
@@ -127,16 +126,26 @@ export default function SuperAdminPage() {
         {/* Sidebar dark */}
         <aside className="w-52 bg-gray-900 border-r border-gray-800 flex flex-col py-4 px-3 flex-shrink-0">
           <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider px-3 mb-3">Modulos</p>
-          {PANELS.map(({ key, label, icon: Icon, desc }) => (
+          {PANELS.map(({ key, label, icon: Icon, desc }, idx) => {
+  const iconColors = [
+    { active: 'text-blue-400',   bg: 'bg-blue-500/20',   dot: '#60a5fa' },
+    { active: 'text-purple-400', bg: 'bg-purple-500/20', dot: '#c084fc' },
+    { active: 'text-emerald-400',bg: 'bg-emerald-500/20',dot: '#34d399' },
+    { active: 'text-amber-400',  bg: 'bg-amber-500/20',  dot: '#fbbf24' },
+    { active: 'text-pink-400',   bg: 'bg-pink-500/20',   dot: '#f472b6' },
+    { active: 'text-cyan-400',   bg: 'bg-cyan-500/20',   dot: '#22d3ee' },
+  ][idx] ?? { active: 'text-red-400', bg: 'bg-red-500/20', dot: '#f87171' };
+  return (
             <button key={key} onClick={() => setActivePanel(key)}
               className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all text-left w-full ${activePanel === key ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}>
-              <div className={'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ' + (activePanel === key ? 'bg-red-500/20' : 'bg-gray-800')}><Icon size={20} className={activePanel === key ? 'text-red-400' : 'text-gray-400'} /></div>
+              <div className={'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ' + (activePanel === key ? iconColors.bg : 'bg-gray-800')}><Icon size={18} className={activePanel === key ? iconColors.active : 'text-gray-500'} /></div>
               <div>
                 <p className="text-xs font-medium leading-tight">{label}</p>
                 <p className="text-xs text-gray-600 leading-tight">{desc}</p>
               </div>
             </button>
-          ))}
+        );})}
+
           <div className="mt-auto pt-4 border-t border-gray-800 px-2 space-y-3">
             <div>
               <p className="text-xs text-gray-600 mb-1">Bloques blockchain</p>
