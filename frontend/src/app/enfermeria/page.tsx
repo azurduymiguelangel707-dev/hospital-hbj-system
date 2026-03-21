@@ -288,8 +288,7 @@ export default function EnfermeriaDashboard() {
           </div>
           <div className="flex gap-1 p-3 border-b border-gray-100">
             {([['pending','Pendientes'],['all','Todos'],['done','Completados']] as const).map(([k,l]) => (
-              <button key={k} onClick={() => setFilter(k)}
-                className={`flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition ${filter===k?'bg-teal-600 text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+              <button key={k} onClick={() => setFilter(k)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${filter===k ? "bg-teal-600 text-white" : "text-gray-500 hover:bg-gray-100"}`}>
                 {l}
               </button>
             ))}
@@ -514,44 +513,102 @@ export default function EnfermeriaDashboard() {
                 )}
               </div>
 
-              {/* Grafico comparativo vitales */}
+              {/* Grafico historial completo de vitales */}
       {(() => {
-        const patientVitals = vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id);
-        if (patientVitals.length === 0) return null;
-        const latest = patientVitals[0];
-        const data = [
-          { name: "PAS", actual: Number(String(vitals.presionArterial).split('/')[0])||0, previo: Number(String(latest.systolic_pressure||latest.presionArterial||'').split('/')[0])||0, min:90, max:140 },
-          { name: "PAD", actual: Number(String(vitals.presionArterial).split('/')[1])||0, previo: Number(String(latest.diastolic_pressure||latest.presionArterial||'').split('/')[1])||0, min:60, max:90 },
-          { name: "FC",  actual: Number(vitals.frecuenciaCardiaca)||0, previo: Number(latest.heart_rate||latest.frecuenciaCardiaca)||0, min:60, max:100 },
-          { name: "FR",  actual: Number(vitals.frecuenciaRespiratoria)||0, previo: Number(latest.respiratory_rate||latest.frecuenciaRespiratoria)||0, min:12, max:20 },
-          { name: "SpO2",actual: Number(vitals.saturacionOxigeno)||0, previo: Number(latest.oxygen_saturation||latest.saturacionOxigeno)||0, min:95, max:100 },
-          { name: "Temp",actual: Number(vitals.temperatura)||0, previo: Number(latest.temperature||latest.temperatura)||0, min:36, max:37.5 },
-        ].filter(d => d.actual > 0 || d.previo > 0);
-        const getColor = (d: {actual:number,min:number,max:number}) =>
-          d.actual < d.min || d.actual > d.max ? "#ef4444" : "#0d9488";
+        const pv = vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id);
+        const latest = pv[0];
+        const paActual = Number(String(vitals.presionArterial).split("/")[0]) || 0;
+        const padActual = Number(String(vitals.presionArterial).split("/")[1]) || 0;
+        const fcActual = Number(vitals.frecuenciaCardiaca) || 0;
+        const frActual = Number(vitals.frecuenciaRespiratoria) || 0;
+        const spActual = Number(vitals.saturacionOxigeno) || 0;
+        const tActual  = Number(vitals.temperatura) || 0;
+        const hasActual = paActual > 0 || fcActual > 0 || spActual > 0;
+        const rangoOk = (val: number, min: number, max: number) => val === 0 ? "#94a3b8" : val < min || val > max ? "#ef4444" : "#0d9488";
+        const comparativo = [
+          { nombre: "Presion sistolica", unidad: "mmHg", actual: paActual,  previo: Number(String(latest?.presionArterial ?? "").split("/")[0]) || 0, min: 90,  max: 140, color: "#0d9488" },
+          { nombre: "Presion diastolica",unidad: "mmHg", actual: padActual, previo: Number(String(latest?.presionArterial ?? "").split("/")[1]) || 0, min: 60,  max: 90,  color: "#0d9488" },
+          { nombre: "Frec. cardiaca",    unidad: "bpm",  actual: fcActual,  previo: Number(latest?.frecuenciaCardiaca ?? 0),  min: 60,  max: 100, color: "#6366f1" },
+          { nombre: "Frec. respiratoria",unidad: "rpm",  actual: frActual,  previo: Number(latest?.frecuenciaRespiratoria ?? 0), min: 12, max: 20,  color: "#8b5cf6" },
+          { nombre: "Saturacion O2",     unidad: "%",    actual: spActual,  previo: Number(latest?.saturacionOxigeno ?? 0),   min: 95,  max: 100, color: "#f59e0b" },
+          { nombre: "Temperatura",       unidad: "°C",   actual: tActual,   previo: Number(latest?.temperatura ?? 0),         min: 36,  max: 37.5,color: "#f97316" },
+        ];
+        const histData = pv.slice(0, 8).reverse().map((v: any, i: number) => ({
+          name: "R" + (i + 1),
+          PAS:  Number(String(v.presionArterial ?? "").split("/")[0]) || 0,
+          FC:   Number(v.frecuenciaCardiaca) || 0,
+          SpO2: Number(v.saturacionOxigeno) || 0,
+          Temp: Number(v.temperatura) || 0,
+        }));
         return (
-          <div className="mb-4 bg-gray-50 rounded-xl p-3">
-            <div className="text-xs font-medium text-gray-600 mb-2 flex items-center gap-1">
-              <Activity size={12} className="text-teal-600" />
-              Comparativo vs registro anterior
+          <div className="mb-4 rounded-xl border border-gray-200 overflow-hidden">
+            {/* Header */}
+            <div className="bg-teal-50 px-4 py-2 flex items-center justify-between border-b border-teal-100">
+              <div className="flex items-center gap-2">
+                <Activity size={13} className="text-teal-600" />
+                <span className="text-xs font-semibold text-teal-800">Signos vitales — {selected.patient?.nombre?.split(" ").slice(0,2).join(" ")}</span>
+              </div>
+              <span className="text-xs text-teal-500">{pv.length} registro(s) previo(s)</span>
             </div>
-            <ResponsiveContainer width="100%" height={160}>
-              <BarChart data={data} barSize={14} barGap={2}>
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis hide />
-                <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }}
-                />
-                <Bar dataKey="previo" name="previo" fill="#cbd5e1" radius={[3,3,0,0]} />
-                <Bar dataKey="actual" name="actual" radius={[3,3,0,0]}>
-                  {data.map((d, i) => <Cell key={i} fill={getColor(d)} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="flex gap-3 mt-1 justify-center">
-              <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-sm bg-slate-300 inline-block"/>Anterior</span>
-              <span className="flex items-center gap-1 text-xs text-teal-600"><span className="w-2 h-2 rounded-sm bg-teal-600 inline-block"/>Normal</span>
-              <span className="flex items-center gap-1 text-xs text-red-500"><span className="w-2 h-2 rounded-sm bg-red-500 inline-block"/>Fuera de rango</span>
+            {/* Tarjetas comparativo actual vs previo */}
+            {hasActual && latest && (
+            <div className="grid grid-cols-3 gap-0 border-b border-gray-100">
+              {comparativo.filter(d => d.actual > 0).map((d, i) => (
+                <div key={i} className="px-3 py-2 border-r border-gray-100 last:border-r-0">
+                  <div className="text-xs text-gray-400 mb-0.5">{d.nombre}</div>
+                  <div className="flex items-end gap-1.5">
+                    <span className="text-lg font-bold" style={{ color: rangoOk(d.actual, d.min, d.max) }}>{d.actual}</span>
+                    <span className="text-xs text-gray-400 mb-0.5">{d.unidad}</span>
+                  </div>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <span className="text-xs text-gray-400">ant: {d.previo || "-"}</span>
+                    {d.actual > 0 && d.previo > 0 && (
+                      <span className={`text-xs font-medium ${d.actual > d.previo ? "text-red-400" : "text-teal-500"}`}>
+                        {d.actual > d.previo ? "▲" : "▼"} {Math.abs(d.actual - d.previo).toFixed(1)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-1 h-1 rounded-full bg-gray-100 overflow-hidden">
+                    <div className="h-1 rounded-full" style={{ width: Math.min((d.actual / d.max) * 100, 100) + "%", backgroundColor: rangoOk(d.actual, d.min, d.max) }} />
+                  </div>
+                  <div className="text-xs text-gray-300 mt-0.5">rango: {d.min}–{d.max}</div>
+                </div>
+              ))}
             </div>
+            )}
+            {/* Grafico tendencia historica */}
+            {histData.length > 0 && (
+            <div className="px-3 pt-2 pb-1">
+              <div className="text-xs text-gray-400 mb-1 font-medium">Tendencia historica (ultimos {histData.length} registros)</div>
+              <ResponsiveContainer width="100%" height={150}>
+                <BarChart data={histData} barSize={12} barGap={2}>
+                  <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis hide />
+                  <Tooltip
+                    contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }}
+                    labelFormatter={(l) => "Registro " + l.toString().replace("R","")}
+                  />
+                  <Bar dataKey="PAS"  name="Presion sistolica" fill="#0d9488" radius={[3,3,0,0]} />
+                  <Bar dataKey="FC"   name="Frec. cardiaca"    fill="#6366f1" radius={[3,3,0,0]} />
+                  <Bar dataKey="SpO2" name="Saturacion O2"     fill="#f59e0b" radius={[3,3,0,0]} />
+                  <Bar dataKey="Temp" name="Temperatura"       fill="#f97316" radius={[3,3,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+              <div className="flex flex-wrap gap-3 justify-center mt-1">
+                <span className="flex items-center gap-1 text-xs text-gray-500"><span className="w-2.5 h-2.5 rounded-sm bg-teal-600 inline-block"/>Presion sistolica (mmHg)</span>
+                <span className="flex items-center gap-1 text-xs text-gray-500"><span className="w-2.5 h-2.5 rounded-sm bg-indigo-500 inline-block"/>Frec. cardiaca (bpm)</span>
+                <span className="flex items-center gap-1 text-xs text-gray-500"><span className="w-2.5 h-2.5 rounded-sm bg-amber-400 inline-block"/>Saturacion O2 (%)</span>
+                <span className="flex items-center gap-1 text-xs text-gray-500"><span className="w-2.5 h-2.5 rounded-sm bg-orange-400 inline-block"/>Temperatura (°C)</span>
+              </div>
+            </div>
+            )}
+            {/* Sin registros previos */}
+            {pv.length === 0 && (
+              <div className="px-4 py-3 text-xs text-gray-400 flex items-center gap-2">
+                <Activity size={12} className="opacity-40" />
+                Sin registros previos — el grafico aparecera despues del primer registro
+              </div>
+            )}
           </div>
         );
       })()}
