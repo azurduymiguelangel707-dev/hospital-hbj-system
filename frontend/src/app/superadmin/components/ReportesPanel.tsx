@@ -61,7 +61,7 @@ export function ReportesPanel() {
         ${(r.citas ?? []).map((c: any) => `<tr><td>${c.numero_ficha}/${c.total_fichas_turno}</td><td>${c.patient_nombre}</td><td>${c.numero_historial}</td><td>Dr. ${c.doctor_nombre} ${c.doctor_apellido}</td><td>${c.status}</td></tr>`).join('')}
         </table>`).join('')}`;
     } else if (activeReport === 'especialidad') {
-      content = `<h2>Reporte - ${data.especialidad}</h2><p>Periodo: ${data.fechaInicio} al ${data.fechaFin} | Total: ${data.total}</p>`,
+      content = `<h2>Reporte - ${data.especialidad}</h2><p>Periodo: ${data.fechaInicio} al ${data.fechaFin} | Total: ${data.total}</p>`;
     } else {
       content = `<h2>Reporte de Pacientes</h2><p>Total nuevos: ${data.stats?.total ?? 0} | Masculinos: ${data.stats?.masculinos ?? 0} | Femeninos: ${data.stats?.femeninos ?? 0}</p>`;
     }
