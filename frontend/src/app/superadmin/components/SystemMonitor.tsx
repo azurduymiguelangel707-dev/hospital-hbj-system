@@ -1,5 +1,6 @@
 // src/app/superadmin/components/SystemMonitor.tsx
 'use client';
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, AlertTriangle, RefreshCw, Server, ShieldCheck, ShieldAlert } from 'lucide-react';
 
@@ -87,36 +88,48 @@ export function SystemMonitor() {
   const invalidBlocks = auditBlocks.filter(b => !b.isValid);
   const chainIntegrity = invalidBlocks.length === 0;
 
+  const [openSections, setOpenSections] = React.useState<Record<string,boolean>>({
+    servicios: true, integridad: true, actividad: false, registros: false, runtime: false
+  });
+  const toggle = (key: string) => setOpenSections(s => ({ ...s, [key]: !s[key] }));
+
+  const Section = ({ id, title, badge, children }: { id: string; title: string; badge?: string; children: React.ReactNode }) => (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <button onClick={() => toggle(id)}
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition text-left">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-gray-700">{title}</span>
+          {badge && <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">{badge}</span>}
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+          className={"transition-transform " + (openSections[id] ? "rotate-180" : "")}>
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+      {openSections[id] && <div className="border-t border-gray-100">{children}</div>}
+    </div>
+  );
 
   return (
     <div className="flex gap-5">
-      {/* Columna principal */}
-      <div className="flex-1 min-w-0 space-y-4">
-
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-400" suppressHydrationWarning>
-              {lastCheck ? "Ultima verificacion: " + lastCheck.toLocaleTimeString("es-ES") : "Sin verificar"}
-            </p>
-          </div>
+      <div className="flex-1 min-w-0 space-y-3">
+        <div className="flex items-center justify-between flex-shrink-0">
+          <p className="text-xs text-gray-400" suppressHydrationWarning>
+            {lastCheck ? "Ultima verificacion: " + lastCheck.toLocaleTimeString("es-ES") : "Sin verificar"}
+          </p>
           <button onClick={loadData} disabled={loading}
             className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-xs text-gray-600 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition">
             <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Actualizar
           </button>
         </div>
 
-        {/* Estado servicios */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado de servicios</p>
-          </div>
+        <Section id="servicios" title="Estado de servicios" badge={services.length + " servicios"}>
           <div className="divide-y divide-gray-50">
             {services.map(s => {
               const statusCfg = {
                 ok:    { color: "#10b981", bg: "#f0fdf4", border: "#bbf7d0", label: "Operativo",  dot: "bg-emerald-500" },
-                warn:  { color: "#f59e0b", bg: "#fffbeb", border: "#fde68a", label: "Lento",       dot: "bg-amber-400" },
-                error: { color: "#ef4444", bg: "#fef2f2", border: "#fecaca", label: "Error",       dot: "bg-red-500" },
+                warn:  { color: "#f59e0b", bg: "#fffbeb", border: "#fde68a", label: "Lento",      dot: "bg-amber-400" },
+                error: { color: "#ef4444", bg: "#fef2f2", border: "#fecaca", label: "Error",      dot: "bg-red-500" },
               }[s.status as string] ?? { color: "#6b7280", bg: "#f9fafb", border: "#e5e7eb", label: "Desconocido", dot: "bg-gray-400" };
               return (
                 <div key={s.name} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition">
@@ -144,15 +157,10 @@ export function SystemMonitor() {
               );
             })}
           </div>
-        </div>
+        </Section>
 
-        {/* Actividad auditoria */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Actividad de auditoria</p>
-            <span className="text-xs text-gray-400">{totalEvents} eventos totales</span>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
+        <Section id="actividad" title="Actividad de auditoria" badge={totalEvents + " eventos"}>
+          <div className="p-4 grid grid-cols-2 gap-3">
             {Object.entries(EVENT_LABELS).map(([key, { label, color, bg }]) => {
               const count = eventCounts[key] ?? 0;
               const pct = totalEvents > 0 ? Math.round((count / totalEvents) * 100) : 0;
@@ -163,22 +171,17 @@ export function SystemMonitor() {
                     <span className="text-lg font-bold text-gray-800">{count}</span>
                   </div>
                   <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mb-1">
-                    <div className={"h-1.5 rounded-full transition-all " + color} style={{ width: pct + "%" }} />
+                    <div className={"h-1.5 rounded-full " + color} style={{ width: pct + "%" }} />
                   </div>
                   <span className="text-xs text-gray-500">{pct}% del total</span>
                 </div>
               );
             })}
           </div>
-        </div>
+        </Section>
 
-        {/* Registros por tabla */}
         {sysInfo && (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Registros en base de datos</p>
-              <span className="text-xs text-gray-400">{(sysInfo?.dbStats ?? []).reduce((a: number, s: DbStat) => a + s.count, 0)} total</span>
-            </div>
+          <Section id="registros" title="Registros en base de datos" badge={((sysInfo?.dbStats ?? []).reduce((a: number, s: DbStat) => a + s.count, 0)) + " total"}>
             <div className="divide-y divide-gray-50">
               {(sysInfo?.dbStats ?? []).map((s: DbStat) => {
                 const total = (sysInfo?.dbStats ?? []).reduce((a: number, x: DbStat) => a + x.count, 0);
@@ -206,101 +209,69 @@ export function SystemMonitor() {
                 );
               })}
             </div>
-          </div>
+          </Section>
+        )}
+
+        {sysInfo && (
+          <Section id="runtime" title="Runtime del servidor">
+            <div className="p-4 grid grid-cols-3 gap-3">
+              {[
+                { icono: "⏱️", label: "Tiempo activo",  val: formatUptime(sysInfo?.uptime ?? 0),                          color: "#10b981" },
+                { icono: "🧠", label: "Memoria usada",  val: formatBytes(sysInfo?.memoryUsage?.heapUsed ?? 0),             color: "#3b82f6" },
+                { icono: "💻", label: "Node.js",        val: sysInfo?.nodeVersion ?? "",                                   color: "#6b7280" },
+              ].map((s, i) => (
+                <div key={i} className="rounded-lg px-3 py-2.5 bg-gray-50 text-center">
+                  <div className="text-lg mb-1">{s.icono}</div>
+                  <div className="text-sm font-bold" style={{ color: s.color }}>{s.val}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{s.label}</div>
+                </div>
+              ))}
+            </div>
+            <div className="px-4 pb-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-gray-500">Heap usado</span>
+                <span className="text-xs text-gray-600">{formatBytes(sysInfo?.memoryUsage?.heapUsed ?? 0)} / {formatBytes(sysInfo?.memoryUsage?.heapTotal ?? 0)}</span>
+              </div>
+              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-blue-500 rounded-full transition-all" style={{ width: sysInfo?.memoryUsage?.heapTotal > 0 ? Math.round((sysInfo.memoryUsage.heapUsed / sysInfo.memoryUsage.heapTotal) * 100) + "%" : "0%" }} />
+              </div>
+            </div>
+          </Section>
         )}
       </div>
 
-      {/* Panel lateral */}
       <div className="w-64 flex-shrink-0 space-y-4">
-
-        {/* Integridad blockchain */}
-        <div className={"rounded-xl border p-4 " + (chainIntegrity ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
-          <div className="flex items-center gap-2 mb-2">
-            {chainIntegrity
-              ? <ShieldCheck size={16} className="text-emerald-600" />
-              : <ShieldAlert size={16} className="text-red-600" />}
-            <p className={"text-sm font-bold " + (chainIntegrity ? "text-emerald-800" : "text-red-800")}>
-              Blockchain {chainIntegrity ? "INTEGRA ✓" : "COMPROMETIDA ✕"}
-            </p>
-          </div>
-          <p className="text-xs text-gray-500">{totalEvents} bloques registrados</p>
-          <p className={"text-xs font-medium mt-0.5 " + (invalidBlocks.length > 0 ? "text-red-600" : "text-emerald-600")}>
-            {invalidBlocks.length === 0 ? "Sin bloques invalidos" : invalidBlocks.length + " bloque(s) invalido(s)"}
-          </p>
-          {lastBlock && (
-            <div className="mt-2 pt-2 border-t border-gray-200">
-              <p className="text-xs text-gray-400 mb-1">Ultimo hash</p>
-              <p className="text-xs font-mono text-gray-600 break-all">{lastBlock.currentHash?.substring(0,20)}...</p>
+        <Section id="integridad" title="Blockchain">
+          <div className={"p-4 " + (chainIntegrity ? "bg-emerald-50" : "bg-red-50")}>
+            <div className="flex items-center gap-2 mb-2">
+              {chainIntegrity
+                ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4M12 16h.01"/></svg>}
+              <p className={"text-sm font-bold " + (chainIntegrity ? "text-emerald-800" : "text-red-800")}>
+                {chainIntegrity ? "INTEGRA ✓" : "COMPROMETIDA ✕"}
+              </p>
             </div>
-          )}
-        </div>
+            <p className="text-xs text-gray-500">{totalEvents} bloques · {invalidBlocks.length === 0 ? "Sin invalidos" : invalidBlocks.length + " invalido(s)"}</p>
+            {lastBlock && <p className="text-xs font-mono text-gray-400 mt-1 truncate">{lastBlock.currentHash?.substring(0,24)}...</p>}
+          </div>
+        </Section>
 
-        {/* Ultimo evento */}
         {lastBlock && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Ultimo evento</p>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">Tipo</span>
-                <span className={"px-2 py-0.5 rounded-full text-xs font-semibold " + (EVENT_LABELS[lastBlock.eventType]?.bg ?? "")} style={{ color: lastBlock.eventType === "CREATE" ? "#10b981" : lastBlock.eventType === "ACCESS" ? "#8b5cf6" : lastBlock.eventType === "DELETE" ? "#ef4444" : "#3b82f6" }}>
-                  {EVENT_LABELS[lastBlock.eventType]?.label ?? lastBlock.eventType}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">Recurso</span>
-                <span className="text-xs font-medium text-gray-700">
-                  {lastBlock.resourceType === "AUTH" ? "Autenticacion" : lastBlock.resourceType === "MEDICAL_RECORD" ? "Historial" : lastBlock.resourceType}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">Bloque</span>
-                <span className="text-xs font-mono font-bold text-gray-700">#{lastBlock.blockIndex}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">Hora</span>
-                <span className="text-xs text-gray-600">{new Date(lastBlock.timestamp).toLocaleTimeString("es-ES")}</span>
-              </div>
+          <Section id="ultimo" title="Ultimo evento">
+            <div className="p-3 space-y-2">
+              {[
+                { label: "Tipo",    val: EVENT_LABELS[lastBlock.eventType]?.label ?? lastBlock.eventType },
+                { label: "Recurso", val: lastBlock.resourceType === "AUTH" ? "Autenticacion" : lastBlock.resourceType === "MEDICAL_RECORD" ? "Historial" : lastBlock.resourceType },
+                { label: "Bloque",  val: "#" + lastBlock.blockIndex },
+                { label: "Hora",    val: new Date(lastBlock.timestamp).toLocaleTimeString("es-ES") },
+              ].map((s, i) => (
+                <div key={i} className="flex items-center justify-between px-2 py-1.5 bg-gray-50 rounded-lg">
+                  <span className="text-xs text-gray-500">{s.label}</span>
+                  <span className="text-xs font-medium text-gray-700">{s.val}</span>
+                </div>
+              ))}
             </div>
-          </div>
-        )}
-
-        {/* Runtime */}
-        {sysInfo && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Runtime del servidor</p>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <span className="text-base">⏱️</span>
-                  <span className="text-xs text-gray-500">Tiempo activo</span>
-                </div>
-                <span className="text-xs font-bold text-emerald-600">{formatUptime(sysInfo?.uptime ?? 0)}</span>
-              </div>
-              <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <span className="text-base">🧠</span>
-                  <span className="text-xs text-gray-500">Memoria usada</span>
-                </div>
-                <span className="text-xs font-bold text-blue-600">{formatBytes(sysInfo?.memoryUsage?.heapUsed ?? 0)}</span>
-              </div>
-              <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <span className="text-base">💻</span>
-                  <span className="text-xs text-gray-500">Node.js</span>
-                </div>
-                <span className="text-xs font-bold text-gray-600">{sysInfo?.nodeVersion ?? ""}</span>
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-500">Heap usado</span>
-                  <span className="text-xs text-gray-600">{formatBytes(sysInfo?.memoryUsage?.heapUsed ?? 0)} / {formatBytes(sysInfo?.memoryUsage?.heapTotal ?? 0)}</span>
-                </div>
-                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-1.5 bg-blue-500 rounded-full" style={{ width: sysInfo?.memoryUsage?.heapTotal > 0 ? Math.round((sysInfo.memoryUsage.heapUsed / sysInfo.memoryUsage.heapTotal) * 100) + "%" : "0%" }} />
-                </div>
-              </div>
-            </div>
-          </div>
+          </Section>
         )}
       </div>
     </div>
