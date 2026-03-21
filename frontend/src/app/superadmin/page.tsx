@@ -2,7 +2,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { LayoutDashboard, Users, Shield, Activity, BarChart2, LogOut, RefreshCw, Terminal } from 'lucide-react';
+import { LayoutDashboard, UserCog, ShieldCheck, Activity, BarChart2, LogOut, RefreshCw, Terminal } from 'lucide-react';
 import { GlobalUserManager } from './components/GlobalUserManager';
 import { BlockchainViewer } from './components/BlockchainViewer';
 import { SystemMonitor } from './components/SystemMonitor';
@@ -19,12 +19,12 @@ function authFetch(url: string, options: RequestInit = {}) {
 type Panel = 'dashboard' | 'usuarios' | 'blockchain' | 'reportes' | 'sistema' | 'backup';
 
 const PANELS: { key: Panel; label: string; icon: any; desc: string }[] = [
-  { key: 'dashboard',  label: 'Resumen ejecutivo',   icon: LayoutDashboard, desc: 'Vision general del sistema' },
-  { key: 'usuarios',   label: 'Usuarios',    icon: Users,           desc: 'Gestion global' },
-  { key: 'blockchain', label: 'Blockchain',  icon: Shield,          desc: 'Audit log' },
-  { key: 'reportes',   label: 'Reportes',    icon: BarChart2,       desc: 'Estadisticas' },
-  { key: 'sistema',    label: 'Sistema',     icon: Activity,        desc: 'Monitor' },
-  { key: 'backup',     label: 'Backup',      icon: Terminal,        desc: 'Respaldo y recuperacion' },
+  { key: 'dashboard',  label: 'Resumen ejecutivo',   icon: LayoutDashboard,   desc: 'Vision general del sistema' },
+  { key: 'usuarios',   label: 'Usuarios',    icon: UserCog,      desc: 'Gestion global' },
+  { key: 'blockchain', label: 'Blockchain',  icon: ShieldCheck, desc: 'Audit log' },
+  { key: 'reportes',   label: 'Reportes',    icon: BarChart2,    desc: 'Estadisticas' },
+  { key: 'sistema',    label: 'Sistema',     icon: Activity,     desc: 'Monitor' },
+  { key: 'backup',     label: 'Backup',      icon: Terminal,    desc: 'Respaldo y recuperacion' },
 ];
 
 function useSession() {
