@@ -137,7 +137,7 @@ export function BlockchainViewer() {
     (filterResource === '' || b.resourceType.includes(filterResource.toUpperCase()))
   );
 
-  const resources = [...new Set(blocks.map(b => b.resourceType))];
+  const resources = Array.from(new Set(blocks.map(b => b.resourceType)));
 
   return (
     <div>

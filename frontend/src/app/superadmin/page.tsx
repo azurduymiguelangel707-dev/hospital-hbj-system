@@ -1,6 +1,7 @@
 // src/app/superadmin/page.tsx
 'use client';
 import { useState, useEffect, useCallback } from 'react';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { LayoutDashboard, Users, Shield, Activity, BarChart2, LogOut, RefreshCw, Terminal } from 'lucide-react';
 import { GlobalUserManager } from './components/GlobalUserManager';
 import { BlockchainViewer } from './components/BlockchainViewer';
@@ -151,38 +152,134 @@ export default function SuperAdminPage() {
         <main className="flex-1 overflow-auto bg-gray-50 p-6">
 
           {/* DASHBOARD */}
-          {activePanel === 'dashboard' && (
-            <div>
-              <div className="mb-5">
-                <div className="flex items-center justify-between"><h2 className="text-xl font-semibold text-gray-800">Centro de Gobierno del Sistema</h2><CerrarDiaButton onSuccess={loadAll} /></div>
-                <p className="text-sm text-gray-500" suppressHydrationWarning>{new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-              </div>
-              <div className="grid grid-cols-4 gap-4 mb-6">
-                {[
-                  { label: 'Usuarios totales', value: stats.totalUsers, color: 'blue', sub: `${stats.activeUsers} activos` },
-                  { label: 'Pacientes', value: patientsCount, color: 'green', sub: 'registrados' },
-                  { label: 'Citas hoy', value: apptStats.totalHoy, color: 'purple', sub: `${apptStats.totalHistorico} historico` },
-                  { label: 'Bloques audit', value: blockchainCount, color: 'red', sub: 'SHA-256' },
-                ].map(c => (
-                  <div key={c.label} className={`bg-${c.color}-50 border border-${c.color}-100 rounded-xl p-4`}>
-                    <p className="text-xs text-gray-500">{c.label}</p>
-                    <p className="text-3xl font-bold text-gray-800 mt-1">{c.value}</p>
-                    <p className="text-xs text-gray-400 mt-1">{c.sub}</p>
+          {activePanel === 'dashboard' && (() => {
+            const dbChartData = dbStats.map(d => ({
+              name: ({ patients:"Pacientes", appointments:"Citas", doctors:"Medicos", users:"Usuarios", medical_records:"Historiales", vital_signs:"Vitales", documents:"Documentos", blockchain_audit:"Audit" } as any)[d.table] ?? d.table,
+              Registros: d.count,
+            })).sort((a,b) => b.Registros - a.Registros).slice(0,6);
+
+            const donaData = [
+              { name: "Pacientes",   value: dbStats.find(d=>d.table==="patients")?.count ?? 0,           color: "#3b82f6" },
+              { name: "Citas",       value: dbStats.find(d=>d.table==="appointments")?.count ?? 0,       color: "#10b981" },
+              { name: "Historiales", value: dbStats.find(d=>d.table==="medical_records")?.count ?? 0,    color: "#8b5cf6" },
+              { name: "Vitales",     value: dbStats.find(d=>d.table==="vital_signs")?.count ?? 0,        color: "#f59e0b" },
+              { name: "Documentos",  value: dbStats.find(d=>d.table==="documents")?.count ?? 0,          color: "#ec4899" },
+              { name: "Audit",       value: dbStats.find(d=>d.table==="blockchain_audit")?.count ?? 0,   color: "#ef4444" },
+            ].filter(d => d.value > 0);
+
+            const totalRegistros = dbStats.reduce((acc, d) => acc + d.count, 0);
+
+            const kpis = [
+              { label: "Usuarios totales",    val: stats.totalUsers ?? 0,      color: "#3b82f6", bg: "#eff6ff", icono: "👥", sub: (stats.activeUsers ?? 0) + " activos" },
+              { label: "Medicos",             val: stats.totalDoctors ?? 0,     color: "#10b981", bg: "#f0fdf4", icono: "🩺", sub: "en el sistema" },
+              { label: "Pacientes",           val: patientsCount,               color: "#8b5cf6", bg: "#f5f3ff", icono: "🏥", sub: "registrados" },
+              { label: "Citas hoy",           val: apptStats.totalHoy ?? 0,     color: "#f59e0b", bg: "#fffbeb", icono: "📅", sub: (apptStats.completadasHoy ?? 0) + " completadas" },
+              { label: "Bloques audit",       val: blockchainCount,             color: "#ef4444", bg: "#fef2f2", icono: "🔗", sub: "SHA-256" },
+              { label: "Total registros BD",  val: totalRegistros,              color: "#6b7280", bg: "#f9fafb", icono: "🗄️", sub: "en PostgreSQL" },
+            ];
+
+            return (
+              <div className="space-y-5">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-800">Resumen ejecutivo</h2>
+                    <p className="text-xs text-gray-400 mt-0.5" suppressHydrationWarning>
+                      {new Date().toLocaleDateString("es-ES", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}
+                    </p>
                   </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="bg-white border border-gray-200 rounded-xl p-5">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-4">Ultimos eventos blockchain</h3>
-                  <BlockchainViewer />
+                  <button onClick={loadAll} disabled={loading}
+                    className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-xs text-gray-600 rounded-lg hover:bg-gray-50 transition">
+                    <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Actualizar datos
+                  </button>
                 </div>
-                <div className="bg-white border border-gray-200 rounded-xl p-5">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-4">Monitor del sistema</h3>
-                  <SystemMonitor />
+
+                {/* KPIs */}
+                <div className="grid grid-cols-6 gap-3">
+                  {kpis.map((k, i) => (
+                    <div key={i} className="rounded-xl p-3 text-center border" style={{ backgroundColor: k.bg, borderColor: k.color + "30" }}>
+                      <div className="text-xl mb-1">{k.icono}</div>
+                      <div className="text-2xl font-bold" style={{ color: k.color }}>{k.val}</div>
+                      <div className="text-xs font-medium mt-0.5" style={{ color: k.color }}>{k.label}</div>
+                      <div className="text-xs text-gray-400 mt-0.5">{k.sub}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-5">
+                  {/* Barras BD */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Registros por tabla</p>
+                    <p className="text-xs text-gray-400 mb-3">Volumen de datos en PostgreSQL</p>
+                    {dbChartData.length === 0 ? (
+                      <div className="text-center py-8 text-gray-300 text-xs">Sin datos</div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height={200}>
+                        <BarChart data={dbChartData} barSize={28} layout="vertical">
+                          <XAxis type="number" allowDecimals={false} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                          <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} width={80} />
+                          <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }} />
+                          <Bar dataKey="Registros" radius={[0,6,6,0]}>
+                            {dbChartData.map((_: any, i: number) => (
+                              <Cell key={i} fill={["#3b82f6","#10b981","#8b5cf6","#f59e0b","#ec4899","#ef4444"][i % 6]} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
+                  </div>
+
+                  {/* Dona distribucion */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Distribucion de datos</p>
+                    <p className="text-xs text-gray-400 mb-3">Proporcion de registros por categoria</p>
+                    {donaData.length === 0 ? (
+                      <div className="text-center py-8 text-gray-300 text-xs">Sin datos</div>
+                    ) : (
+                      <div className="flex items-center gap-4">
+                        <ResponsiveContainer width="55%" height={200}>
+                          <PieChart>
+                            <Pie data={donaData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={2} dataKey="value">
+                              {donaData.map((_: any, i: number) => <Cell key={i} fill={donaData[i].color} />)}
+                            </Pie>
+                            <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                        <div className="flex-1 space-y-1.5">
+                          {donaData.map((d: any, i: number) => (
+                            <div key={i} className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
+                                <span className="text-xs text-gray-600">{d.name}</span>
+                              </div>
+                              <span className="text-xs font-bold" style={{ color: d.color }}>{d.value}</span>
+                            </div>
+                          ))}
+                          <div className="pt-1 border-t border-gray-100 flex items-center justify-between">
+                            <span className="text-xs text-gray-400">Total</span>
+                            <span className="text-xs font-bold text-gray-700">{totalRegistros}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-5">
+                  {/* Estado servicios */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Estado de servicios</p>
+                    <SystemMonitor />
+                  </div>
+                  {/* Blockchain */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Ultimos eventos blockchain</p>
+                    <BlockchainViewer />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* USUARIOS */}
           {activePanel === 'usuarios' && (

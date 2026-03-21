@@ -261,7 +261,7 @@ export function ReportesPanel() {
               <p className="text-xs font-semibold text-gray-500 mb-3">Pacientes por especialidad requerida</p>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
-                  <Pie data={data.porEspecialidad} dataKey="total" nameKey="especialidad" cx="50%" cy="50%" outerRadius={80} label={({ especialidad, total }) => `${especialidad}: ${total}`}>
+                  <Pie data={data.porEspecialidad} dataKey="total" nameKey="especialidad" cx="50%" cy="50%" outerRadius={80} label={({ name, value }) => `${name}: ${value}`}>
                     {data.porEspecialidad.map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>
                   <Tooltip />
