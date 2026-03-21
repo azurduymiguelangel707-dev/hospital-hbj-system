@@ -30,6 +30,7 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
   const [resetResult, setResetResult] = useState<{ id: string; nombre: string; password: string } | null>(null);
   const [loading, setLoading]       = useState<string | null>(null);
   const [sortBy, setSortBy]         = useState<'nombre'|'rol'|'fecha'>('rol');
+  const [modalUser, setModalUser]   = useState<User | null>(null);
 
   const filtered = users
     .filter(u => {
@@ -160,7 +161,7 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
                   const cfg = ROLE_CFG[u.role] ?? ROLE_CFG.PACIENTE;
                   const initials = `${u.first_name?.[0] ?? ''}${u.last_name?.[0] ?? ''}`.toUpperCase();
                   return (
-                    <tr key={u.id} className={`hover:bg-gray-50 transition ${!u.is_active ? 'opacity-50' : ''}`}>
+                    <tr key={u.id} onClick={() => setModalUser(u)} className={`hover:bg-gray-50 transition cursor-pointer ${!u.is_active ? 'opacity-50' : ''}`}>
                       {/* Usuario */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
@@ -292,6 +293,78 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
           </div>
         </div>
       </div>
+    {/* Modal detalle usuario */}
+    {modalUser && (() => {
+      const cfg = ROLE_CFG[modalUser.role] ?? ROLE_CFG.PACIENTE;
+      const initials = `${modalUser.first_name?.[0] ?? ''}${modalUser.last_name?.[0] ?? ''}`.toUpperCase();
+      return (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setModalUser(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md" onClick={e => e.stopPropagation()}>
+            {/* Header modal */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-800">Detalle de usuario</h3>
+              <button onClick={() => setModalUser(null)} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
+                <X size={16} className="text-gray-500" />
+              </button>
+            </div>
+            {/* Contenido */}
+            <div className="px-6 py-5 space-y-4">
+              {/* Avatar y nombre */}
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold"
+                  style={{ backgroundColor: cfg.bg, color: cfg.color, border: '2px solid ' + cfg.border }}>
+                  {initials}
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-gray-800">{modalUser.first_name} {modalUser.last_name}</p>
+                  <p className="text-sm text-gray-400">{modalUser.email}</p>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold mt-1"
+                    style={{ color: cfg.color, backgroundColor: cfg.bg, border: '1px solid ' + cfg.border }}>
+                    {cfg.icono} {cfg.label}
+                  </span>
+                </div>
+              </div>
+              {/* Info */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: "Estado",   val: modalUser.is_active ? "Activo" : "Inactivo", color: modalUser.is_active ? "#10b981" : "#ef4444" },
+                  { label: "Codigo",   val: modalUser.email?.split('@')[0] ?? '—', color: "#6b7280" },
+                  { label: "Alta",     val: new Date(modalUser.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }), color: "#6b7280" },
+                  { label: "Rol",      val: cfg.label, color: cfg.color },
+                ].map((s, i) => (
+                  <div key={i} className="bg-gray-50 rounded-xl px-3 py-2.5">
+                    <p className="text-xs text-gray-400 mb-0.5">{s.label}</p>
+                    <p className="text-sm font-semibold" style={{ color: s.color }}>{s.val}</p>
+                  </div>
+                ))}
+              </div>
+              {/* Acciones */}
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-100">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setEditRole({ id: modalUser.id, current: modalUser.role }); setNewRole(modalUser.role); setModalUser(null); }}
+                  className="flex flex-col items-center gap-1.5 px-3 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl transition">
+                  <Shield size={16} />
+                  <span className="text-xs font-medium">Cambiar rol</span>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleToggle(modalUser.id); setModalUser(null); }}
+                  className={"flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl transition " + (modalUser.is_active ? "bg-red-50 hover:bg-red-100 text-red-600" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-600")}>
+                  <Power size={16} />
+                  <span className="text-xs font-medium">{modalUser.is_active ? "Desactivar" : "Activar"}</span>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleResetPassword(modalUser.id, modalUser.first_name + ' ' + modalUser.last_name); setModalUser(null); }}
+                  className="flex flex-col items-center gap-1.5 px-3 py-3 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-xl transition">
+                  <Key size={16} />
+                  <span className="text-xs font-medium">Reset pass</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    })()}
     </div>
+
   );
 }
