@@ -132,223 +132,248 @@ export function BlockchainViewer() {
   const chainIntegrity = blocks.filter(b => !b.isValid).length === 0;
   const invalidBlocks = blocks.filter(b => !b.isValid);
 
+
   return (
-    <div className="flex gap-4 h-full">
-      {/* Columna principal */}
-      <div className="flex-1 min-w-0 flex flex-col gap-3 overflow-hidden">
-
-        {/* Banner integridad */}
-        {integrity && (
-          <div className={"flex items-center gap-3 px-4 py-2.5 rounded-xl border flex-shrink-0 " + (integrity.isValid ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
-            {integrity.isValid
-              ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-              : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>}
-            <p className={"text-xs font-bold flex-1 " + (integrity.isValid ? "text-emerald-800" : "text-red-800")}>
-              {integrity.isValid ? "Cadena INTEGRA — todos los bloques son validos" : "CADENA COMPROMETIDA — " + (integrity.invalidBlocks?.length ?? 0) + " bloque(s) invalido(s)"}
-            </p>
-            <button onClick={() => setIntegrity(null)} className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
-          </div>
-        )}
-
-        {/* Controles compactos */}
-        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-          <select value={filterEvent} onChange={e => setFilterEvent(e.target.value)}
-            className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Todos los eventos</option>
-            {Object.entries(EVENT_CFG).map(([k, v]) => <option key={k} value={k}>{v.icono} {v.label}</option>)}
-          </select>
-          <select value={filterResource} onChange={e => setFilterResource(e.target.value)}
-            className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Todos los recursos</option>
-            {resources.map(r => <option key={r} value={r}>{RESOURCE_LABELS[r] ?? r}</option>)}
-          </select>
-          <input value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Buscar hash o usuario..."
-            className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 w-40" />
-          <div className="ml-auto flex gap-1.5">
-            <button onClick={verifyChain} disabled={verifying}
-              className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-              {verifying ? "..." : "Verificar"}
-            </button>
-            <button onClick={exportJSON} className="px-2.5 py-1.5 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition">JSON</button>
-            <button onClick={exportPDF} className="px-2.5 py-1.5 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition">PDF</button>
-            <button onClick={loadBlocks} className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-              <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
-            </button>
-          </div>
+    <div className="space-y-4">
+      {/* Banner integridad */}
+      {integrity && (
+        <div className={"flex items-center gap-3 px-4 py-3 rounded-xl border " + (integrity.isValid ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
+          {integrity.isValid
+            ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>}
+          <p className={"text-sm font-bold flex-1 " + (integrity.isValid ? "text-emerald-800" : "text-red-800")}>
+            {integrity.isValid ? "Cadena INTEGRA — todos los bloques son validos" : "CADENA COMPROMETIDA — " + (integrity.invalidBlocks?.length ?? 0) + " bloque(s) invalido(s)"}
+          </p>
+          <button onClick={() => setIntegrity(null)} className="text-gray-400 hover:text-gray-600 px-2">✕</button>
         </div>
+      )}
 
-        {/* Tabla compacta */}
-        <div className="border border-gray-200 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0">
-          <div className="overflow-y-auto flex-1">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
-                <tr>
-                  {['#','Fecha','Evento','Recurso','Usuario','Hash','Estado',''].map(h => (
-                    <th key={h} className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {loading ? (
-                  <tr><td colSpan={8} className="text-center py-8 text-gray-400 text-sm">
-                    <RefreshCw size={18} className="mx-auto mb-2 animate-spin opacity-30" />Cargando...
-                  </td></tr>
-                ) : filtered.length === 0 ? (
-                  <tr><td colSpan={8} className="text-center py-6 text-gray-400 text-xs">Sin bloques</td></tr>
-                ) : filtered.map(b => {
-                  const cfg = EVENT_CFG[b.eventType] ?? EVENT_CFG.ACCESS;
-                  return (
-                    <>
-                      <tr key={b.id} className={"hover:bg-gray-50 transition cursor-pointer " + (!b.isValid ? "bg-red-50" : "")}
-                        onClick={() => setExpanded(expanded === b.id ? null : b.id)}>
-                        <td className="px-3 py-2 text-xs font-mono font-bold text-gray-600">{b.blockIndex}</td>
-                        <td className="px-3 py-2 text-xs text-gray-500">
-                          {new Date(b.timestamp).toLocaleDateString("es-ES",{day:"2-digit",month:"short"})} {new Date(b.timestamp).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}
-                        </td>
-                        <td className="px-3 py-2">
-                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold" style={{ color: cfg.color, backgroundColor: cfg.bg, border: "1px solid " + cfg.border }}>
-                            {cfg.icono} {cfg.label}
-                          </span>
-                        </td>
-                        <td className="px-3 py-2 text-xs text-gray-600">{RESOURCE_LABELS[b.resourceType] ?? b.resourceType}</td>
-                        <td className="px-3 py-2 text-xs font-mono text-gray-400">{b.userId?.substring(0,8)}...</td>
-                        <td className="px-3 py-2">
-                          <span className="text-xs font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{b.currentHash?.substring(0,10)}...</span>
-                        </td>
-                        <td className="px-3 py-2">
-                          {b.isValid
-                            ? <span className="flex items-center gap-1 text-xs text-emerald-600"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Valido</span>
-                            : <span className="flex items-center gap-1 text-xs text-red-600 font-semibold"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>Invalido</span>}
-                        </td>
-                        <td className="px-3 py-2">
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                            className={"transition-transform text-gray-400 " + (expanded === b.id ? "rotate-180" : "")}>
-                            <path d="M6 9l6 6 6-6"/>
-                          </svg>
-                        </td>
-                      </tr>
-                      {expanded === b.id && (
-                        <tr key={b.id + "-detail"} className="bg-blue-50">
-                          <td colSpan={8} className="px-4 py-3">
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
-                                <p className="text-xs font-semibold text-gray-500 mb-1">Hash actual</p>
-                                <p className="font-mono text-xs text-gray-700 break-all">{b.currentHash}</p>
-                              </div>
-                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
-                                <p className="text-xs font-semibold text-gray-500 mb-1">Hash anterior</p>
-                                <p className="font-mono text-xs text-gray-700 break-all">{b.previousHash}</p>
-                              </div>
-                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
-                                <p className="text-xs font-semibold text-gray-500 mb-1">Nonce</p>
-                                <p className="font-mono text-xs text-gray-700">{b.nonce}</p>
-                              </div>
-                              <div className="bg-white rounded-lg p-2.5 border border-blue-100">
-                                <p className="text-xs font-semibold text-gray-500 mb-1">Detalles</p>
-                                <p className="font-mono text-xs text-gray-600 break-all">{JSON.stringify(b.actionDetails)}</p>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          {/* Paginacion compacta */}
-          <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-t border-gray-100 flex-shrink-0">
-            <span className="text-xs text-gray-400">{total} bloques · pag {page}/{totalPages}</span>
-            <div className="flex gap-1">
-              <button onClick={() => setPage(1)} disabled={page === 1} className="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-100 disabled:opacity-40">«</button>
-              <button onClick={() => setPage(p => Math.max(1,p-1))} disabled={page === 1} className="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-100 disabled:opacity-40">‹</button>
-              {[...Array(Math.min(5,totalPages))].map((_,i) => {
-                const p = Math.max(1,page-2)+i;
-                if (p > totalPages) return null;
-                return <button key={p} onClick={() => setPage(p)} className={"px-2.5 py-1 rounded text-xs border transition " + (p === page ? "bg-blue-600 text-white border-blue-600" : "border-gray-200 hover:bg-gray-100")}>{p}</button>;
-              })}
-              <button onClick={() => setPage(p => p+1)} disabled={blocks.length < 20} className="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-100 disabled:opacity-40">›</button>
-              <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-100 disabled:opacity-40">»</button>
-            </div>
-          </div>
+      {/* Controles */}
+      <div className="flex items-center gap-2 flex-wrap bg-gray-50 rounded-xl p-3">
+        <select value={filterEvent} onChange={e => setFilterEvent(e.target.value)}
+          className="border border-gray-200 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Todos los eventos</option>
+          {Object.entries(EVENT_CFG).map(([k, v]) => <option key={k} value={k}>{v.icono} {v.label}</option>)}
+        </select>
+        <select value={filterResource} onChange={e => setFilterResource(e.target.value)}
+          className="border border-gray-200 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Todos los recursos</option>
+          {resources.map(r => <option key={r} value={r}>{RESOURCE_LABELS[r] ?? r}</option>)}
+        </select>
+        <input value={search} onChange={e => setSearch(e.target.value)}
+          placeholder="Buscar hash o usuario..."
+          className="border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 min-w-32" />
+        <div className="flex gap-2 ml-auto">
+          <button onClick={verifyChain} disabled={verifying}
+            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            {verifying ? "Verificando..." : "Verificar integridad"}
+          </button>
+          <button onClick={exportJSON} className="px-3 py-2 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition">JSON</button>
+          <button onClick={exportPDF} className="px-3 py-2 border border-gray-200 text-xs rounded-lg hover:bg-gray-50 transition">PDF</button>
+          <button onClick={loadBlocks} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+            <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+          </button>
         </div>
       </div>
 
-      {/* Panel lateral compacto */}
-      <div className="w-52 flex-shrink-0 space-y-3">
-        {/* Estado cadena */}
-        <div className={"rounded-xl border p-3 " + (chainIntegrity ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
-          <div className="flex items-center gap-2 mb-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={chainIntegrity ? "#10b981" : "#ef4444"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              {chainIntegrity ? <path d="M9 12l2 2 4-4"/> : <path d="M12 8v4M12 16h.01"/>}
-            </svg>
-            <p className={"text-xs font-bold " + (chainIntegrity ? "text-emerald-800" : "text-red-800")}>
-              {chainIntegrity ? "INTEGRA ✓" : "COMPROMETIDA ✕"}
-            </p>
-          </div>
-          <div className="space-y-1">
-            {[
-              { label: "Total",    val: total },
-              { label: "Pagina",   val: blocks.length },
-              { label: "Invalidos", val: blocks.filter(b => !b.isValid).length, alert: blocks.filter(b => !b.isValid).length > 0 },
-            ].map((s, i) => (
-              <div key={i} className="flex justify-between text-xs">
-                <span className="text-gray-500">{s.label}</span>
-                <span className={"font-bold " + ((s as any).alert ? "text-red-600" : chainIntegrity ? "text-emerald-700" : "text-gray-700")}>{s.val}</span>
-              </div>
-            ))}
-          </div>
-          <button onClick={verifyChain} disabled={verifying}
-            className="mt-2 w-full py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition">
-            {verifying ? "Verificando..." : "Verificar cadena"}
-          </button>
-        </div>
-
-        {/* Distribucion eventos */}
-        <div className="bg-white rounded-xl border border-gray-200 p-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Eventos</p>
-          <div className="space-y-1.5">
-            {Object.entries(EVENT_CFG).map(([k, v]) => {
-              const count = blocks.filter(b => b.eventType === k).length;
-              const pct = blocks.length > 0 ? Math.round((count / blocks.length) * 100) : 0;
-              return (
-                <div key={k} className="flex items-center gap-2">
-                  <span className="text-xs w-4">{v.icono}</span>
-                  <div className="flex-1">
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-1.5 rounded-full" style={{ width: pct + "%", backgroundColor: v.color }} />
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold w-6 text-right" style={{ color: v.color }}>{count}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Ultimo bloque */}
-        {blocks[0] && (
-          <div className="bg-white rounded-xl border border-gray-200 p-3">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ultimo bloque</p>
-            <div className="space-y-1">
-              {[
-                { label: "N°",      val: "#" + blocks[0].blockIndex },
-                { label: "Tipo",    val: EVENT_CFG[blocks[0].eventType]?.label ?? blocks[0].eventType },
-                { label: "Hora",    val: new Date(blocks[0].timestamp).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"}) },
-              ].map((s, i) => (
-                <div key={i} className="flex justify-between text-xs">
-                  <span className="text-gray-400">{s.label}</span>
-                  <span className="font-medium text-gray-700">{s.val}</span>
-                </div>
-              ))}
-              <p className="text-xs font-mono text-gray-400 truncate mt-1">{blocks[0].currentHash?.substring(0,20)}...</p>
+      {/* Contenido principal: tabla + panel lateral */}
+      <div className="flex gap-4">
+        {/* Tabla */}
+        <div className="flex-1 min-w-0 bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                {[
+                  { label: '#',       w: 'w-12' },
+                  { label: 'Fecha',   w: 'w-28' },
+                  { label: 'Evento',  w: 'w-32' },
+                  { label: 'Recurso', w: 'w-32' },
+                  { label: 'Usuario', w: 'w-24' },
+                  { label: 'Hash',    w: 'w-32' },
+                  { label: 'Estado',  w: 'w-20' },
+                  { label: '',        w: 'w-8'  },
+                ].map(h => (
+                  <th key={h.label} className={"px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide " + h.w}>{h.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {loading ? (
+                <tr><td colSpan={8} className="text-center py-12">
+                  <RefreshCw size={20} className="mx-auto mb-2 animate-spin text-blue-400" />
+                  <p className="text-sm text-gray-400">Cargando bloques...</p>
+                </td></tr>
+              ) : filtered.length === 0 ? (
+                <tr><td colSpan={8} className="text-center py-10 text-gray-400 text-sm">Sin bloques que coincidan</td></tr>
+              ) : filtered.map(b => {
+                const cfg = EVENT_CFG[b.eventType] ?? EVENT_CFG.ACCESS;
+                return (
+                  <>
+                    <tr key={b.id} className={"hover:bg-gray-50 transition cursor-pointer " + (!b.isValid ? "bg-red-50" : "")}
+                      onClick={() => setExpanded(expanded === b.id ? null : b.id)}>
+                      <td className="px-4 py-3 text-sm font-mono font-bold text-gray-700">{b.blockIndex}</td>
+                      <td className="px-4 py-3">
+                        <p className="text-xs font-medium text-gray-700">{new Date(b.timestamp).toLocaleDateString("es-ES",{day:"2-digit",month:"short"})}</p>
+                        <p className="text-xs text-gray-400">{new Date(b.timestamp).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
+                          style={{ color: cfg.color, backgroundColor: cfg.bg, border: "1px solid " + cfg.border }}>
+                          {cfg.icono} {cfg.label}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600">{RESOURCE_LABELS[b.resourceType] ?? b.resourceType}</td>
+                      <td className="px-4 py-3 text-xs font-mono text-gray-400">{b.userId?.substring(0,8)}...</td>
+                      <td className="px-4 py-3">
+                        <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">{b.currentHash?.substring(0,12)}...</span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {b.isValid
+                          ? <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Valido
+                            </span>
+                          : <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>Invalido
+                            </span>}
+                      </td>
+                      <td className="px-4 py-3">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                          className={"transition-transform text-gray-400 " + (expanded === b.id ? "rotate-180" : "")}>
+                          <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                      </td>
+                    </tr>
+                    {expanded === b.id && (
+                      <tr key={b.id + "-exp"}>
+                        <td colSpan={8} className="px-4 py-4 bg-blue-50 border-t border-blue-100">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-white rounded-xl p-3 border border-blue-100">
+                              <p className="text-xs font-semibold text-gray-400 mb-1.5">Hash actual</p>
+                              <p className="font-mono text-xs text-gray-700 break-all leading-relaxed">{b.currentHash}</p>
+                            </div>
+                            <div className="bg-white rounded-xl p-3 border border-blue-100">
+                              <p className="text-xs font-semibold text-gray-400 mb-1.5">Hash anterior</p>
+                              <p className="font-mono text-xs text-gray-700 break-all leading-relaxed">{b.previousHash}</p>
+                            </div>
+                            <div className="bg-white rounded-xl p-3 border border-blue-100">
+                              <p className="text-xs font-semibold text-gray-400 mb-1.5">Nonce</p>
+                              <p className="font-mono text-xs text-gray-700">{b.nonce}</p>
+                            </div>
+                            <div className="bg-white rounded-xl p-3 border border-blue-100">
+                              <p className="text-xs font-semibold text-gray-400 mb-1.5">Detalles</p>
+                              <p className="font-mono text-xs text-gray-600 break-all">{JSON.stringify(b.actionDetails)}</p>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                );
+              })}
+            </tbody>
+          </table>
+          {/* Paginacion */}
+          <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-100">
+            <span className="text-xs text-gray-500">{total} bloques totales · pagina {page} de {totalPages}</span>
+            <div className="flex gap-1">
+              <button onClick={() => setPage(1)} disabled={page === 1}
+                className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-white disabled:opacity-40 transition">«</button>
+              <button onClick={() => setPage(p => Math.max(1,p-1))} disabled={page === 1}
+                className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-white disabled:opacity-40 transition">‹</button>
+              {[...Array(Math.min(5,totalPages))].map((_,i) => {
+                const p = Math.max(1, page-2) + i;
+                if (p > totalPages) return null;
+                return (
+                  <button key={p} onClick={() => setPage(p)}
+                    className={"px-3 py-1.5 rounded-lg text-xs border transition " + (p === page ? "bg-blue-600 text-white border-blue-600" : "border-gray-200 hover:bg-white")}>
+                    {p}
+                  </button>
+                );
+              })}
+              <button onClick={() => setPage(p => p+1)} disabled={blocks.length < 20}
+                className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-white disabled:opacity-40 transition">›</button>
+              <button onClick={() => setPage(totalPages)} disabled={page === totalPages}
+                className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs hover:bg-white disabled:opacity-40 transition">»</button>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Panel lateral */}
+        <div className="w-56 flex-shrink-0 space-y-3">
+          {/* Estado cadena */}
+          <div className={"rounded-xl border p-4 " + (chainIntegrity ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
+            <div className="flex items-center gap-2 mb-3">
+              {chainIntegrity
+                ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>}
+              <p className={"text-sm font-bold " + (chainIntegrity ? "text-emerald-800" : "text-red-800")}>
+                {chainIntegrity ? "INTEGRA ✓" : "COMPROMETIDA ✕"}
+              </p>
+            </div>
+            <div className="space-y-2">
+              {[
+                { label: "Total bloques", val: total,                                      color: chainIntegrity ? "#10b981" : "#6b7280" },
+                { label: "Esta pagina",  val: blocks.length,                               color: "#6b7280" },
+                { label: "Invalidos",    val: blocks.filter(b => !b.isValid).length,       color: blocks.filter(b => !b.isValid).length > 0 ? "#ef4444" : "#10b981" },
+              ].map((s, i) => (
+                <div key={i} className="flex items-center justify-between px-3 py-2 bg-white/70 rounded-lg">
+                  <span className="text-xs text-gray-500">{s.label}</span>
+                  <span className="text-sm font-bold" style={{ color: s.color }}>{s.val}</span>
+                </div>
+              ))}
+            </div>
+            <button onClick={verifyChain} disabled={verifying}
+              className="mt-3 w-full py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition">
+              {verifying ? "Verificando..." : "Verificar cadena"}
+            </button>
+          </div>
+
+          {/* Eventos en pagina */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Eventos en pagina</p>
+            <div className="space-y-2">
+              {Object.entries(EVENT_CFG).map(([k, v]) => {
+                const count = blocks.filter(b => b.eventType === k).length;
+                const pct = blocks.length > 0 ? Math.round((count / blocks.length) * 100) : 0;
+                return (
+                  <div key={k}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-600 flex items-center gap-1">{v.icono} {v.label}</span>
+                      <span className="text-xs font-bold" style={{ color: v.color }}>{count}</span>
+                    </div>
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 rounded-full transition-all" style={{ width: pct + "%", backgroundColor: v.color }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Ultimo bloque */}
+          {blocks[0] && (
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Ultimo bloque</p>
+              <div className="space-y-2">
+                {[
+                  { label: "Numero",  val: "#" + blocks[0].blockIndex },
+                  { label: "Tipo",    val: EVENT_CFG[blocks[0].eventType]?.label ?? blocks[0].eventType },
+                  { label: "Recurso", val: RESOURCE_LABELS[blocks[0].resourceType] ?? blocks[0].resourceType },
+                  { label: "Hora",    val: new Date(blocks[0].timestamp).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"}) },
+                ].map((s, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <span className="text-xs text-gray-400">{s.label}</span>
+                    <span className="text-xs font-semibold text-gray-700">{s.val}</span>
+                  </div>
+                ))}
+                <p className="text-xs font-mono text-gray-300 truncate pt-1 border-t border-gray-100">
+                  {blocks[0].currentHash?.substring(0,22)}...
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
