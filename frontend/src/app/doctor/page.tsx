@@ -456,15 +456,15 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
                     { label: detail.tipoSangre,      color: "#ef4444" },
                     detail.ci ? { label: "CI: " + detail.ci, color: "#6b7280" } : null,
                     detail.telefono ? { label: "📞 " + detail.telefono, color: "#10b981" } : null,
-                  ].filter(Boolean).map((chip: any, i: number) => (
+                  ].filter((x): x is {label: string; color: string} => x !== null && x !== undefined).map((chip, i) => (
                     <span key={i} className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ color: chip.color, backgroundColor: chip.color + "15", border: "1px solid " + chip.color + "30" }}>
                       {chip.label}
                     </span>
                   ))}
                 </div>
-                {detail.condicionesCronicas && detail.condicionesCronicas.length > 0 && (
+                {(detail.condicionesCronicas ?? []).length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {detail.condicionesCronicas.map((c: string, i: number) => (
+                    {(detail.condicionesCronicas ?? []).map((c: string, i: number) => (
                       <span key={i} className="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-full text-xs">
                         {c}
                       </span>
