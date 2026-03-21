@@ -1,24 +1,27 @@
-﻿'use client';
+'use client';
 import { useState } from 'react';
-import { RefreshCw, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
-const STATUS_CFG: Record<string, { label: string; cls: string }> = {
-  AGENDADA:    { label: 'Agendada',    cls: 'bg-amber-100 text-amber-800' },
-  PENDIENTE:   { label: 'Pendiente',   cls: 'bg-amber-100 text-amber-800' },
-  CONFIRMADA:  { label: 'Confirmada',  cls: 'bg-blue-100 text-blue-800' },
-  EN_ESPERA:   { label: 'En espera',   cls: 'bg-blue-100 text-blue-800' },
-  EN_CONSULTA: { label: 'En consulta', cls: 'bg-purple-100 text-purple-800' },
-  COMPLETADA:  { label: 'Completada',  cls: 'bg-green-100 text-green-800' },
-  NO_ASISTIO:  { label: 'No asistio',  cls: 'bg-gray-100 text-gray-600' },
-  ANULADA:     { label: 'Anulada',     cls: 'bg-red-100 text-red-800' },
-  CANCELADA:   { label: 'Cancelada',   cls: 'bg-red-100 text-red-800' },
+import { RefreshCw } from 'lucide-react';
+
+const STATUS_CFG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
+  AGENDADA:    { label: 'Agendada',    color: '#f59e0b', bg: '#fffbeb', dot: 'bg-amber-400' },
+  PENDIENTE:   { label: 'Pendiente',   color: '#f59e0b', bg: '#fffbeb', dot: 'bg-amber-400' },
+  CONFIRMADA:  { label: 'Confirmada',  color: '#3b82f6', bg: '#eff6ff', dot: 'bg-blue-500' },
+  EN_ESPERA:   { label: 'En espera',   color: '#3b82f6', bg: '#eff6ff', dot: 'bg-blue-500' },
+  EN_CONSULTA: { label: 'En consulta', color: '#8b5cf6', bg: '#f5f3ff', dot: 'bg-purple-500' },
+  COMPLETADA:  { label: 'Completada',  color: '#10b981', bg: '#f0fdf4', dot: 'bg-emerald-500' },
+  NO_ASISTIO:  { label: 'No asistio',  color: '#6b7280', bg: '#f9fafb', dot: 'bg-gray-400' },
+  ANULADA:     { label: 'Anulada',     color: '#ef4444', bg: '#fef2f2', dot: 'bg-red-500' },
+  CANCELADA:   { label: 'Cancelada',   color: '#ef4444', bg: '#fef2f2', dot: 'bg-red-500' },
 };
-const ESP_CFG: Record<string, { color: string; bg: string; border: string; consultorio: string; short: string; dot: string }> = {
-  Cardiologia:          { color: 'text-red-700',    bg: 'bg-red-50',    border: 'border-red-200',    consultorio: 'Consultorio 1', short: 'CAR', dot: 'bg-red-500' },
-  Traumatologia:        { color: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-200', consultorio: 'Consultorio 2', short: 'TRA', dot: 'bg-orange-500' },
-  Neurologia:           { color: 'text-purple-700', bg: 'bg-purple-50', border: 'border-purple-200', consultorio: 'Consultorio 3', short: 'NEU', dot: 'bg-purple-500' },
-  Otorrinolaringologia: { color: 'text-blue-700',   bg: 'bg-blue-50',   border: 'border-blue-200',   consultorio: 'Consultorio 4', short: 'OTO', dot: 'bg-blue-500' },
-  Gastroenterologia:    { color: 'text-green-700',  bg: 'bg-green-50',  border: 'border-green-200',  consultorio: 'Consultorio 5', short: 'GAS', dot: 'bg-green-500' },
+
+const ESP_CFG: Record<string, { color: string; bg: string; border: string; dot: string; short: string; consultorio: string }> = {
+  Cardiologia:          { color: '#dc2626', bg: '#fef2f2', border: '#fecaca', dot: 'bg-red-500',    short: 'CAR', consultorio: 'Consultorio 1' },
+  Traumatologia:        { color: '#ea580c', bg: '#fff7ed', border: '#fed7aa', dot: 'bg-orange-500', short: 'TRA', consultorio: 'Consultorio 2' },
+  Neurologia:           { color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe', dot: 'bg-purple-500', short: 'NEU', consultorio: 'Consultorio 3' },
+  Otorrinolaringologia: { color: '#1d4ed8', bg: '#eff6ff', border: '#bfdbfe', dot: 'bg-blue-500',   short: 'OTR', consultorio: 'Consultorio 4' },
+  Gastroenterologia:    { color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0', dot: 'bg-green-500',  short: 'GAS', consultorio: 'Consultorio 5' },
 };
+
 interface Appointment {
   id: string; appointmentDate: string; appointmentTime: string;
   status: string; reason: string; turno?: string;
@@ -27,11 +30,13 @@ interface Appointment {
   doctor?: { user?: { first_name: string; last_name: string }; specialty?: string };
 }
 interface Props { appointments: Appointment[]; onRefresh: () => void; }
+
 export function AppointmentMonitor({ appointments, onRefresh }: Props) {
   const today = new Date().toISOString().split('T')[0];
   const todayAppts = appointments
     .filter(a => (a.appointmentDate ?? '').split('T')[0] === today && a.status !== 'ANULADA' && a.status !== 'CANCELADA')
     .sort((a, b) => (a.numeroFicha ?? 99) - (b.numeroFicha ?? 99));
+
   const porEspecialidad: Record<string, Appointment[]> = {};
   for (const a of todayAppts) {
     const esp = a.especialidad ?? a.doctor?.specialty ?? 'General';
@@ -40,99 +45,139 @@ export function AppointmentMonitor({ appointments, onRefresh }: Props) {
   }
   const especialidades = Object.keys(porEspecialidad).sort();
   const [filtro, setFiltro] = useState<string>('todas');
-  const [expandidas, setExpandidas] = useState<Record<string, boolean>>({});
-  const toggle = (esp: string) => setExpandidas(prev => ({ ...prev, [esp]: !prev[esp] }));
+  const [expanded, setExpanded] = useState<string | null>(null);
+
   const espsVisibles = filtro === 'todas' ? especialidades : especialidades.filter(e => e === filtro);
+
+  const completadasTotal = todayAppts.filter(a => a.status === 'COMPLETADA').length;
+  const pendientesTotal  = todayAppts.filter(a => ['PENDIENTE','AGENDADA','CONFIRMADA','EN_ESPERA'].includes(a.status)).length;
+  const enConsulta       = todayAppts.filter(a => a.status === 'EN_CONSULTA').length;
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs text-gray-500">{todayAppts.length} citas programadas hoy</p>
-        <button onClick={onRefresh} className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 transition">
-          <RefreshCw size={12} /> Actualizar
-        </button>
+    <div className="space-y-3">
+      {/* KPIs compactos */}
+      <div className="grid grid-cols-4 gap-2">
+        {[
+          { label: 'Total hoy',    val: todayAppts.length,  color: '#3b82f6', bg: '#eff6ff' },
+          { label: 'Completadas',  val: completadasTotal,   color: '#10b981', bg: '#f0fdf4' },
+          { label: 'Pendientes',   val: pendientesTotal,    color: '#f59e0b', bg: '#fffbeb' },
+          { label: 'En consulta',  val: enConsulta,         color: '#8b5cf6', bg: '#f5f3ff' },
+        ].map((k, i) => (
+          <div key={i} className="rounded-xl p-2.5 text-center border" style={{ backgroundColor: k.bg, borderColor: k.color + '30' }}>
+            <div className="text-xl font-bold" style={{ color: k.color }}>{k.val}</div>
+            <div className="text-xs mt-0.5" style={{ color: k.color }}>{k.label}</div>
+          </div>
+        ))}
       </div>
-      <div className="flex gap-2 flex-wrap mb-4">
-        <button onClick={() => setFiltro('todas')} className={'px-3 py-1.5 rounded-lg text-xs font-medium border transition ' + (filtro === 'todas' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300')}>
-          Todas ({todayAppts.length})
+
+      {/* Filtros */}
+      <div className="flex gap-1.5 flex-wrap items-center">
+        <button onClick={() => setFiltro('todas')}
+          className={'px-2.5 py-1 rounded-lg text-xs font-medium border transition ' + (filtro === 'todas' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300')}>
+          Todas
         </button>
         {especialidades.map(esp => {
-          const cfg = ESP_CFG[esp] ?? { color: 'text-gray-700', bg: 'bg-gray-50', border: 'border-gray-200', dot: 'bg-gray-400' };
+          const cfg = ESP_CFG[esp] ?? { color: '#6b7280', bg: '#f9fafb', border: '#e5e7eb', dot: 'bg-gray-400', short: esp.substring(0,3).toUpperCase(), consultorio: '' };
           return (
             <button key={esp} onClick={() => setFiltro(esp === filtro ? 'todas' : esp)}
-              className={'px-3 py-1.5 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 ' + (filtro === esp ? cfg.bg + ' ' + cfg.color + ' ' + cfg.border : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300')}>
-              <span className={'w-1.5 h-1.5 rounded-full ' + cfg.dot}></span>
-              {esp} ({porEspecialidad[esp].length})
+              className={'px-2.5 py-1 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 ' + (filtro === esp ? 'text-white border-transparent' : 'bg-white border-gray-200 hover:border-gray-300')}
+              style={filtro === esp ? { backgroundColor: cfg.color, borderColor: cfg.color } : {}}>
+              <span className={'w-1.5 h-1.5 rounded-full flex-shrink-0 ' + cfg.dot} />
+              {esp.substring(0,6)} ({porEspecialidad[esp].length})
             </button>
           );
         })}
+        <button onClick={onRefresh} className="ml-auto flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition">
+          <RefreshCw size={11} /> Actualizar
+        </button>
       </div>
+
+      {/* Grid de especialidades */}
       {todayAppts.length === 0 ? (
-        <div className="text-center py-8 text-gray-400 text-sm border border-gray-200 rounded-xl">Sin citas para hoy</div>
+        <div className="text-center py-10 text-gray-400 border-2 border-dashed border-gray-100 rounded-xl">
+          <p className="text-sm">Sin citas programadas para hoy</p>
+        </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {espsVisibles.map(esp => {
             const citas = porEspecialidad[esp];
-            const cfg = ESP_CFG[esp] ?? { color: 'text-gray-700', bg: 'bg-gray-50', border: 'border-gray-200', consultorio: 'Consultorio', short: 'GEN', dot: 'bg-gray-400' };
-            const doctor = citas[0]?.doctor?.user;
+            const cfg = ESP_CFG[esp] ?? { color: '#6b7280', bg: '#f9fafb', border: '#e5e7eb', dot: 'bg-gray-400', short: esp.substring(0,3).toUpperCase(), consultorio: '-' };
             const completadas = citas.filter(c => c.status === 'COMPLETADA').length;
             const progreso = Math.round((completadas / citas.length) * 100);
-            const expandida = expandidas[esp] !== false;
-            const manana = citas.filter(c => c.turno === 'manana');
-            const tarde = citas.filter(c => c.turno === 'tarde');
-            const sinTurno = citas.filter(c => !c.turno);
+            const isOpen = expanded === esp;
+            const doctor = citas[0]?.doctor?.user;
+
             return (
-              <div key={esp} className={'border rounded-xl overflow-hidden ' + cfg.border}>
-                <div className={'flex items-center justify-between px-4 py-3 cursor-pointer ' + cfg.bg} onClick={() => toggle(esp)}>
-                  <div className="flex items-center gap-3">
-                    <div className={'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white ' + cfg.dot}>
-                      {cfg.short}
+              <div key={esp} className="bg-white border rounded-xl overflow-hidden" style={{ borderColor: cfg.border }}>
+                {/* Header especialidad */}
+                <div className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition"
+                  style={{ backgroundColor: isOpen ? cfg.bg : undefined }}
+                  onClick={() => setExpanded(isOpen ? null : esp)}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                    style={{ backgroundColor: cfg.color }}>
+                    {cfg.short}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-bold" style={{ color: cfg.color }}>{esp}</p>
+                      <span className="text-xs text-gray-400">{cfg.consultorio}</span>
+                      {doctor && <span className="text-xs text-gray-400 truncate">· Dr. {doctor.first_name} {doctor.last_name}</span>}
                     </div>
-                    <div>
-                      <p className={'text-sm font-bold ' + cfg.color}>{esp}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <MapPin size={10} className="text-gray-400" />
-                        <p className="text-xs text-gray-500">{cfg.consultorio}</p>
-                        {doctor && <span className="text-xs text-gray-400">- Dr. {doctor.first_name} {doctor.last_name}</span>}
+                    <div className="flex items-center gap-3 mt-1">
+                      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-emerald-500 rounded-full transition-all" style={{ width: progreso + '%' }} />
                       </div>
+                      <span className="text-xs text-gray-400 flex-shrink-0">{completadas}/{citas.length} · {progreso}%</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className={'text-xs font-semibold ' + cfg.color}>{citas.length} pacientes</p>
-                      <p className="text-xs text-gray-400">{completadas} completadas</p>
-                    </div>
-                    <div className="w-16">
-                      <div className="w-full bg-gray-200 rounded-full h-1.5">
-                        <div className="bg-green-500 h-1.5 rounded-full transition-all" style={{ width: progreso + '%' }}></div>
-                      </div>
-                      <p className="text-xs text-gray-400 text-right mt-0.5">{progreso}%</p>
-                    </div>
-                    {expandida ? <ChevronUp size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {/* Mini status pills */}
+                    {(['EN_CONSULTA','PENDIENTE','COMPLETADA'] as const).map(st => {
+                      const count = citas.filter(c => c.status === st).length;
+                      if (count === 0) return null;
+                      const sCfg = STATUS_CFG[st];
+                      return (
+                        <span key={st} className="px-1.5 py-0.5 rounded-full text-xs font-bold"
+                          style={{ color: sCfg.color, backgroundColor: sCfg.bg }}>
+                          {count}
+                        </span>
+                      );
+                    })}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                      className={"transition-transform text-gray-400 " + (isOpen ? "rotate-180" : "")}>
+                      <path d="M6 9l6 6 6-6"/>
+                    </svg>
                   </div>
                 </div>
-                {expandida && (
-                  <div className="bg-white">
-                    {[{label:'Turno Manana',items:manana,hora:'08:00 - 14:00'},{label:'Turno Tarde',items:tarde,hora:'15:00 - 18:00'},{label:'Sin turno',items:sinTurno,hora:''}].filter(t => t.items.length > 0).map(turno => (
+
+                {/* Citas expandidas */}
+                {isOpen && (
+                  <div className="border-t" style={{ borderColor: cfg.border }}>
+                    {[
+                      { label: 'Manana', hora: '08:00-14:00', items: citas.filter(c => c.turno === 'manana') },
+                      { label: 'Tarde',  hora: '15:00-18:00', items: citas.filter(c => c.turno === 'tarde') },
+                      { label: 'Sin turno', hora: '', items: citas.filter(c => !c.turno) },
+                    ].filter(t => t.items.length > 0).map(turno => (
                       <div key={turno.label}>
-                        <div className="px-4 py-2 bg-gray-50 border-b border-t border-gray-100 flex items-center gap-2">
+                        <div className="px-4 py-1.5 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                           <span className="text-xs font-semibold text-gray-600">{turno.label}</span>
                           {turno.hora && <span className="text-xs text-gray-400">{turno.hora}</span>}
                           <span className="text-xs text-gray-400 ml-auto">{turno.items.length} fichas</span>
                         </div>
-                        <div className="divide-y divide-gray-50">
+                        <div className="grid grid-cols-2 gap-0 divide-y divide-gray-50">
                           {turno.items.map(a => {
-                            const stCfg = STATUS_CFG[a.status] ?? { label: a.status, cls: 'bg-gray-100 text-gray-600' };
+                            const stCfg = STATUS_CFG[a.status] ?? { label: a.status, color: '#6b7280', bg: '#f9fafb', dot: 'bg-gray-400' };
                             return (
-                              <div key={a.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition">
-                                <div className={'w-10 h-10 rounded-lg flex flex-col items-center justify-center flex-shrink-0 border ' + (a.status === 'COMPLETADA' ? 'bg-green-50 border-green-200' : a.status === 'EN_CONSULTA' ? 'bg-purple-50 border-purple-200' : 'bg-white border-gray-200')}>
-                                  <span className={'text-base font-bold leading-none ' + (a.status === 'COMPLETADA' ? 'text-green-600' : a.status === 'EN_CONSULTA' ? 'text-purple-600' : cfg.color)}>{a.numeroFicha ?? '?'}</span>
-                                  <span className="text-xs text-gray-300 leading-none">/{a.totalFichasTurno ?? 15}</span>
+                              <div key={a.id} className="flex items-center gap-2.5 px-4 py-2 hover:bg-gray-50 transition">
+                                <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                                  style={{ backgroundColor: stCfg.bg, color: stCfg.color }}>
+                                  {a.numeroFicha ?? '?'}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-800 truncate">{a.patient?.nombre ?? 'N/A'}</p>
+                                  <p className="text-xs font-semibold text-gray-700 truncate">{a.patient?.nombre ?? 'N/A'}</p>
                                   <p className="text-xs text-gray-400 truncate">{a.reason ?? 'Sin motivo'}</p>
                                 </div>
-                                <span className={'px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ' + stCfg.cls}>{stCfg.label}</span>
+                                <span className="text-xs font-medium flex-shrink-0" style={{ color: stCfg.color }}>{stCfg.label}</span>
                               </div>
                             );
                           })}
