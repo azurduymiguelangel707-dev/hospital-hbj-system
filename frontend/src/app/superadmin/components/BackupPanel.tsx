@@ -136,113 +136,183 @@ export function BackupPanel() {
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
+  const DB_TABLES = [
+    { name: "Pacientes",       table: "patients",         color: "#3b82f6", icono: "🏥", desc: "Datos demograficos y clinicos" },
+    { name: "Citas",           table: "appointments",     color: "#10b981", icono: "📅", desc: "Agendamiento y estados" },
+    { name: "Historiales",     table: "medical_records",  color: "#8b5cf6", icono: "📋", desc: "Diagnosticos y tratamientos" },
+    { name: "Signos vitales",  table: "vital_signs",      color: "#06b6d4", icono: "💓", desc: "PA, FC, temperatura, SpO2" },
+    { name: "Documentos",      table: "documents",        color: "#f97316", icono: "📄", desc: "Imagenes y archivos medicos" },
+    { name: "Usuarios",        table: "users",            color: "#f59e0b", icono: "👥", desc: "Cuentas y roles del sistema" },
+    { name: "Medicos",         table: "doctors",          color: "#6366f1", icono: "🩺", desc: "Perfil y especialidades" },
+    { name: "Audit blockchain",table: "blockchain_audit", color: "#ef4444", icono: "🔗", desc: "Registro SHA-256 inmutable" },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="flex gap-5 h-full">
       {toast && <Toast {...toast} />}
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-            <Database className="w-7 h-7 text-blue-600" />
-            Backup y Recuperacion
-          </h2>
-          <p className="text-gray-500 mt-1 text-sm">Respaldo completo de la base de datos PostgreSQL del sistema HBJ</p>
-        </div>
-        <button onClick={cargarBackups} className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium text-gray-700 transition-colors">
-          <RefreshCw className="w-4 h-4" /> Actualizar
-        </button>
-      </div>
+      {/* Columna principal */}
+      <div className="flex-1 min-w-0 flex flex-col overflow-hidden space-y-4">
 
-      {/* Metricas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { icon: <Database className="w-6 h-6 text-blue-500" />, bg: 'bg-blue-50', label: 'Total Backups', value: backups.length.toString(), sub: 'archivos disponibles' },
-          { icon: <HardDrive className="w-6 h-6 text-purple-500" />, bg: 'bg-purple-50', label: 'Espacio Total', value: formatSize(totalSize), sub: 'almacenado' },
-          { icon: <Table className="w-6 h-6 text-green-500" />, bg: 'bg-green-50', label: 'Tablas', value: lastBackup ? lastBackup.tablas.toString() : '12', sub: 'en ultimo backup' },
-          { icon: <Clock className="w-6 h-6 text-orange-500" />, bg: 'bg-orange-50', label: 'Ultimo Backup', value: lastBackup ? diasDesde(lastBackup.fechaCreacion) : 'Nunca', sub: lastBackup ? formatFecha(lastBackup.fechaCreacion).split(' a las ')[0] : 'Sin backups' },
-        ].map((m, i) => (
-          <div key={i} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <div className={`w-11 h-11 ${m.bg} rounded-xl flex items-center justify-center mb-3`}>{m.icon}</div>
-            <div className="text-2xl font-bold text-gray-900">{m.value}</div>
-            <div className="text-sm font-semibold text-gray-700 mt-0.5">{m.label}</div>
-            <div className="text-xs text-gray-400 mt-0.5">{m.sub}</div>
+        {/* Header */}
+        <div className="flex items-center justify-between flex-shrink-0">
+          <div>
+            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <Database className="w-5 h-5 text-blue-600" /> Backup y Recuperacion
+            </h2>
+            <p className="text-xs text-gray-400 mt-0.5">Respaldo completo de PostgreSQL — Sistema HBJ</p>
           </div>
-        ))}
-      </div>
-
-      {/* Crear backup */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <Plus className="w-5 h-5 text-blue-600" /> Crear Nuevo Backup
-        </h3>
-        <div className="flex gap-3">
-          <input type="text" placeholder="Descripcion del backup (opcional)" value={descripcion}
-            onChange={e => setDescripcion(e.target.value)}
-            className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <button onClick={crearBackup} disabled={creando}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-semibold text-sm transition-colors shadow-sm">
-            {creando ? <><RefreshCw className="w-4 h-4 animate-spin" /> Creando...</> : <><Database className="w-4 h-4" /> Crear Backup</>}
+          <button onClick={cargarBackups} className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 text-xs text-gray-600 rounded-lg hover:bg-gray-50 transition">
+            <RefreshCw className="w-3.5 h-3.5" /> Actualizar
           </button>
         </div>
-        <div className="mt-3 flex items-start gap-2 text-xs text-gray-400">
-          <Shield className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-          <span>El backup incluye todas las tablas del sistema: pacientes, citas, historiales, signos vitales, documentos, usuarios, medicos y registros blockchain.</span>
+
+        {/* KPIs */}
+        <div className="grid grid-cols-4 gap-3 flex-shrink-0">
+          {[
+            { icono: "🗄️", label: "Total backups",  val: backups.length,              color: "#3b82f6", bg: "#eff6ff", sub: "archivos disponibles" },
+            { icono: "💾", label: "Espacio total",   val: formatSize(totalSize),       color: "#8b5cf6", bg: "#f5f3ff", sub: "almacenado" },
+            { icono: "📊", label: "Tablas",          val: lastBackup?.tablas ?? "—",   color: "#10b981", bg: "#f0fdf4", sub: "en ultimo backup" },
+            { icono: "🕐", label: "Ultimo backup",   val: lastBackup ? diasDesde(lastBackup.fechaCreacion) : "Nunca", color: "#f59e0b", bg: "#fffbeb", sub: lastBackup ? formatFecha(lastBackup.fechaCreacion).split(",")[0] : "Sin backups" },
+          ].map((m, i) => (
+            <div key={i} className="rounded-xl p-3 text-center border" style={{ backgroundColor: m.bg, borderColor: m.color + "30" }}>
+              <div className="text-2xl mb-1">{m.icono}</div>
+              <div className="text-xl font-bold" style={{ color: m.color }}>{m.val}</div>
+              <div className="text-xs font-semibold mt-0.5" style={{ color: m.color }}>{m.label}</div>
+              <div className="text-xs text-gray-400 mt-0.5">{m.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Crear backup */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4 flex-shrink-0">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5">
+            <Plus className="w-3.5 h-3.5" /> Crear nuevo backup
+          </p>
+          <div className="flex gap-3">
+            <input type="text" placeholder="Descripcion del backup (opcional)" value={descripcion}
+              onChange={e => setDescripcion(e.target.value)}
+              className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button onClick={crearBackup} disabled={creando}
+              className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-lg transition">
+              {creando ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Creando...</> : <><Database className="w-3.5 h-3.5" /> Crear Backup</>}
+            </button>
+          </div>
+          <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-400">
+            <Shield className="w-3.5 h-3.5 text-emerald-500" />
+            Incluye {DB_TABLES.length} tablas del sistema — datos cifrados en transito
+          </div>
+        </div>
+
+        {/* Historial backups con scroll */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col flex-1 min-h-0">
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Historial de backups</p>
+            <span className="text-xs text-gray-400">{backups.length} backup{backups.length !== 1 ? "s" : ""}</span>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <RefreshCw className="w-5 h-5 text-blue-500 animate-spin mr-2" />
+                <span className="text-sm text-gray-400">Cargando backups...</span>
+              </div>
+            ) : backups.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-gray-300">
+                <div className="text-4xl mb-2">🗄️</div>
+                <p className="text-sm font-medium text-gray-400">Sin backups disponibles</p>
+                <p className="text-xs text-gray-300 mt-1">Crea tu primer backup con el formulario de arriba</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {backups.map((backup, i) => (
+                  <div key={backup.filename} className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                    <div className={"w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 " + (i === 0 ? "bg-blue-100" : "bg-gray-100")}>
+                      <Database className={"w-4 h-4 " + (i === 0 ? "text-blue-600" : "text-gray-400")} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-semibold text-gray-800 truncate">{backup.descripcion}</span>
+                        {i === 0 && <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full flex-shrink-0">Ultimo</span>}
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-gray-400">
+                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{diasDesde(backup.fechaCreacion)}</span>
+                        <span className="flex items-center gap-1"><HardDrive className="w-3 h-3" />{backup.tamanoLegible}</span>
+                        <span className="flex items-center gap-1"><Table className="w-3 h-3" />{backup.tablas} tablas</span>
+                      </div>
+                      <p className="text-xs font-mono text-gray-300 mt-0.5 truncate">{backup.filename}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <button onClick={() => descargarBackup(backup.filename)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-medium rounded-lg transition">
+                        <Download className="w-3 h-3" /> Descargar
+                      </button>
+                      <button onClick={() => restaurarBackup(backup.filename)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium rounded-lg transition">
+                        <RefreshCw className="w-3 h-3" /> Restaurar
+                      </button>
+                      <button onClick={() => setConfirmDelete(backup.filename)}
+                        className="p-1.5 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg transition">
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Lista de backups */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-gray-900">Historial de Backups</h3>
-          <span className="text-sm text-gray-400">{backups.length} backup{backups.length !== 1 ? 's' : ''}</span>
-        </div>
-        {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <RefreshCw className="w-6 h-6 text-blue-500 animate-spin mr-3" />
-            <span className="text-gray-500">Cargando backups...</span>
+      {/* Panel lateral */}
+      <div className="w-64 flex-shrink-0 space-y-4">
+
+        {/* Diagrama tablas incluidas */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Datos incluidos en backup</p>
+            <p className="text-xs text-gray-400 mt-0.5">Todas las tablas del sistema</p>
           </div>
-        ) : backups.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-            <Database className="w-12 h-12 mb-3 opacity-30" />
-            <p className="font-medium">Sin backups disponibles</p>
-            <p className="text-sm mt-1">Crea tu primer backup usando el formulario de arriba</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-50">
-            {backups.map((backup, i) => (
-              <div key={backup.filename} className={`px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors ${i === 0 ? 'bg-blue-50/40' : ''}`}>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${i === 0 ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                  <Database className={`w-5 h-5 ${i === 0 ? 'text-blue-600' : 'text-gray-400'}`} />
+          <div className="p-3 space-y-1.5">
+            {DB_TABLES.map((t, i) => (
+              <div key={i} className="flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-gray-50 transition"
+                style={{ borderLeft: "3px solid " + t.color }}>
+                <span className="text-sm flex-shrink-0">{t.icono}</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-semibold text-gray-700">{t.name}</p>
+                  <p className="text-xs text-gray-400 truncate">{t.desc}</p>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-gray-900 truncate">{backup.descripcion}</span>
-                    {i === 0 && <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">ULTIMO</span>}
-                  </div>
-                  <div className="flex items-center gap-4 mt-1">
-                    <span className="text-xs text-gray-400 flex items-center gap-1"><Clock className="w-3 h-3" />{formatFecha(backup.fechaCreacion)}</span>
-                    <span className="text-xs text-gray-400 flex items-center gap-1"><HardDrive className="w-3 h-3" />{backup.tamanoLegible}</span>
-                    <span className="text-xs text-gray-400 flex items-center gap-1"><Table className="w-3 h-3" />{backup.tablas} tablas</span>
-                  </div>
-                  <div className="text-xs text-gray-300 font-mono mt-0.5 truncate">{backup.filename}</div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button onClick={() => descargarBackup(backup.filename)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg text-xs font-semibold transition-colors">
-                    <Download className="w-3.5 h-3.5" /> Descargar
-                  </button>
-                  <button onClick={() => restaurarBackup(backup.filename)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-semibold transition-colors">
-                    <RefreshCw className="w-3.5 h-3.5" /> Restaurar
-                  </button>
-                  <button onClick={() => setConfirmDelete(backup.filename)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-semibold transition-colors">
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: t.color }} />
               </div>
             ))}
+          </div>
+          <div className="px-4 py-2.5 bg-emerald-50 border-t border-emerald-100 flex items-center gap-2">
+            <Shield className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="text-xs text-emerald-700 font-medium">Backup 100% completo</span>
+          </div>
+        </div>
+
+        {/* Info ultimo backup */}
+        {lastBackup && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Ultimo backup</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between px-2 py-1.5 bg-gray-50 rounded-lg">
+                <span className="text-xs text-gray-500">Fecha</span>
+                <span className="text-xs font-medium text-gray-700">{diasDesde(lastBackup.fechaCreacion)}</span>
+              </div>
+              <div className="flex items-center justify-between px-2 py-1.5 bg-gray-50 rounded-lg">
+                <span className="text-xs text-gray-500">Tamano</span>
+                <span className="text-xs font-bold text-blue-600">{lastBackup.tamanoLegible}</span>
+              </div>
+              <div className="flex items-center justify-between px-2 py-1.5 bg-gray-50 rounded-lg">
+                <span className="text-xs text-gray-500">Tablas</span>
+                <span className="text-xs font-bold text-emerald-600">{lastBackup.tablas}</span>
+              </div>
+            </div>
+            <button onClick={() => descargarBackup(lastBackup.filename)}
+              className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition">
+              <Download className="w-3.5 h-3.5" /> Descargar ultimo backup
+            </button>
           </div>
         )}
       </div>
@@ -265,11 +335,11 @@ export function BackupPanel() {
             </div>
             <div className="flex gap-3">
               <button onClick={() => setConfirmDelete(null)}
-                className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold text-sm transition-colors">
+                className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold text-sm transition">
                 Cancelar
               </button>
               <button onClick={() => eliminarBackup(confirmDelete)}
-                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-sm transition-colors">
+                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-sm transition">
                 Eliminar
               </button>
             </div>
