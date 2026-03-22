@@ -4,8 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, ClipboardList, FileText, BookOpen, BarChart2, AlertTriangle, Activity, Clock } from 'lucide-react';
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend, LineChart, Line, CartesianGrid, ReferenceLine, ReferenceArea } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 import type {
   AppointmentWithPatient, PatientDetail, ConsultaForm,
   ClinicalDocument, WeeklyReportData, FollowUpPatient,
@@ -13,12 +12,11 @@ import type {
 import {
   getTodayAppointments, updateAppointmentStatus,
   getPatientDetail, submitConsulta,
-  getPatientDocuments, getFollowUpPatients, getWeeklyReport, getVitalsHistory,
+  getPatientDocuments, getFollowUpPatients, getWeeklyReport,
 } from '@/lib/api/doctor';
 import { PatientCard }    from './components/PatientCard';
 import { VitalSignsGrid } from './components/VitalSignsGrid';
 import { DocumentsPanel } from './components/DocumentsPanel';
-import { imprimirOrdenMedica } from './components/OrdenMedica';
 
 type Panel = 'agenda' | 'ficha' | 'consulta' | 'documentos' | 'seguimiento' | 'reporte';
 
@@ -83,12 +81,11 @@ export default function DoctorDashboard() {
     if (!appt.patient?.id) return;
     setLoadingDetail(true);
     try {
-      const [detail, docs, vitalsHist] = await Promise.all([
+      const [detail, docs] = await Promise.all([
         getPatientDetail(appt.patient.id),
+      getVitalsHistory(appt.patient.id).then(setVitalsHistory),
         getPatientDocuments(appt.patient.id),
-        getVitalsHistory(appt.patient.id),
       ]);
-      setVitalsHistory(vitalsHist ?? []);
       setPatientDetail(detail);
       setDocuments(docs);
       setConsultaForm((f) => ({ ...f, motivoConsulta: appt.reason ?? '' }));
@@ -201,12 +198,11 @@ export default function DoctorDashboard() {
             <ConsultaPanel appointment={selectedAppt} patientDetail={patientDetail}
               form={consultaForm} onChange={setConsultaForm}
               onComplete={handleComplete}
-            <ConsultaPanel appointment={selectedAppt} patientDetail={patientDetail}
-              form={consultaForm} onChange={setConsultaForm}
-              onComplete={handleComplete}
-              doctorNombre={doctor.nombre}
-              doctorEspecialidad={doctor.especialidad}
               onAdjuntarDocs={() => setActivePanel('documentos')} />
+          )}
+          {activePanel === 'consulta' && !selectedAppt && (
+            <div className="text-center py-16 text-gray-400">
+              <Activity size={40} className="mx-auto mb-3 opacity-30" />
               <p className="text-sm">Selecciona un paciente desde la agenda primero</p>
             </div>
           )}
@@ -419,10 +415,9 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
   );
 }
 
-function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vitalsHistory }: {
+function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
   detail: PatientDetail | null; loading: boolean;
   onIniciarConsulta: () => void; onVerDocumentos: () => void;
-  vitalsHistory?: any[];
 }) {
   const [expandedRecord, setExpandedRecord] = useState<string | null>(null);
   if (loading) return <div className="text-center py-16 text-gray-400">Cargando ficha...</div>;
@@ -586,7 +581,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
                   <YAxis domain={[cfg.min, cfg.max]} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }}
-                    formatter={(val: unknown) => [String(val) + " " + cfg.unidad]}
+                    formatter={(val: number, name: string) => [`${val} ${cfg.unidad}`, name]}
                   />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   {/* Banda zona normal */}
@@ -738,12 +733,12 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
 function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete, onAdjuntarDocs }: {
   appointment: AppointmentWithPatient; patientDetail: PatientDetail | null;
   form: ConsultaForm; onChange: (f: ConsultaForm) => void;
-function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete, onAdjuntarDocs, doctorNombre, doctorEspecialidad }: {
-  appointment: AppointmentWithPatient; patientDetail: PatientDetail | null;
-  form: ConsultaForm; onChange: (f: ConsultaForm) => void;
   onComplete: () => void; onAdjuntarDocs: () => void;
-  doctorNombre?: string; doctorEspecialidad?: string;
 }) {
+  const [newMed, setNewMed] = useState({ medicamento: "", dosis: "", duracion: "" });
+  const [showMedForm, setShowMedForm] = useState(false);
+  const alergia = patientDetail?.alerts?.find(a => a.tipo === "danger");
+  const ESTUDIOS = [
     { id: "ECG",              label: "ECG",                  desc: "Electrocardiograma" },
     { id: "Glucemia",         label: "Glucemia",             desc: "Azucar en sangre" },
     { id: "HbA1c",            label: "HbA1c",                desc: "Hemoglobina glicada" },
@@ -799,7 +794,6 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
               <button onClick={onAdjuntarDocs} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5">
                 <FileText size={12} /> Adjuntar docs
               </button>
-              <button onClick={() => imprimirOrdenMedica({ form, patientDetail, appointment, doctorNombre, doctorEspecialidad })} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5">Imprimir orden</button>
               <button onClick={onComplete}
                 className={"px-3 py-2 text-xs font-semibold rounded-lg transition flex items-center gap-1.5 " + (form.diagnostico ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-100 text-gray-400 cursor-not-allowed")}
                 disabled={!form.diagnostico}
