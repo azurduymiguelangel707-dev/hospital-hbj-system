@@ -940,42 +940,127 @@ export default function EnfermeriaDashboard() {
 
         {/* TAB: Historial vitales */}
         {mainTab === 'historial' && (
-          <div className='flex-1 overflow-auto p-6'>
-            <div className='mb-4'>
-              <h2 className='text-lg font-bold text-gray-800'>Historial de signos vitales</h2>
-              <p className='text-xs text-gray-400 mt-0.5'>Todos los registros del dia por paciente</p>
+          <div className='flex-1 overflow-auto p-6 space-y-4'>
+            {/* Header con stats */}
+            <div className='flex items-center justify-between'>
+              <div>
+                <h2 className='text-lg font-bold text-gray-800'>Historial de signos vitales</h2>
+                <p className='text-xs text-gray-400 mt-0.5'>Registros del dia por paciente — {vitalsHistory.length} tomas totales</p>
+              </div>
             </div>
-            <div className='space-y-3'>
-              {appointments.map(a => {
-                const pvs = vitalsHistory.filter((v: any) => v.patientId === a.patient?.id);
-                if (pvs.length === 0) return null;
-                return (
-                  <div key={a.id} className='bg-white rounded-xl border border-gray-200 overflow-hidden'>
-                    <div className='px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between'>
-                      <div className='flex items-center gap-2'>
-                        <div className='w-7 h-7 rounded-lg bg-teal-50 flex items-center justify-center text-xs font-bold text-teal-600'>
-                          {a.patient?.nombre?.substring(0,2).toUpperCase()}
+
+            {/* KPIs rapidos */}
+            <div className='grid grid-cols-4 gap-3'>
+              {[
+                { label: 'Pacientes monitoreados', val: new Set(vitalsHistory.map((v: any) => v.patientId)).size, color: '#0d9488', bg: '#f0fdfa' },
+                { label: 'Total tomas hoy',        val: vitalsHistory.length,                                     color: '#3b82f6', bg: '#eff6ff' },
+                { label: 'Sin vitales registrados',val: appointments.filter(a => !vitalsHistory.some((v: any) => v.patientId === a.patient?.id)).length, color: '#f59e0b', bg: '#fffbeb' },
+                { label: 'Con alertas',            val: appointments.filter(a => { const pv = vitalsHistory.filter((v: any) => v.patientId === a.patient?.id)[0]; return pv && (Number(pv.saturacionOxigeno) < 94 || Number(pv.frecuenciaCardiaca) > 100 || Number(pv.frecuenciaCardiaca) < 60); }).length, color: '#ef4444', bg: '#fef2f2' },
+              ].map((k, i) => (
+                <div key={i} className='rounded-xl px-3 py-3 text-center border' style={{ backgroundColor: k.bg, borderColor: k.color + '30' }}>
+                  <div className='text-2xl font-black' style={{ color: k.color }}>{k.val}</div>
+                  <div className='text-xs mt-0.5 font-medium' style={{ color: k.color }}>{k.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Lista pacientes con historial */}
+            {appointments.filter(a => vitalsHistory.some((v: any) => v.patientId === a.patient?.id)).length === 0 ? (
+              <div className='bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-12 text-gray-300'>
+                <div className='text-4xl mb-2'>📋</div>
+                <p className='text-sm font-medium text-gray-400'>Sin registros de vitales hoy</p>
+              </div>
+            ) : (
+              <div className='space-y-3'>
+                {appointments.map(a => {
+                  const pvs = vitalsHistory.filter((v: any) => v.patientId === a.patient?.id);
+                  if (pvs.length === 0) return null;
+                  const ultimo = pvs[0];
+                  const fc  = Number(ultimo?.frecuenciaCardiaca) || 0;
+                  const sp  = Number(ultimo?.saturacionOxigeno) || 0;
+                  const tmp = Number(ultimo?.temperatura) || 0;
+                  const pas = Number(String(ultimo?.presionArterial ?? '').split('/')[0]) || 0;
+                  const fr  = Number(ultimo?.frecuenciaRespiratoria) || 0;
+                  const hasAlert = sp > 0 && sp < 94 || fc > 100 || fc < 60 || tmp > 37.5 || tmp < 36 || pas > 140 || pas < 90;
+                  const hasPrecaution = sp >= 94 && sp < 96 || fc >= 90 && fc <= 100 || tmp >= 37 && tmp <= 37.5;
+                  const borderColor = hasAlert ? '#ef4444' : hasPrecaution ? '#f59e0b' : '#e5e7eb';
+                  return (
+                    <div key={a.id} className='bg-white rounded-xl border-2 overflow-hidden' style={{ borderColor }}>
+                      {/* Header paciente */}
+                      <div className='px-4 py-3 flex items-center justify-between' style={{ backgroundColor: hasAlert ? '#fef2f2' : hasPrecaution ? '#fffbeb' : '#f9fafb' }}>
+                        <div className='flex items-center gap-3'>
+                          <div className='w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white' style={{ backgroundColor: hasAlert ? '#ef4444' : hasPrecaution ? '#f59e0b' : '#0d9488' }}>
+                            {a.patient?.nombre?.substring(0,2).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className='text-sm font-bold text-gray-800'>{a.patient?.nombre}</p>
+                            <p className='text-xs text-gray-400'>{a.patient?.edad} años · {a.doctor?.specialty ?? '-'} · {pvs.length} tomas</p>
+                          </div>
                         </div>
-                        <span className='text-sm font-semibold text-gray-700'>{a.patient?.nombre}</span>
+                        <div className='flex items-center gap-2'>
+                          {hasAlert && <span className='px-2.5 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full'>⚠️ Alerta</span>}
+                          {hasPrecaution && !hasAlert && <span className='px-2.5 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full'>⚡ Precaucion</span>}
+                          {!hasAlert && !hasPrecaution && pvs.length > 0 && <span className='px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full'>✓ Normal</span>}
+                        </div>
                       </div>
-                      <span className='text-xs text-gray-400'>{pvs.length} registros</span>
-                    </div>
-                    <div className='divide-y divide-gray-50'>
-                      {pvs.map((v: any, i: number) => (
-                        <div key={i} className='grid grid-cols-6 gap-2 px-4 py-2.5 text-xs hover:bg-gray-50'>
-                          <span className='text-gray-400 col-span-1'>{new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</span>
-                          <span className='font-medium text-gray-700'>PA: {v.presionArterial || '-'}</span>
-                          <span className='font-medium text-gray-700'>FC: {v.frecuenciaCardiaca || '-'}</span>
-                          <span className='font-medium text-gray-700'>T: {v.temperatura || '-'}C</span>
-                          <span className='font-medium text-gray-700'>SpO2: {v.saturacionOxigeno || '-'}%</span>
-                          <span className='font-medium text-gray-700'>FR: {v.frecuenciaRespiratoria || '-'}</span>
+
+                      {/* Ultimo registro - vitales pills */}
+                      <div className='px-4 py-3 border-b border-gray-100'>
+                        <p className='text-xs text-gray-400 mb-2'>Ultimo registro — {new Date(ultimo?.registradoEn ?? ultimo?.registeredAt ?? Date.now()).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</p>
+                        <div className='grid grid-cols-6 gap-2'>
+                          {[
+                            { label: 'PA',   val: ultimo?.presionArterial || '-',  unit: 'mmHg', alert: pas > 140 || (pas > 0 && pas < 90) },
+                            { label: 'FC',   val: fc || '-',                        unit: 'bpm',  alert: fc > 100 || (fc > 0 && fc < 60) },
+                            { label: 'SpO2', val: sp || '-',                        unit: '%',    alert: sp > 0 && sp < 94 },
+                            { label: 'Temp', val: tmp || '-',                       unit: 'C',    alert: tmp > 37.5 || (tmp > 0 && tmp < 36) },
+                            { label: 'FR',   val: fr || '-',                        unit: 'rpm',  alert: fr > 20 || (fr > 0 && fr < 12) },
+                            { label: 'Peso', val: ultimo?.peso || '-',              unit: 'kg',   alert: false },
+                          ].map((s, i) => (
+                            <div key={i} className={'rounded-lg px-2 py-2 text-center border ' + (s.alert ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-100')}>
+                              <div className={'text-sm font-bold ' + (s.alert ? 'text-red-600' : 'text-gray-700')}>{s.val}</div>
+                              <div className='text-xs text-gray-400'>{s.label} {s.unit}</div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
+
+                      {/* Timeline todos los registros */}
+                      {pvs.length > 1 && (
+                        <div className='px-4 py-2'>
+                          <p className='text-xs text-gray-400 mb-2'>Historial del dia ({pvs.length} tomas)</p>
+                          <div className='overflow-x-auto'>
+                            <table className='w-full text-xs'>
+                              <thead>
+                                <tr className='border-b border-gray-100'>
+                                  {['Hora','PA','FC','SpO2','Temp','FR'].map(h => (
+                                    <th key={h} className='text-left text-gray-400 font-medium pb-1.5 pr-4'>{h}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody className='divide-y divide-gray-50'>
+                                {pvs.map((v: any, i: number) => {
+                                  const isFirst = i === 0;
+                                  return (
+                                    <tr key={i} className={'hover:bg-gray-50 transition ' + (isFirst ? 'font-semibold' : '')}>
+                                      <td className='py-1.5 pr-4 text-gray-500'>{new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</td>
+                                      <td className='py-1.5 pr-4'><span className={Number(String(v.presionArterial).split('/')[0]) > 140 ? 'text-red-500' : 'text-gray-700'}>{v.presionArterial || '-'}</span></td>
+                                      <td className='py-1.5 pr-4'><span className={Number(v.frecuenciaCardiaca) > 100 || Number(v.frecuenciaCardiaca) < 60 ? 'text-red-500' : 'text-gray-700'}>{v.frecuenciaCardiaca || '-'}</span></td>
+                                      <td className='py-1.5 pr-4'><span className={Number(v.saturacionOxigeno) < 94 ? 'text-red-500' : 'text-gray-700'}>{v.saturacionOxigeno || '-'}%</span></td>
+                                      <td className='py-1.5 pr-4'><span className={Number(v.temperatura) > 37.5 ? 'text-red-500' : 'text-gray-700'}>{v.temperatura || '-'}C</span></td>
+                                      <td className='py-1.5'><span className={Number(v.frecuenciaRespiratoria) > 20 ? 'text-red-500' : 'text-gray-700'}>{v.frecuenciaRespiratoria || '-'}</span></td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
