@@ -137,6 +137,42 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
             ))}
           </div>
         </div>
+        {/* Vitales iniciales */}
+        {!vitalesSaved ? (
+          <div className='bg-white border border-blue-200 rounded-xl p-4 mb-4'>
+            <p className='text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2 flex items-center gap-2'>
+              💓 Registrar signos vitales iniciales
+            </p>
+            <p className='text-xs text-gray-400 mb-3'>La enfermera de {form.especialidad} los vera al recibir la cita</p>
+            <div className='grid grid-cols-3 gap-3'>
+              {([
+                ['presionArterial',       'Presion Arterial', '120/80', 'text'],
+                ['frecuenciaCardiaca',    'Frec. Cardiaca',   '70',     'number'],
+                ['frecuenciaRespiratoria','Frec. Respirat.',  '16',     'number'],
+                ['temperatura',          'Temperatura C',    '36.5',   'number'],
+                ['saturacionOxigeno',    'SpO2 %',           '98',     'number'],
+                ['peso',                 'Peso kg',          '70',     'number'],
+              ] as [string,string,string,string][]).map(([key, label, placeholder, type]) => (
+                <div key={key}>
+                  <label className='text-xs text-gray-500 mb-1 block'>{label}</label>
+                  <input type={type} placeholder={placeholder}
+                    value={(vitalesForm as any)[key]}
+                    onChange={e => setVitalesForm((v: any) => ({ ...v, [key]: e.target.value }))}
+                    className='w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400' />
+                </div>
+              ))}
+            </div>
+            <button onClick={handleGuardarVitales} disabled={savingVitales}
+              className='mt-3 w-full py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition text-sm font-semibold'>
+              {savingVitales ? 'Guardando...' : '💓 Guardar signos vitales'}
+            </button>
+          </div>
+        ) : (
+          <div className='bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-4 flex items-center gap-2'>
+            <span className='text-emerald-600'>✓</span>
+            <p className='text-sm text-emerald-700 font-medium'>Signos vitales registrados — la enfermera de {form.especialidad} los vera</p>
+          </div>
+        )}
         <div className="flex gap-2">
           <button onClick={onDone}
             className="flex-1 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium">
