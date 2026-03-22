@@ -55,6 +55,7 @@ export default function DoctorDashboard() {
   const [documents, setDocuments] = useState<ClinicalDocument[]>([]);
   const [followUps, setFollowUps] = useState<FollowUpPatient[]>([]);
   const [weeklyReport, setWeeklyReport] = useState<WeeklyReportData | null>(null);
+  const [vitalsHistory, setVitalsHistory] = useState<any[]>([]);
   const [weekOffset, setWeekOffset] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -82,6 +83,7 @@ export default function DoctorDashboard() {
     try {
       const [detail, docs] = await Promise.all([
         getPatientDetail(appt.patient.id),
+      getVitalsHistory(appt.patient.id).then(setVitalsHistory),
         getPatientDocuments(appt.patient.id),
       ]);
       setPatientDetail(detail);
@@ -186,7 +188,7 @@ export default function DoctorDashboard() {
 
           {/* FICHA */}
           {activePanel === 'ficha' && (
-            <FichaPanel detail={patientDetail} loading={loadingDetail}
+            <FichaPanel detail={patientDetail} loading={loadingDetail} vitalsHistory={vitalsHistory}
               onIniciarConsulta={() => setActivePanel('consulta')}
               onVerDocumentos={() => setActivePanel('documentos')} />
           )}
@@ -533,6 +535,75 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
             </div>
           )}
         </div>
+
+        {/* Grafico evolucion vitales */}
+        {vitalsHistory && vitalsHistory.length > 1 && (() => {
+          const data = vitalsHistory.slice(0, 10).reverse().map((v: any, i: number) => ({
+            name: "R" + (i + 1),
+            fecha: new Date(v.registradoEn ?? v.createdAt ?? Date.now()).toLocaleDateString("es-ES", { day: "2-digit", month: "short" }),
+            PAS:  Number(String(v.presionArterial ?? "").split("/")[0]) || null,
+            PAD:  Number(String(v.presionArterial ?? "").split("/")[1]) || null,
+            FC:   Number(v.frecuenciaCardiaca)    || null,
+            SpO2: Number(v.saturacionOxigeno)     || null,
+            Temp: Number(v.temperatura)           || null,
+            FR:   Number(v.frecuenciaRespiratoria)|| null,
+          }));
+          const [serieActiva, setSerieActiva] = React.useState<string>("PA");
+          const series: Record<string, { lines: {key:string;color:string;label:string}[]; min:number; max:number; minNorm:number; maxNorm:number; unidad:string }> = {
+            PA:   { lines: [{key:"PAS",color:"#ef4444",label:"Sistolica"},{key:"PAD",color:"#f97316",label:"Diastolica"}], min:60, max:180, minNorm:90, maxNorm:140, unidad:"mmHg" },
+            FC:   { lines: [{key:"FC", color:"#6366f1",label:"Pulso"}],  min:40, max:140, minNorm:60, maxNorm:100, unidad:"lpm" },
+            SpO2: { lines: [{key:"SpO2",color:"#0ea5e9",label:"SpO2"}],  min:85, max:100, minNorm:95, maxNorm:100, unidad:"%" },
+            Temp: { lines: [{key:"Temp",color:"#f59e0b",label:"Temperatura"}], min:35, max:40, minNorm:36, maxNorm:37.5, unidad:"°C" },
+            FR:   { lines: [{key:"FR",  color:"#8b5cf6",label:"Respiracion"}], min:8,  max:30, minNorm:12, maxNorm:20, unidad:"rpm" },
+          };
+          const cfg = series[serieActiva];
+          return (
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Evolucion de signos vitales</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{vitalsHistory.length} registros — banda verde = rango normal</p>
+                </div>
+                <div className="flex gap-1 flex-wrap justify-end">
+                  {Object.keys(series).map(k => (
+                    <button key={k} onClick={() => setSerieActiva(k)}
+                      className={"px-2.5 py-1 rounded-lg text-xs font-semibold border transition " + (serieActiva === k ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-500 border-gray-200 hover:border-gray-300")}
+                    >
+                      {k}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="fecha" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis domain={[cfg.min, cfg.max]} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }}
+                    formatter={(val: number, name: string) => [`${val} ${cfg.unidad}`, name]}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  {/* Banda zona normal */}
+                  <ReferenceArea y1={cfg.minNorm} y2={cfg.maxNorm} fill="#10b981" fillOpacity={0.08} />
+                  {/* Lineas limite */}
+                  <ReferenceLine y={cfg.maxNorm} stroke="#ef4444" strokeDasharray="4 4" strokeWidth={1} label={{ value: "Max normal", fontSize: 9, fill: "#ef4444" }} />
+                  <ReferenceLine y={cfg.minNorm} stroke="#f59e0b" strokeDasharray="4 4" strokeWidth={1} label={{ value: "Min normal", fontSize: 9, fill: "#f59e0b" }} />
+                  {/* Series */}
+                  {cfg.lines.map(l => (
+                    <Line key={l.key} type="monotone" dataKey={l.key} name={l.label} stroke={l.color}
+                      strokeWidth={2} dot={{ r: 4, fill: l.color }} activeDot={{ r: 6 }} connectNulls />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+              <div className="flex items-center gap-4 mt-2 justify-center">
+                <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-3 h-2 rounded bg-emerald-200 inline-block"/>Zona normal</span>
+                <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-4 border-t-2 border-dashed border-red-400 inline-block"/>Limite alto</span>
+                <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-4 border-t-2 border-dashed border-amber-400 inline-block"/>Limite bajo</span>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Historial reciente */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

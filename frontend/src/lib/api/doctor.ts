@@ -142,6 +142,11 @@ export async function submitConsulta(appointmentId: string, form: ConsultaForm, 
 }
 
 
+
+export async function getVitalsHistory(patientId: string): Promise<any[]> {
+  return apiFetch<any[]>(`/api/patients/${patientId}/vitals/history`).catch(() => []);
+}
+
 export async function getFollowUpPatients(doctorId: string): Promise<FollowUpPatient[]> {
   return apiFetch<FollowUpPatient[]>(`/api/appointments/followup?doctorId=${doctorId}`).catch(() => []);
 }
