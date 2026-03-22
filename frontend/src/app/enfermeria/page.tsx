@@ -1081,7 +1081,7 @@ export default function EnfermeriaDashboard() {
                 const key = pid + '-' + h;
                 heatData[key] = (heatData[key] ?? 0) + 1;
               });
-              const pacientesUnicos = Array.from(new Set(vitalsHistory.map((v: any) => v.patientId?.substring(0,8)))];
+              const pacientesUnicos = Array.from(new Set(vitalsHistory.map((v: any) => v.patientId?.substring(0,8))));
               const maxVal = Math.max(...Object.values(heatData), 1);
               const totalRegistros = vitalsHistory.length;
               const _horas = vitalsHistory.map((v: any) => new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).getHours()); const horasConRegistro = new Set(_horas).size;
