@@ -201,11 +201,12 @@ export default function DoctorDashboard() {
             <ConsultaPanel appointment={selectedAppt} patientDetail={patientDetail}
               form={consultaForm} onChange={setConsultaForm}
               onComplete={handleComplete}
+            <ConsultaPanel appointment={selectedAppt} patientDetail={patientDetail}
+              form={consultaForm} onChange={setConsultaForm}
+              onComplete={handleComplete}
+              doctorNombre={doctor.nombre}
+              doctorEspecialidad={doctor.especialidad}
               onAdjuntarDocs={() => setActivePanel('documentos')} />
-          )}
-          {activePanel === 'consulta' && !selectedAppt && (
-            <div className="text-center py-16 text-gray-400">
-              <Activity size={40} className="mx-auto mb-3 opacity-30" />
               <p className="text-sm">Selecciona un paciente desde la agenda primero</p>
             </div>
           )}
@@ -737,12 +738,12 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
 function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete, onAdjuntarDocs }: {
   appointment: AppointmentWithPatient; patientDetail: PatientDetail | null;
   form: ConsultaForm; onChange: (f: ConsultaForm) => void;
+function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete, onAdjuntarDocs, doctorNombre, doctorEspecialidad }: {
+  appointment: AppointmentWithPatient; patientDetail: PatientDetail | null;
+  form: ConsultaForm; onChange: (f: ConsultaForm) => void;
   onComplete: () => void; onAdjuntarDocs: () => void;
+  doctorNombre?: string; doctorEspecialidad?: string;
 }) {
-  const [newMed, setNewMed] = useState({ medicamento: "", dosis: "", duracion: "" });
-  const [showMedForm, setShowMedForm] = useState(false);
-  const alergia = patientDetail?.alerts?.find(a => a.tipo === "danger");
-  const ESTUDIOS = [
     { id: "ECG",              label: "ECG",                  desc: "Electrocardiograma" },
     { id: "Glucemia",         label: "Glucemia",             desc: "Azucar en sangre" },
     { id: "HbA1c",            label: "HbA1c",                desc: "Hemoglobina glicada" },
