@@ -85,7 +85,8 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
 
   ];
   return (
-    <div>
+  return (
+    <div className="flex flex-col h-full overflow-auto">
       <div className="flex items-center gap-3 mb-6">
         <button onClick={onBack} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
           <ArrowLeft size={16} /> Volver
@@ -398,8 +399,9 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
   const paginados = filtrados.slice(pagina * POR_PAGINA, (pagina + 1) * POR_PAGINA);
   if (selected) return <FichaPaciente paciente={selected} onBack={() => setSelected(null)} />;
   return (
-    <div>
-      <div className="flex items-center gap-3 mb-4">
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex items-center gap-3 mb-4 flex-shrink-0">
         <div className="relative flex-1 max-w-sm">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" placeholder="Buscar por nombre, CI o historial..."
@@ -411,7 +413,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
       </div>
       {loading ? <p className="text-center text-gray-400 py-12 text-sm">Cargando pacientes...</p> :
         filtrados.length === 0 ? <p className="text-center text-gray-400 py-12 text-sm">Sin resultados</p> :
-        <div>
+      <div className="flex-1 overflow-auto">
           <div className="grid grid-cols-1 gap-1.5 mb-3">
             {paginados.map(p => (
               <button key={p.id} onClick={() => setSelected(p)}

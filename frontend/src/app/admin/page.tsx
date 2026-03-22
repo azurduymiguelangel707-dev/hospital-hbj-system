@@ -239,7 +239,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {activePanel === 'pacientes' && <div className='flex-1 overflow-auto p-6'><PacientesPanel /></div>}
+          {activePanel === 'pacientes' && <div className='flex-1 overflow-hidden flex flex-col p-6'><PacientesPanel /></div>}
 
           {activePanel === 'usuarios' && (
             <div className='space-y-4'>
