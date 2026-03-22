@@ -36,7 +36,8 @@ async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> 
 
 export async function getTodayAppointments(doctorId: string): Promise<AppointmentWithPatient[]> {
   const all = await apiFetch<any[]>(`/api/appointments${doctorId ? `?doctorId=${doctorId}` : ''}`);
-  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const today = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
   return (all ?? [])
     .filter((a) => a.appointmentDate?.split('T')[0] === today)
     .map(mapAppointment);
