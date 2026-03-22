@@ -798,7 +798,7 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
               <button onClick={onAdjuntarDocs} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5">
                 <FileText size={12} /> Adjuntar docs
               </button>
-              <button onClick={() => imprimirOrdenMedica({ form, patientDetail, appointment, doctorNombre: doctor.nombre, doctorEspecialidad: doctor.especialidad })} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5">Imprimir orden</button>
+              <button onClick={() => imprimirOrdenMedica({ form, patientDetail, appointment, doctorNombre, doctorEspecialidad })} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5">Imprimir orden</button>
               <button onClick={onComplete}
                 className={"px-3 py-2 text-xs font-semibold rounded-lg transition flex items-center gap-1.5 " + (form.diagnostico ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-100 text-gray-400 cursor-not-allowed")}
                 disabled={!form.diagnostico}
