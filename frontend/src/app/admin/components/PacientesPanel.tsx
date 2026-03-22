@@ -37,7 +37,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
   const [summary, setSummary] = useState<any>(null);
 
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'citas'|'vitales'|'historial'|'documentos'>('citas');
+  const [tab, setTab] = useState<'citas'|'vitales'|'historial'|'documentos'|'grafico'>('citas');
 
   useEffect(() => {
     const cargar = async () => {
@@ -80,6 +80,8 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
     { key: 'vitales', label: 'Vitales', count: vitalesHistory.length },
     { key: 'historial', label: 'Historial', count: historial.length },
     { key: 'documentos', label: 'Documentos', count: documentos.length },
+    { key: 'grafico', label: 'Actividad clinica', count: historial.length },
+
   ];
   return (
     <div>
@@ -287,6 +289,82 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
                   })}
                 </div>
               )}
+                {tab === 'grafico' && (
+                  <div className='space-y-4'>
+                    {/* KPIs historial */}
+                    <div className='grid grid-cols-3 gap-3'>
+                      {[
+                        { label: 'Registros totales',  val: historial.length,                                                          color: '#3b82f6', bg: '#eff6ff' },
+                        { label: 'Ultimo registro',    val: historial[0] ? new Date(historial[0].fecha ?? historial[0].createdAt).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}) : 'Sin registros', color: '#8b5cf6', bg: '#f5f3ff' },
+                        { label: 'Estado historial',   val: historial.length > 0 ? 'Activo' : 'Sin actividad',                        color: historial.length > 0 ? '#10b981' : '#ef4444', bg: historial.length > 0 ? '#f0fdf4' : '#fef2f2' },
+                      ].map((k, i) => (
+                        <div key={i} className='rounded-xl p-3 text-center border' style={{ backgroundColor: k.bg, borderColor: k.color + '30' }}>
+                          <div className='text-lg font-bold' style={{ color: k.color }}>{k.val}</div>
+                          <div className='text-xs mt-0.5' style={{ color: k.color }}>{k.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Grafica area actividad por mes */}
+                    <div className='bg-gray-50 rounded-xl p-4'>
+                      <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3'>Actividad clinica — ultimos 6 meses</p>
+                      {historial.length === 0 ? (
+                        <div className='text-center py-8 text-gray-300'>
+                          <p className='text-sm'>Sin registros en el historial</p>
+                        </div>
+                      ) : (() => {
+                        const meses = Array.from({length: 6}, (_, i) => {
+                          const d = new Date(); d.setMonth(d.getMonth() - (5-i));
+                          const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+                          const label = d.toLocaleDateString('es-ES',{month:'short',year:'2-digit'});
+                          const registros = historial.filter((h: any) => {
+                            const hd = new Date(h.fecha ?? h.createdAt);
+                            return hd.getFullYear() + '-' + String(hd.getMonth()+1).padStart(2,'0') === key;
+                          }).length;
+                          return { mes: label, registros, activo: registros > 0 ? registros : 0, inactivo: registros === 0 ? 1 : 0 };
+                        });
+                        return (
+                          <ResponsiveContainer width='100%' height={180}>
+                            <AreaChart data={meses} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                              <defs>
+                                <linearGradient id='colorActivo' x1='0' y1='0' x2='0' y2='1'>
+                                  <stop offset='5%' stopColor='#3b82f6' stopOpacity={0.3}/>
+                                  <stop offset='95%' stopColor='#3b82f6' stopOpacity={0}/>
+                                </linearGradient>
+                              </defs>
+                              <CartesianGrid strokeDasharray='3 3' stroke='#f3f4f6' />
+                              <XAxis dataKey='mes' tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                              <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                              <Area type='monotone' dataKey='registros' name='Registros clinicos' stroke='#3b82f6' strokeWidth={2} fill='url(#colorActivo)' />
+                            </AreaChart>
+                          </ResponsiveContainer>
+                        );
+                      })()}
+                    </div>
+                    {/* Timeline registros */}
+                    {historial.length > 0 && (
+                      <div className='bg-white rounded-xl border border-gray-200 overflow-hidden'>
+                        <div className='px-4 py-3 bg-gray-50 border-b border-gray-100'>
+                          <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide'>Ultimos registros clinicos</p>
+                        </div>
+                        <div className='divide-y divide-gray-50'>
+                          {historial.slice(0,5).map((h: any, i: number) => (
+                            <div key={i} className='flex items-center gap-4 px-4 py-3 hover:bg-gray-50 transition'>
+                              <div className='w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0'>
+                                <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='#3b82f6' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><path d='M14 2v6h6M16 13H8M16 17H8M10 9H8'/></svg>
+                              </div>
+                              <div className='flex-1 min-w-0'>
+                                <p className='text-xs font-semibold text-gray-700 truncate'>{h.diagnostico ?? h.diagnosis ?? 'Sin diagnostico'}</p>
+                                <p className='text-xs text-gray-400'>{new Date(h.fecha ?? h.createdAt).toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})}</p>
+                              </div>
+                              <span className='text-xs text-gray-400 flex-shrink-0'>{h.doctor?.user?.first_name ? 'Dr. ' + h.doctor.user.first_name : ''}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
             </>
           )}
         </div>
