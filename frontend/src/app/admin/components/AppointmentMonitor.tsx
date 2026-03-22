@@ -32,7 +32,7 @@ interface Appointment {
 interface Props { appointments: Appointment[]; onRefresh: () => void; }
 
 export function AppointmentMonitor({ appointments, onRefresh }: Props) {
-  const today = new Date().toISOString().split('T')[0];
+  const now = new Date(); const today = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
   const todayAppts = appointments
     .filter(a => (a.appointmentDate ?? '').split('T')[0] === today && a.status !== 'ANULADA' && a.status !== 'CANCELADA')
     .sort((a, b) => (a.numeroFicha ?? 99) - (b.numeroFicha ?? 99));
