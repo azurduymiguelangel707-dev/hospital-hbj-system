@@ -210,7 +210,13 @@ export class AppointmentsService {
       throw new Error(`No hay fichas disponibles para ${data.especialidad} en turno ${data.turno} del ${data.fecha}`);
     }
 
-    const appointmentTime = data.turno === 'manana' ? '08:00:00' : '15:00:00';
+    // Calcular hora segun ficha (cada cita dura 20 minutos)
+    const fichaNum = slots.proximaFicha ?? 1;
+    const baseHour = (data.turno ?? '').toUpperCase() === 'MANANA' ? 8 : 15;
+    const totalMinutes = baseHour * 60 + (fichaNum - 1) * 20;
+    const hh = Math.floor(totalMinutes / 60).toString().padStart(2, '0');
+    const mm = (totalMinutes % 60).toString().padStart(2, '0');
+    const appointmentTime = hh + ':' + mm + ':00';
     const appt = this.appointmentRepository.create({
       patientId: data.patientId,
       doctorId: data.doctorId,
