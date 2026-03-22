@@ -85,7 +85,6 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
 
   ];
   return (
-  return (
     <div className="flex flex-col h-full overflow-auto">
       <div className="flex items-center gap-3 mb-6">
         <button onClick={onBack} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
@@ -398,7 +397,6 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
   const totalPaginas = Math.ceil(filtrados.length / POR_PAGINA);
   const paginados = filtrados.slice(pagina * POR_PAGINA, (pagina + 1) * POR_PAGINA);
   if (selected) return <FichaPaciente paciente={selected} onBack={() => setSelected(null)} />;
-  return (
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex items-center gap-3 mb-4 flex-shrink-0">
