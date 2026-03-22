@@ -1081,10 +1081,10 @@ export default function EnfermeriaDashboard() {
                 const key = pid + '-' + h;
                 heatData[key] = (heatData[key] ?? 0) + 1;
               });
-              const pacientesUnicos = [...new Set(vitalsHistory.map((v: any) => v.patientId?.substring(0,8)))];
+              const pacientesUnicos = Array.from(new Set(vitalsHistory.map((v: any) => v.patientId?.substring(0,8)))];
               const maxVal = Math.max(...Object.values(heatData), 1);
               const totalRegistros = vitalsHistory.length;
-              const horasConRegistro = new Set(vitalsHistory.map((v: any) => new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).getHours())).size;
+              const horasConRegistro = new Set<number>(vitalsHistory.map((v: any) => new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).getHours())).size;
               function getColor(val: number): string {
                 if (val === 0) return '#f9fafb';
                 const pct = val / maxVal;
