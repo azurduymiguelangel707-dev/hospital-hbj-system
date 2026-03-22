@@ -14,6 +14,7 @@ import { RegistroPaciente } from './components/RegistroPaciente';
 import { CerrarDiaButton } from './components/CerrarDiaButton';
 import { AgendamientoCita } from './components/AgendamientoCita';
 import { ReportesPanel } from './components/ReportesPanel';
+import { TendenciaCitas } from './components/TendenciaCitas';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
