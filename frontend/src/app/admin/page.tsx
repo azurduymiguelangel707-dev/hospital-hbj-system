@@ -16,6 +16,7 @@ import { AgendamientoCita } from './components/AgendamientoCita';
 import { ReportesPanel } from './components/ReportesPanel';
 import { TendenciaCitas } from './components/TendenciaCitas';
 import { HeatmapAgenda } from './components/HeatmapAgenda';
+import { PacientesNuevosVsRecurrentes } from './components/PacientesNuevosVsRecurrentes';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
@@ -271,6 +272,7 @@ export default function AdminDashboard() {
                 <p className='text-sm text-gray-500'>Analisis de especialidades, medicamentos y citas</p>
               </div>
               <HeatmapAgenda />
+              <PacientesNuevosVsRecurrentes />
               <ReportesPanel />
             </div>
           )}
