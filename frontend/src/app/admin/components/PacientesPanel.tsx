@@ -372,6 +372,7 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
       </div>
     </div>
   );
+}
 export function PacientesPanel() {
   const [pacientes, setPacientes]   = useState<any[]>([]);
   const [loading, setLoading]       = useState(true);
