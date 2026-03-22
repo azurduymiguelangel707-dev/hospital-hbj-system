@@ -94,6 +94,7 @@ export default function EnfermeriaDashboard() {
   const [savedMsg, setSavedMsg] = useState('');
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'done'>('pending');
+  const [mainTab, setMainTab] = useState<'pacientes'|'historial'|'reportes'>('pacientes');
   const [search, setSearch] = useState('');
   const [vitalsHistory, setVitalsHistory] = useState<any[]>([]);
   const [enfermeraInfo, setEnfermeraInfo] = useState({ nombre: "Enfermeria", especialidad: "", fechaHoy: "" });
@@ -276,7 +277,19 @@ export default function EnfermeriaDashboard() {
         ))}
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+        {/* Nav principal */}
+        <div className='flex gap-1 bg-gray-100 p-1 mx-6 my-3 rounded-xl flex-shrink-0'>
+          {([['pacientes','👥 Pacientes'],['historial','📋 Historial vitales'],['reportes','📊 Reportes']] as const).map(([k,l]) => (
+            <button key={k} onClick={() => setMainTab(k)}
+              className={'flex-1 py-2 rounded-lg text-xs font-semibold transition ' + (mainTab === k ? 'bg-white shadow-sm text-gray-800' : 'text-gray-500 hover:text-gray-700')}>
+              {l}
+            </button>
+          ))}
+        </div>
+
+
+        {mainTab === 'pacientes' && (
+        <div className='flex flex-1 overflow-hidden'>
         {/* Lista de pacientes */}
         <div className="w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 min-h-0">
           <div className="flex items-center gap-2 px-3 pt-3 pb-2">
@@ -922,7 +935,146 @@ export default function EnfermeriaDashboard() {
           })()}
         </div>
       </div>
-    </div>
+        </div>
+        )}
+
+        {/* TAB: Historial vitales */}
+        {mainTab === 'historial' && (
+          <div className='flex-1 overflow-auto p-6'>
+            <div className='mb-4'>
+              <h2 className='text-lg font-bold text-gray-800'>Historial de signos vitales</h2>
+              <p className='text-xs text-gray-400 mt-0.5'>Todos los registros del dia por paciente</p>
+            </div>
+            <div className='space-y-3'>
+              {appointments.map(a => {
+                const pvs = vitalsHistory.filter((v: any) => v.patientId === a.patient?.id);
+                if (pvs.length === 0) return null;
+                return (
+                  <div key={a.id} className='bg-white rounded-xl border border-gray-200 overflow-hidden'>
+                    <div className='px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between'>
+                      <div className='flex items-center gap-2'>
+                        <div className='w-7 h-7 rounded-lg bg-teal-50 flex items-center justify-center text-xs font-bold text-teal-600'>
+                          {a.patient?.nombre?.substring(0,2).toUpperCase()}
+                        </div>
+                        <span className='text-sm font-semibold text-gray-700'>{a.patient?.nombre}</span>
+                      </div>
+                      <span className='text-xs text-gray-400'>{pvs.length} registros</span>
+                    </div>
+                    <div className='divide-y divide-gray-50'>
+                      {pvs.map((v: any, i: number) => (
+                        <div key={i} className='grid grid-cols-6 gap-2 px-4 py-2.5 text-xs hover:bg-gray-50'>
+                          <span className='text-gray-400 col-span-1'>{new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</span>
+                          <span className='font-medium text-gray-700'>PA: {v.presionArterial || '-'}</span>
+                          <span className='font-medium text-gray-700'>FC: {v.frecuenciaCardiaca || '-'}</span>
+                          <span className='font-medium text-gray-700'>T: {v.temperatura || '-'}C</span>
+                          <span className='font-medium text-gray-700'>SpO2: {v.saturacionOxigeno || '-'}%</span>
+                          <span className='font-medium text-gray-700'>FR: {v.frecuenciaRespiratoria || '-'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* TAB: Reportes */}
+        {mainTab === 'reportes' && (
+          <div className='flex-1 overflow-auto p-6 space-y-5'>
+            <div>
+              <h2 className='text-lg font-bold text-gray-800'>Reportes de enfermeria</h2>
+              <p className='text-xs text-gray-400 mt-0.5'>Frecuencia de controles y cumplimiento de protocolos</p>
+            </div>
+            {/* Heatmap frecuencia controles */}
+            {(() => {
+              const HORAS = ['06','07','08','09','10','11','12','13','14','15','16','17','18','19','20'];
+              const heatData: Record<string, number> = {};
+              vitalsHistory.forEach((v: any) => {
+                const h = new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).getHours().toString().padStart(2,'0');
+                const pid = v.patientId?.substring(0,8) ?? 'Unknown';
+                const key = pid + '-' + h;
+                heatData[key] = (heatData[key] ?? 0) + 1;
+              });
+              const pacientesUnicos = [...new Set(vitalsHistory.map((v: any) => v.patientId?.substring(0,8)))];
+              const maxVal = Math.max(...Object.values(heatData), 1);
+              const totalRegistros = vitalsHistory.length;
+              const horasConRegistro = new Set(vitalsHistory.map((v: any) => new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).getHours())).size;
+              function getColor(val: number): string {
+                if (val === 0) return '#f9fafb';
+                const pct = val / maxVal;
+                if (pct <= 0.25) return '#ccfbf1';
+                if (pct <= 0.5)  return '#5eead4';
+                if (pct <= 0.75) return '#0d9488';
+                return '#0f766e';
+              }
+              return (
+                <div className='bg-white rounded-xl border border-gray-200 p-5 space-y-4'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <h3 className='text-sm font-bold text-gray-800'>Mapa de calor — Frecuencia de controles</h3>
+                      <p className='text-xs text-gray-400 mt-0.5'>Tomas de signos vitales por paciente y hora del dia</p>
+                    </div>
+                  </div>
+                  <div className='grid grid-cols-3 gap-3'>
+                    {[{label:'Total registros',val:totalRegistros,color:'#0d9488',bg:'#f0fdfa'},{label:'Pacientes monitoreados',val:pacientesUnicos.length,color:'#3b82f6',bg:'#eff6ff'},{label:'Horas con actividad',val:horasConRegistro,color:'#8b5cf6',bg:'#f5f3ff'}].map((k,i) => (
+                      <div key={i} className='rounded-xl px-3 py-2.5 text-center border' style={{backgroundColor:k.bg,borderColor:k.color+'30'}}>
+                        <div className='text-2xl font-black' style={{color:k.color}}>{k.val}</div>
+                        <div className='text-xs mt-0.5' style={{color:k.color}}>{k.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className='overflow-x-auto'>
+                    <table className='w-full text-xs border-collapse'>
+                      <thead>
+                        <tr>
+                          <th className='w-24 text-gray-400 font-normal pb-2 text-left'>Paciente</th>
+                          {HORAS.map(h => <th key={h} className='text-center text-gray-500 font-semibold pb-2 px-0.5'>{h}h</th>)}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pacientesUnicos.map(pid => {
+                          const nombre = appointments.find(a => a.patient?.id?.substring(0,8) === pid)?.patient?.nombre?.split(' ')[0] ?? pid;
+                          return (
+                            <tr key={pid}>
+                              <td className='text-gray-600 font-medium pr-2 py-0.5 truncate max-w-24'>{nombre}</td>
+                              {HORAS.map(h => {
+                                const val = heatData[pid+'-'+h] ?? 0;
+                                return (
+                                  <td key={h} className='px-0.5 py-0.5'>
+                                    <div className='h-7 w-7 rounded-md flex items-center justify-center text-xs font-bold mx-auto'
+                                      style={{backgroundColor:getColor(val),color:val>0?'#fff':'#d1d5db'}}>
+                                      {val > 0 ? val : ''}
+                                    </div>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          );
+                        })}
+                        {pacientesUnicos.length === 0 && (
+                          <tr><td colSpan={16} className='text-center py-8 text-gray-300 text-sm'>Sin registros de vitales hoy</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className='flex items-center justify-between bg-teal-50 rounded-lg px-4 py-2'>
+                    <span className='text-xs font-semibold text-teal-700'>Leyenda de intensidad:</span>
+                    <div className='flex items-center gap-3'>
+                      {[{color:'#ccfbf1',label:'1 toma'},{color:'#5eead4',label:'2 tomas'},{color:'#0d9488',label:'3 tomas'},{color:'#0f766e',label:'4+ tomas'}].map((l,i) => (
+                        <div key={i} className='flex items-center gap-1.5'>
+                          <div className='w-5 h-4 rounded' style={{backgroundColor:l.color}}/>
+                          <span className='text-xs text-gray-500'>{l.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+        </div>
   </div>
   );
 }
