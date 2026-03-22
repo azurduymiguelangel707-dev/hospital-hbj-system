@@ -1084,7 +1084,7 @@ export default function EnfermeriaDashboard() {
               const pacientesUnicos = Array.from(new Set(vitalsHistory.map((v: any) => v.patientId?.substring(0,8)))];
               const maxVal = Math.max(...Object.values(heatData), 1);
               const totalRegistros = vitalsHistory.length;
-              const horasConRegistro = new Set<number>(vitalsHistory.map((v: any) => new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).getHours())).size;
+              const _horas = vitalsHistory.map((v: any) => new Date(v.registradoEn ?? v.registeredAt ?? Date.now()).getHours()); const horasConRegistro = new Set(_horas).size;
               function getColor(val: number): string {
                 if (val === 0) return '#f9fafb';
                 const pct = val / maxVal;
