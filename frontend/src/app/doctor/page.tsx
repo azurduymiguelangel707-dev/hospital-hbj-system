@@ -96,13 +96,13 @@ export default function DoctorDashboard() {
         getPatientDocuments(appt.patient.id),
         getVitalsHistory(appt.patient.id),
       ]);
+      setPatientDetail(detail);
+      setDocuments(docs);
       setVitalsHistory(vitalsHist ?? []);
       setConsultaForm((f) => ({ ...f, motivoConsulta: appt.reason ?? '' }));
     } catch (e) { console.error(e); }
     finally { setLoadingDetail(false); }
   }
-
-  async function handleStart(id: string) {
     await updateAppointmentStatus(id, 'EN_CONSULTA');
     loadAppointments();
   }
