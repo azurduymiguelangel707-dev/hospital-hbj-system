@@ -1,6 +1,6 @@
+'use client';
 ﻿// src/app/dashboard/doctor/page.tsx
 import React from 'react';
-'use client';
 import { useRouter } from 'next/navigation';
 
 import { useState, useEffect, useCallback } from 'react';
