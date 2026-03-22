@@ -176,7 +176,7 @@ export default function DoctorDashboard() {
         </aside>
 
         {/* Main */}
-        <main className="flex-1 overflow-hidden p-6">
+        <main className="flex-1 overflow-y-auto p-6">
 
           {/* AGENDA */}
           {activePanel === 'agenda' && (
