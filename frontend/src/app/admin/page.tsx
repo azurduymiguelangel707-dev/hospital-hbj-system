@@ -15,6 +15,7 @@ import { CerrarDiaButton } from './components/CerrarDiaButton';
 import { AgendamientoCita } from './components/AgendamientoCita';
 import { ReportesPanel } from './components/ReportesPanel';
 import { TendenciaCitas } from './components/TendenciaCitas';
+import { HeatmapAgenda } from './components/HeatmapAgenda';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 function getToken() { return typeof window !== 'undefined' ? localStorage.getItem('auth_token') ?? '' : ''; }
@@ -269,6 +270,7 @@ export default function AdminDashboard() {
                 <h2 className='text-xl font-bold text-gray-800'>Reportes y estadisticas</h2>
                 <p className='text-sm text-gray-500'>Analisis de especialidades, medicamentos y citas</p>
               </div>
+              <HeatmapAgenda />
               <ReportesPanel />
             </div>
           )}
