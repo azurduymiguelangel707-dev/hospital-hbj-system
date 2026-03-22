@@ -36,6 +36,9 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<any>(null);
   const [error, setError] = useState('');
+  const [vitalesForm, setVitalesForm] = useState({ presionArterial: '', frecuenciaCardiaca: '', frecuenciaRespiratoria: '', temperatura: '', saturacionOxigeno: '', peso: '' });
+  const [savingVitales, setSavingVitales] = useState(false);
+  const [vitalesSaved, setVitalesSaved] = useState(false);
 
   // Cargar medicos por especialidad
   useEffect(() => {
@@ -84,6 +87,28 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
   }
 
   const selectedDoctor = doctors.find(d => d.id === form.doctorId);
+
+  async function handleGuardarVitales() {
+    if (!saved?.id) return;
+    setSavingVitales(true);
+    try {
+      const res = await authFetch('/api/vital-signs', {
+        method: 'POST',
+        body: JSON.stringify({
+          appointmentId: saved.id,
+          patientId: patient.id,
+          ...vitalesForm,
+          frecuenciaCardiaca: Number(vitalesForm.frecuenciaCardiaca) || undefined,
+          frecuenciaRespiratoria: Number(vitalesForm.frecuenciaRespiratoria) || undefined,
+          temperatura: Number(vitalesForm.temperatura) || undefined,
+          saturacionOxigeno: Number(vitalesForm.saturacionOxigeno) || undefined,
+          peso: Number(vitalesForm.peso) || undefined,
+        }),
+      });
+      if (res.ok) setVitalesSaved(true);
+    } catch(e) { console.error(e); }
+    finally { setSavingVitales(false); }
+  }
 
   if (saved) {
     return (
