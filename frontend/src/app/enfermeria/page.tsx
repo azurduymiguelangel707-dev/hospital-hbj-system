@@ -1074,7 +1074,6 @@ export default function EnfermeriaDashboard() {
             })()}
           </div>
         )}
-        </div>
   </div>
   );
 }
