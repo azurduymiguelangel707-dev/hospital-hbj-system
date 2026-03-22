@@ -154,9 +154,9 @@ export function AppointmentMonitor({ appointments, onRefresh }: Props) {
                 {isOpen && (
                   <div className="border-t" style={{ borderColor: cfg.border }}>
                     {[
-                      { label: 'Manana', hora: '08:00-14:00', items: citas.filter(c => c.turno === 'manana') },
-                      { label: 'Tarde',  hora: '15:00-18:00', items: citas.filter(c => c.turno === 'tarde') },
-                      { label: 'Sin turno', hora: '', items: citas.filter(c => !c.turno) },
+                      { label: 'Manana', hora: '08:00-14:00', items: citas.filter(c => (c.turno ?? '').toUpperCase() === 'MANANA') },
+                      { label: 'Tarde',  hora: '15:00-18:00', items: citas.filter(c => (c.turno ?? '').toUpperCase() === 'TARDE') },
+                      { label: 'Sin turno', hora: '', items: citas.filter(c => !c.turno || ((c.turno ?? '').toUpperCase() !== 'MANANA' && (c.turno ?? '').toUpperCase() !== 'TARDE')) },
                     ].filter(t => t.items.length > 0).map(turno => (
                       <div key={turno.label}>
                         <div className="px-4 py-1.5 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
