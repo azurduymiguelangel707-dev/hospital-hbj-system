@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, ClipboardList, FileText, BookOpen, BarChart2, AlertTriangle, Activity, Clock } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend, LineChart, Line, CartesianGrid, ReferenceLine, ReferenceArea } from 'recharts';
 import type {
   AppointmentWithPatient, PatientDetail, ConsultaForm,
   ClinicalDocument, WeeklyReportData, FollowUpPatient,
@@ -12,7 +13,7 @@ import type {
 import {
   getTodayAppointments, updateAppointmentStatus,
   getPatientDetail, submitConsulta,
-  getPatientDocuments, getFollowUpPatients, getWeeklyReport,
+  getPatientDocuments, getFollowUpPatients, getWeeklyReport, getVitalsHistory,
 } from '@/lib/api/doctor';
 import { PatientCard }    from './components/PatientCard';
 import { VitalSignsGrid } from './components/VitalSignsGrid';
@@ -415,9 +416,10 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
   );
 }
 
-function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
+function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vitalsHistory }: {
   detail: PatientDetail | null; loading: boolean;
   onIniciarConsulta: () => void; onVerDocumentos: () => void;
+  vitalsHistory?: any[];
 }) {
   const [expandedRecord, setExpandedRecord] = useState<string | null>(null);
   if (loading) return <div className="text-center py-16 text-gray-400">Cargando ficha...</div>;
@@ -581,7 +583,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
                   <YAxis domain={[cfg.min, cfg.max]} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }}
-                    formatter={(val: number, name: string) => [`${val} ${cfg.unidad}`, name]}
+                    formatter={(val: unknown) => [String(val) + " " + cfg.unidad]}
                   />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   {/* Banda zona normal */}
