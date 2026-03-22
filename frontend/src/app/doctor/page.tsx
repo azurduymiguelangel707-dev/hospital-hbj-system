@@ -18,6 +18,7 @@ import {
 import { PatientCard }    from './components/PatientCard';
 import { VitalSignsGrid } from './components/VitalSignsGrid';
 import { DocumentsPanel } from './components/DocumentsPanel';
+import { imprimirOrdenMedica } from './components/OrdenMedica';
 
 type Panel = 'agenda' | 'ficha' | 'consulta' | 'documentos' | 'seguimiento' | 'reporte';
 
