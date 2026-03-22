@@ -266,7 +266,7 @@ export default function AdminDashboard() {
           )}
 
           {activePanel === 'reportes' && (
-            <div className='space-y-4'>
+            <div className='flex-1 overflow-auto p-6'><div className='space-y-4'>
               <div>
                 <h2 className='text-xl font-bold text-gray-800'>Reportes y estadisticas</h2>
                 <p className='text-sm text-gray-500'>Analisis de especialidades, medicamentos y citas</p>
@@ -274,7 +274,7 @@ export default function AdminDashboard() {
               <HeatmapAgenda />
               <PacientesNuevosVsRecurrentes />
               <ReportesPanel />
-            </div>
+            </div></div>
           )}
 
           {activePanel === 'sistema' && (
