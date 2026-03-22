@@ -1,10 +1,11 @@
 ﻿// src/app/dashboard/doctor/page.tsx
+import React from 'react';
 'use client';
 import { useRouter } from 'next/navigation';
 
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, ClipboardList, FileText, BookOpen, BarChart2, AlertTriangle, Activity, Clock } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend, LineChart, Line, CartesianGrid, ReferenceLine, ReferenceArea } from 'recharts';
 import type {
   AppointmentWithPatient, PatientDetail, ConsultaForm,
   ClinicalDocument, WeeklyReportData, FollowUpPatient,
@@ -12,11 +13,12 @@ import type {
 import {
   getTodayAppointments, updateAppointmentStatus,
   getPatientDetail, submitConsulta,
-  getPatientDocuments, getFollowUpPatients, getWeeklyReport,
+  getPatientDocuments, getFollowUpPatients, getWeeklyReport, getVitalsHistory,
 } from '@/lib/api/doctor';
 import { PatientCard }    from './components/PatientCard';
 import { VitalSignsGrid } from './components/VitalSignsGrid';
 import { DocumentsPanel } from './components/DocumentsPanel';
+import { imprimirOrdenMedica } from './components/OrdenMedica';
 
 type Panel = 'agenda' | 'ficha' | 'consulta' | 'documentos' | 'seguimiento' | 'reporte';
 
@@ -581,7 +583,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
                   <YAxis domain={[cfg.min, cfg.max]} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e5e7eb" }}
-                    formatter={(val: number, name: string) => [`${val} ${cfg.unidad}`, name]}
+                    formatter={(val: unknown) => [String(val) + " " + cfg.unidad]}
                   />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   {/* Banda zona normal */}
