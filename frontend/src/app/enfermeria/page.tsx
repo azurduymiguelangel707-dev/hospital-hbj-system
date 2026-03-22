@@ -1,7 +1,7 @@
 // src/app/enfermeria/page.tsx
 'use client';
 import { useRouter } from 'next/navigation';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid, Legend } from 'recharts';
 
 import { useState, useEffect, useCallback } from 'react';
 import {
