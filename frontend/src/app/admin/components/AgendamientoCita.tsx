@@ -112,73 +112,79 @@ export function AgendamientoCita({ patient, onBack, onDone }: Props) {
 
   if (saved) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-5">
-          <CheckCircle size={20} className="text-green-600" />
-          <h3 className="text-base font-semibold text-green-800">Cita agendada exitosamente</h3>
+      <div className='space-y-4'>
+        <div className='flex items-center gap-2'>
+          <CheckCircle size={18} className='text-green-600' />
+          <h3 className='text-base font-semibold text-green-800'>Cita agendada exitosamente</h3>
         </div>
-        <div className="bg-white border border-green-200 rounded-xl p-5 mb-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Comprobante de cita</p>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: 'N° Ficha', value: `${saved.numeroFicha} / ${saved.totalFichasTurno}`, highlight: true },
-              { label: 'N° Historial', value: patient.numeroHistorial, highlight: true },
-              { label: 'Paciente', value: patient.nombre },
-              { label: 'Medico', value: selectedDoctor ? `Dr. ${selectedDoctor.user?.first_name ?? ''} ${selectedDoctor.user?.last_name ?? ''}` : '-' },
-              { label: 'Especialidad', value: saved.especialidad },
-              { label: 'Turno', value: saved.turno === 'manana' ? 'Manana (08:00-14:00)' : 'Tarde (15:00-18:00)' },
-              { label: 'Fecha', value: new Date(saved.appointmentDate).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) },
-              { label: 'Estado', value: 'AGENDADA' },
-            ].map(item => (
-              <div key={item.label} className={`rounded-lg px-3 py-2.5 border ${item.highlight ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
-                <p className="text-xs text-gray-400">{item.label}</p>
-                <p className={`font-semibold ${item.highlight ? 'text-green-700 text-base' : 'text-gray-800 text-sm'}`}>{item.value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Vitales iniciales */}
-        {!vitalesSaved ? (
-          <div className='bg-white border border-blue-200 rounded-xl p-4 mb-4'>
-            <p className='text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2 flex items-center gap-2'>
-              💓 Registrar signos vitales iniciales
-            </p>
-            <p className='text-xs text-gray-400 mb-3'>La enfermera de {form.especialidad} los vera al recibir la cita</p>
-            <div className='grid grid-cols-3 gap-3'>
-              {([
-                ['presionArterial',       'Presion Arterial', '120/80', 'text'],
-                ['frecuenciaCardiaca',    'Frec. Cardiaca',   '70',     'number'],
-                ['frecuenciaRespiratoria','Frec. Respirat.',  '16',     'number'],
-                ['temperatura',          'Temperatura C',    '36.5',   'number'],
-                ['saturacionOxigeno',    'SpO2 %',           '98',     'number'],
-                ['peso',                 'Peso kg',          '70',     'number'],
-              ] as [string,string,string,string][]).map(([key, label, placeholder, type]) => (
-                <div key={key}>
-                  <label className='text-xs text-gray-500 mb-1 block'>{label}</label>
-                  <input type={type} placeholder={placeholder}
-                    value={(vitalesForm as any)[key]}
-                    onChange={e => setVitalesForm((v: any) => ({ ...v, [key]: e.target.value }))}
-                    className='w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400' />
+        <div className='grid grid-cols-2 gap-4'>
+          {/* Comprobante */}
+          <div className='bg-green-50 border border-green-200 rounded-xl p-4'>
+            <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3'>Comprobante</p>
+            <div className='space-y-2'>
+              {[
+                { label: 'N Ficha',     value: saved.numeroFicha + ' / ' + saved.totalFichasTurno, highlight: true },
+                { label: 'N Historial', value: patient.numeroHistorial,                             highlight: true },
+                { label: 'Paciente',    value: patient.nombre },
+                { label: 'Medico',      value: selectedDoctor ? 'Dr. ' + (selectedDoctor.user?.first_name ?? '') + ' ' + (selectedDoctor.user?.last_name ?? '') : '-' },
+                { label: 'Especialidad',value: saved.especialidad },
+                { label: 'Turno',       value: saved.turno === 'manana' ? 'Manana 08:00-14:00' : 'Tarde 15:00-18:00' },
+                { label: 'Fecha',       value: new Date(saved.appointmentDate).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}) },
+                { label: 'Estado',      value: 'AGENDADA' },
+              ].map(item => (
+                <div key={item.label} className={'flex items-center justify-between px-3 py-2 rounded-lg border ' + (item.highlight ? 'bg-white border-green-200' : 'bg-white border-gray-100')}>
+                  <span className='text-xs text-gray-400'>{item.label}</span>
+                  <span className={'text-xs font-bold ' + (item.highlight ? 'text-green-700' : 'text-gray-700')}>{item.value}</span>
                 </div>
               ))}
             </div>
-            <button onClick={handleGuardarVitales} disabled={savingVitales}
-              className='mt-3 w-full py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition text-sm font-semibold'>
-              {savingVitales ? 'Guardando...' : '💓 Guardar signos vitales'}
-            </button>
           </div>
-        ) : (
-          <div className='bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-4 flex items-center gap-2'>
-            <span className='text-emerald-600'>✓</span>
-            <p className='text-sm text-emerald-700 font-medium'>Signos vitales registrados — la enfermera de {form.especialidad} los vera</p>
+          {/* Formulario vitales */}
+          <div className='bg-white border border-blue-200 rounded-xl p-4 flex flex-col'>
+            <p className='text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1 flex items-center gap-1.5'>
+              💓 Signos vitales iniciales
+            </p>
+            <p className='text-xs text-gray-400 mb-3'>La enfermera de {form.especialidad} los vera</p>
+            {!vitalesSaved ? (
+              <>
+                <div className='grid grid-cols-2 gap-2 flex-1'>
+                  {([
+                    ['presionArterial',       'Presion Arterial', '120/80', 'text'],
+                    ['frecuenciaCardiaca',    'Frec. Cardiaca',   '70',     'number'],
+                    ['frecuenciaRespiratoria','Frec. Respirat.',  '16',     'number'],
+                    ['temperatura',          'Temperatura',      '36.5',   'number'],
+                    ['saturacionOxigeno',    'SpO2 %',           '98',     'number'],
+                    ['peso',                 'Peso kg',          '70',     'number'],
+                  ] as [string,string,string,string][]).map(([key, label, placeholder, type]) => (
+                    <div key={key}>
+                      <label className='text-xs text-gray-500 mb-1 block'>{label}</label>
+                      <input type={type} placeholder={placeholder}
+                        value={(vitalesForm as any)[key]}
+                        onChange={e => setVitalesForm((v: any) => ({ ...v, [key]: e.target.value }))}
+                        className='w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400' />
+                    </div>
+                  ))}
+                </div>
+                <button onClick={handleGuardarVitales} disabled={savingVitales}
+                  className='mt-3 w-full py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition text-sm font-semibold'>
+                  {savingVitales ? 'Guardando...' : 'Guardar signos vitales'}
+                </button>
+              </>
+            ) : (
+              <div className='flex-1 flex flex-col items-center justify-center gap-3'>
+                <div className='w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center'>
+                  <CheckCircle size={24} className='text-emerald-600' />
+                </div>
+                <p className='text-sm font-semibold text-emerald-700 text-center'>Vitales registrados</p>
+                <p className='text-xs text-gray-400 text-center'>La enfermera de {form.especialidad} los vera en su panel</p>
+              </div>
+            )}
           </div>
-        )}
-        <div className="flex gap-2">
-          <button onClick={onDone}
-            className="flex-1 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium">
-            Nuevo registro
-          </button>
         </div>
+        <button onClick={onDone}
+          className='w-full py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold'>
+          Nuevo registro
+        </button>
       </div>
     );
   }
