@@ -68,7 +68,7 @@ export default function DoctorDashboard() {
   });
 
   const loadAppointments = useCallback(async () => {
-    setLoading(true);
+    if (!doctor.id) return;
     try {
       const appts = await getTodayAppointments(doctor.id);
       setAppointments(appts);
