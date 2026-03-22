@@ -26,11 +26,17 @@ function useDoctorSession() {
   const [session, setSession] = useState({ id: '', nombre: 'Dr.', especialidad: 'Medicina General' });
   useEffect(() => {
     try {
+      const token = localStorage.getItem('auth_token') ?? '';
       const u = JSON.parse(localStorage.getItem('user_data') ?? '{}');
+      // Intentar obtener doctorId de multiples fuentes
+      const doctorId = u.doctorId ?? u.doctor_id ?? u.id ?? '';
+      const nombre = u.nombre ?? u.first_name ?? 'Dr.';
+      const apellido = u.apellido ?? u.last_name ?? '';
+      const especialidad = u.especialidad ?? u.specialty ?? 'Medicina General';
       setSession({
-        id: u.doctorId ?? u.id ?? '',
-        nombre: u.nombre ? `Dr. ${u.nombre} ${u.apellido ?? ''}`.trim() : 'Dr.',
-        especialidad: u.especialidad ?? u.specialty ?? 'Medicina General',
+        id: doctorId,
+        nombre: nombre ? `Dr. ${nombre} ${apellido}`.trim() : 'Dr.',
+        especialidad,
       });
     } catch {}
   }, []);
@@ -68,8 +74,13 @@ export default function DoctorDashboard() {
   });
 
   const loadAppointments = useCallback(async () => {
+    setLoading(true);
     try {
-      const appts = await getTodayAppointments(doctor.id);
+      // Obtener doctorId directo del localStorage como fallback
+      const u = JSON.parse(localStorage.getItem('user_data') ?? '{}');
+      const did = doctor.id || u.doctorId || u.doctor_id || u.id || '';
+      if (!did) { setLoading(false); return; }
+      const appts = await getTodayAppointments(did);
       setAppointments(appts);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
