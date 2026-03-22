@@ -68,7 +68,6 @@ export default function DoctorDashboard() {
   });
 
   const loadAppointments = useCallback(async () => {
-    if (!doctor.id) return;
     try {
       const appts = await getTodayAppointments(doctor.id);
       setAppointments(appts);
@@ -76,7 +75,7 @@ export default function DoctorDashboard() {
     finally { setLoading(false); }
   }, [doctor.id]);
 
-  useEffect(() => { loadAppointments(); }, [loadAppointments]);
+  useEffect(() => { if (doctor.id) loadAppointments(); }, [loadAppointments, doctor.id]);
 
   async function selectPatient(appt: AppointmentWithPatient) {
     setSelectedAppt(appt);
