@@ -23,23 +23,21 @@ import { imprimirOrdenMedica } from './components/OrdenMedica';
 type Panel = 'agenda' | 'ficha' | 'consulta' | 'documentos' | 'seguimiento' | 'reporte';
 
 function useDoctorSession() {
-  const [session, setSession] = useState({ id: '', nombre: 'Dr.', especialidad: 'Medicina General' });
-  useEffect(() => {
+  // Lectura sincrona - evita el problema de render vacio
+  const init = (() => {
     try {
-      const token = localStorage.getItem('auth_token') ?? '';
       const u = JSON.parse(localStorage.getItem('user_data') ?? '{}');
-      // Intentar obtener doctorId de multiples fuentes
-      const doctorId = u.doctorId ?? u.doctor_id ?? u.id ?? '';
+      const id = u.doctorId ?? u.doctor_id ?? u.id ?? '';
       const nombre = u.nombre ?? u.first_name ?? 'Dr.';
       const apellido = u.apellido ?? u.last_name ?? '';
-      const especialidad = u.especialidad ?? u.specialty ?? 'Medicina General';
-      setSession({
-        id: doctorId,
+      return {
+        id,
         nombre: nombre ? `Dr. ${nombre} ${apellido}`.trim() : 'Dr.',
-        especialidad,
-      });
-    } catch {}
-  }, []);
+        especialidad: u.especialidad ?? u.specialty ?? 'Medicina General',
+      };
+    } catch { return { id: '', nombre: 'Dr.', especialidad: 'Medicina General' }; }
+  })();
+  const [session] = useState(init);
   return session;
 }
 
