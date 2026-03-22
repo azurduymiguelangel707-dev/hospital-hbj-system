@@ -180,6 +180,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <StatsGrid userStats={userStats} apptStats={apptStats} />
+              <TendenciaCitas />
               {/* Tabs */}
               <div className='flex gap-1 bg-gray-100 p-1 rounded-xl'>
                 <button onClick={() => setDashTab('citas')}
