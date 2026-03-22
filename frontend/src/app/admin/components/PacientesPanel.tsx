@@ -372,13 +372,23 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
       </div>
     </div>
   );
-}export function PacientesPanel() {
-  const [pacientes, setPacientes] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState<any>(null);
-  const [pagina, setPagina] = useState(0);
-  const POR_PAGINA = 20;
+export function PacientesPanel() {
+  const [pacientes, setPacientes]   = useState<any[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [search, setSearch]         = useState('');
+  const [selected, setSelected]     = useState<any>(null);
+  const [activeEsp, setActiveEsp]   = useState('Todas');
+
+  const ESPECIALIDADES = ['Todas','Cardiologia','Traumatologia','Neurologia','Otorrinolaringologia','Gastroenterologia'];
+
+  const ESP_COLORS: Record<string,{color:string;bg:string;border:string}> = {
+    Cardiologia:          { color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
+    Traumatologia:        { color: '#ea580c', bg: '#fff7ed', border: '#fed7aa' },
+    Neurologia:           { color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
+    Otorrinolaringologia: { color: '#1d4ed8', bg: '#eff6ff', border: '#bfdbfe' },
+    Gastroenterologia:    { color: '#15803d', bg: '#f0fdf4', border: '#bbf7d0' },
+  };
+
   const cargar = useCallback(async () => {
     setLoading(true);
     try {
@@ -388,60 +398,97 @@ function FichaPaciente({ paciente, onBack }: { paciente: any; onBack: () => void
     } catch(e) { console.error(e); }
     finally { setLoading(false); }
   }, []);
+
   useEffect(() => { cargar(); }, [cargar]);
-  const filtrados = pacientes.filter(p =>
-    p.nombre?.toLowerCase().includes(search.toLowerCase()) ||
-    p.ci?.includes(search) ||
-    p.numeroHistorial?.includes(search)
-  );
-  const totalPaginas = Math.ceil(filtrados.length / POR_PAGINA);
-  const paginados = filtrados.slice(pagina * POR_PAGINA, (pagina + 1) * POR_PAGINA);
+
+  const filtrados = pacientes.filter(p => {
+    const matchEsp = activeEsp === 'Todas' || p.especialidadRequerida === activeEsp;
+    const matchSearch = search === '' ||
+      p.nombre?.toLowerCase().includes(search.toLowerCase()) ||
+      p.ci?.includes(search) ||
+      p.numeroHistorial?.includes(search);
+    return matchEsp && matchSearch;
+  });
+
   if (selected) return <FichaPaciente paciente={selected} onBack={() => setSelected(null)} />;
+
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center gap-3 mb-4 flex-shrink-0">
-        <div className="relative flex-1 max-w-sm">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder="Buscar por nombre, CI o historial..."
-            value={search} onChange={e => { setSearch(e.target.value); setPagina(0); }}
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    <div className='flex flex-col h-full overflow-hidden'>
+      {/* Header con buscador */}
+      <div className='flex items-center gap-3 mb-3 flex-shrink-0'>
+        <div className='relative flex-1 max-w-sm'>
+          <Search size={14} className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
+          <input type='text' placeholder='Buscar por nombre, CI o historial...'
+            value={search} onChange={e => setSearch(e.target.value)}
+            className='w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400' />
         </div>
-        <button onClick={cargar} className="px-3 py-2 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 transition">Actualizar</button>
-        <span className="text-xs text-gray-400">{filtrados.length} pacientes</span>
+        <button onClick={cargar} className='px-3 py-2 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 transition'>
+          Actualizar
+        </button>
+        <span className='text-xs text-gray-400'>{filtrados.length} pacientes</span>
       </div>
-      {loading ? <p className="text-center text-gray-400 py-12 text-sm">Cargando pacientes...</p> :
-        filtrados.length === 0 ? <p className="text-center text-gray-400 py-12 text-sm">Sin resultados</p> :
-      <div className="flex-1 overflow-auto">
-          <div className="grid grid-cols-1 gap-1.5 mb-3">
-            {paginados.map(p => (
-              <button key={p.id} onClick={() => setSelected(p)}
-                className="bg-white border border-gray-100 rounded-lg px-4 py-2.5 text-left hover:border-blue-300 hover:bg-blue-50 transition flex items-center gap-3 w-full">
-                <div className="w-7 h-7 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
-                  <User size={13} className="text-blue-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">{p.nombre}</p>
-                  <p className="text-xs text-gray-400">CI: {p.ci} - Hist: {p.numeroHistorial ?? '-'} - {p.edad} anos - {p.genero}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  {p.especialidadRequerida && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs">{p.especialidadRequerida}</span>}
-                  <ChevronRight size={13} className="text-gray-300" />
-                </div>
-              </button>
-            ))}
-          </div>
-          {totalPaginas > 1 && (
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-              <span className="text-xs text-gray-400">{pagina * POR_PAGINA + 1}-{Math.min((pagina + 1) * POR_PAGINA, filtrados.length)} de {filtrados.length}</span>
-              <div className="flex items-center gap-2">
-                <button onClick={() => setPagina(p => Math.max(0, p - 1))} disabled={pagina === 0} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">Anterior</button>
-                <span className="text-xs text-gray-500 px-2">{pagina + 1} / {totalPaginas}</span>
-                <button onClick={() => setPagina(p => Math.min(totalPaginas - 1, p + 1))} disabled={pagina >= totalPaginas - 1} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">Siguiente</button>
-              </div>
-            </div>
-          )}
+
+      {/* Tabs especialidad */}
+      <div className='flex gap-1 flex-shrink-0 mb-3 overflow-x-auto pb-1'>
+        {ESPECIALIDADES.map(esp => {
+          const count = esp === 'Todas' ? pacientes.length : pacientes.filter(p => p.especialidadRequerida === esp).length;
+          const cfg = ESP_COLORS[esp];
+          const isActive = activeEsp === esp;
+          return (
+            <button key={esp} onClick={() => setActiveEsp(esp)}
+              className={'flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition flex-shrink-0 ' +
+                (isActive ? 'text-white' : 'bg-white text-gray-600 hover:border-gray-300')}
+              style={isActive ? { backgroundColor: cfg?.color ?? '#3b82f6', borderColor: cfg?.color ?? '#3b82f6' } : { borderColor: cfg?.border ?? '#e5e7eb', backgroundColor: cfg?.bg ?? '#fff' }}>
+              {esp === 'Todas' ? '📋' : esp.substring(0,3).toUpperCase()}
+              <span>{esp === 'Todas' ? 'Todos' : esp}</span>
+              <span className={'px-1.5 py-0.5 rounded-full text-xs font-bold ' + (isActive ? 'bg-white/30' : 'bg-gray-100')}
+                style={isActive ? {} : { color: cfg?.color ?? '#6b7280' }}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Lista pacientes con scroll interno */}
+      {loading ? (
+        <div className='flex-1 flex items-center justify-center'>
+          <p className='text-gray-400 text-sm'>Cargando pacientes...</p>
         </div>
-      }
+      ) : filtrados.length === 0 ? (
+        <div className='flex-1 flex items-center justify-center'>
+          <p className='text-gray-400 text-sm'>Sin pacientes{activeEsp !== 'Todas' ? ' en ' + activeEsp : ''}</p>
+        </div>
+      ) : (
+        <div className='flex-1 overflow-auto'>
+          <div className='space-y-1.5'>
+            {filtrados.map(p => {
+              const cfg = ESP_COLORS[p.especialidadRequerida ?? ''];
+              return (
+                <button key={p.id} onClick={() => setSelected(p)}
+                  className='w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-left hover:border-blue-200 hover:shadow-sm transition flex items-center gap-3'>
+                  <div className='w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold text-white'
+                    style={{ backgroundColor: cfg?.color ?? '#6b7280' }}>
+                    {p.nombre?.substring(0,2).toUpperCase() ?? 'PA'}
+                  </div>
+                  <div className='flex-1 min-w-0'>
+                    <p className='text-sm font-semibold text-gray-800 truncate'>{p.nombre}</p>
+                    <p className='text-xs text-gray-400'>CI: {p.ci} · Hist: {p.numeroHistorial ?? '-'} · {p.edad ?? '-'} años</p>
+                  </div>
+                  <div className='flex items-center gap-2 flex-shrink-0'>
+                    {p.especialidadRequerida && (
+                      <span className='px-2 py-1 rounded-lg text-xs font-semibold' style={{ color: cfg?.color ?? '#6b7280', backgroundColor: cfg?.bg ?? '#f9fafb', border: '1px solid ' + (cfg?.border ?? '#e5e7eb') }}>
+                        {p.especialidadRequerida.substring(0,6)}
+                      </span>
+                    )}
+                    <ChevronRight size={14} className='text-gray-300' />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
