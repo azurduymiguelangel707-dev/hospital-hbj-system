@@ -82,11 +82,12 @@ export default function DoctorDashboard() {
     if (!appt.patient?.id) return;
     setLoadingDetail(true);
     try {
-      const [detail, docs] = await Promise.all([
+      const [detail, docs, vitalsHist] = await Promise.all([
         getPatientDetail(appt.patient.id),
-      getVitalsHistory(appt.patient.id).then(setVitalsHistory),
         getPatientDocuments(appt.patient.id),
+        getVitalsHistory(appt.patient.id),
       ]);
+      setVitalsHistory(vitalsHist ?? []);
       setPatientDetail(detail);
       setDocuments(docs);
       setConsultaForm((f) => ({ ...f, motivoConsulta: appt.reason ?? '' }));
