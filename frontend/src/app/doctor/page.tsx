@@ -83,13 +83,12 @@ export default function DoctorDashboard() {
     if (!appt.patient?.id) return;
     setLoadingDetail(true);
     try {
-      const [detail, docs] = await Promise.all([
+      const [detail, docs, vitalsHist] = await Promise.all([
         getPatientDetail(appt.patient.id),
-      getVitalsHistory(appt.patient.id).then(setVitalsHistory),
         getPatientDocuments(appt.patient.id),
+        getVitalsHistory(appt.patient.id),
       ]);
-      setPatientDetail(detail);
-      setDocuments(docs);
+      setVitalsHistory(vitalsHist ?? []);
       setConsultaForm((f) => ({ ...f, motivoConsulta: appt.reason ?? '' }));
     } catch (e) { console.error(e); }
     finally { setLoadingDetail(false); }
@@ -417,9 +416,10 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
   );
 }
 
-function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos }: {
+function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vitalsHistory }: {
   detail: PatientDetail | null; loading: boolean;
   onIniciarConsulta: () => void; onVerDocumentos: () => void;
+  vitalsHistory?: any[];
 }) {
   const [expandedRecord, setExpandedRecord] = useState<string | null>(null);
   if (loading) return <div className="text-center py-16 text-gray-400">Cargando ficha...</div>;
