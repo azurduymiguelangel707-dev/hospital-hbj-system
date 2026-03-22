@@ -136,10 +136,23 @@ export function imprimirOrdenMedica({
 </body>
 </html>`;
 
-  const w = window.open('', '_blank', 'width=900,height=700');
-  if (!w) { alert('Habilita ventanas emergentes para imprimir'); return; }
-  w.document.write(html);
-  w.document.close();
-  w.focus();
-  setTimeout(() => w.print(), 600);
+  // Crear iframe oculto para imprimir sin ventana emergente
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  document.body.appendChild(iframe);
+  const doc = iframe.contentWindow?.document;
+  if (!doc) { alert('Error al generar la orden'); return; }
+  doc.open();
+  doc.write(html);
+  doc.close();
+  setTimeout(() => {
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
+    setTimeout(() => document.body.removeChild(iframe), 2000);
+  }, 500);
 }
