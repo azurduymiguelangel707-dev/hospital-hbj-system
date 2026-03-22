@@ -1,7 +1,7 @@
 // src/app/enfermeria/page.tsx
 'use client';
 import { useRouter } from 'next/navigation';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 
 import { useState, useEffect, useCallback } from 'react';
 import {
@@ -513,6 +513,78 @@ export default function EnfermeriaDashboard() {
                 )}
               </div>
 
+
+        {/* Grafico Radar - Perfil de constantes */}
+        {(() => {
+          const pv = vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id);
+          const latest = pv[0] ?? vitals;
+          const fc  = Number(latest?.frecuenciaCardiaca ?? vitals.frecuenciaCardiaca) || 0;
+          const fr  = Number(latest?.frecuenciaRespiratoria ?? vitals.frecuenciaRespiratoria) || 0;
+          const sp  = Number(latest?.saturacionOxigeno ?? vitals.saturacionOxigeno) || 0;
+          const tmp = Number(latest?.temperatura ?? vitals.temperatura) || 0;
+          const pas = Number(String(latest?.presionArterial ?? vitals.presionArterial).split('/')[0]) || 0;
+          if (!fc && !sp && !tmp && !pas) return null;
+          // Normalizar 0-100 respecto a rangos ideales
+          const norm = (val: number, min: number, max: number) => {
+            if (!val) return 0;
+            const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+            // 100 = ideal (centro del rango), penalizar desviacion
+            const mid = (min + max) / 2;
+            const halfRange = (max - min) / 2;
+            return Math.max(0, Math.round(100 - (Math.abs(val - mid) / halfRange) * 100));
+          };
+          const radarData = [
+            { signo: 'FC',    valor: norm(fc,  60, 100), referencia: 100, unidad: fc + ' bpm'   },
+            { signo: 'PAS',   valor: norm(pas, 90, 130), referencia: 100, unidad: pas + ' mmHg' },
+            { signo: 'SpO2',  valor: norm(sp,  95, 100), referencia: 100, unidad: sp + '%'      },
+            { signo: 'Temp',  valor: norm(tmp, 36, 37.5),referencia: 100, unidad: tmp + 'C'     },
+            { signo: 'FR',    valor: norm(fr,  12, 20),  referencia: 100, unidad: fr + ' rpm'   },
+          ];
+          const avg = Math.round(radarData.reduce((s, d) => s + d.valor, 0) / radarData.length);
+          const estado = avg >= 80 ? { label: 'Optimo', color: '#10b981', bg: '#f0fdf4' } : avg >= 50 ? { label: 'Precaucion', color: '#f59e0b', bg: '#fffbeb' } : { label: 'Critico', color: '#ef4444', bg: '#fef2f2' };
+          return (
+            <div className='bg-white border border-gray-200 rounded-xl p-4 mb-4'>
+              <div className='flex items-center justify-between mb-3'>
+                <div>
+                  <p className='text-xs font-semibold text-gray-600 uppercase tracking-wide'>Perfil de constantes vitales</p>
+                  <p className='text-xs text-gray-400 mt-0.5'>Normalizacion respecto a rangos ideales</p>
+                </div>
+                <span className='px-3 py-1.5 rounded-full text-xs font-bold' style={{ color: estado.color, backgroundColor: estado.bg }}>
+                  {estado.label} — {avg}%
+                </span>
+              </div>
+              <div className='flex items-center gap-4'>
+                <ResponsiveContainer width='55%' height={200}>
+                  <RadarChart data={radarData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
+                    <PolarGrid stroke='#e5e7eb' />
+                    <PolarAngleAxis dataKey='signo' tick={{ fontSize: 11, fill: '#6b7280' }} />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9 }} axisLine={false} />
+                    <Radar name='Paciente' dataKey='valor' stroke='#3b82f6' fill='#3b82f6' fillOpacity={0.25} strokeWidth={2} />
+                    <Radar name='Ideal' dataKey='referencia' stroke='#10b981' fill='#10b981' fillOpacity={0.05} strokeWidth={1} strokeDasharray='4 2' />
+                    <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} formatter={(val: any) => [val + '%', 'Score']} />
+                    <Legend wrapperStyle={{ fontSize: 10 }} />
+                  </RadarChart>
+                </ResponsiveContainer>
+                <div className='flex-1 space-y-2'>
+                  {radarData.map((d, i) => (
+                    <div key={i}>
+                      <div className='flex items-center justify-between mb-0.5'>
+                        <span className='text-xs font-medium text-gray-600'>{d.signo}</span>
+                        <div className='flex items-center gap-2'>
+                          <span className='text-xs text-gray-400'>{d.unidad}</span>
+                          <span className='text-xs font-bold' style={{ color: d.valor >= 80 ? '#10b981' : d.valor >= 50 ? '#f59e0b' : '#ef4444' }}>{d.valor}%</span>
+                        </div>
+                      </div>
+                      <div className='h-1.5 bg-gray-100 rounded-full overflow-hidden'>
+                        <div className='h-1.5 rounded-full transition-all' style={{ width: d.valor + '%', backgroundColor: d.valor >= 80 ? '#10b981' : d.valor >= 50 ? '#f59e0b' : '#ef4444' }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       {/* Panel vitales unificado */}
       {(() => {
         const pv = vitalsHistory.filter((v: any) => v.patientId === selected.patient?.id);
