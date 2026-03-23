@@ -748,16 +748,60 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
   const [newMed, setNewMed] = useState({ medicamento: "", dosis: "", duracion: "" });
   const [showMedForm, setShowMedForm] = useState(false);
   const alergia = patientDetail?.alerts?.find(a => a.tipo === "danger");
-  const ESTUDIOS = [
-    { id: "ECG",              label: "ECG",                  desc: "Electrocardiograma" },
-    { id: "Glucemia",         label: "Glucemia",             desc: "Azucar en sangre" },
-    { id: "HbA1c",            label: "HbA1c",                desc: "Hemoglobina glicada" },
-    { id: "Perfil lipidico",  label: "Perfil lipidico",      desc: "Colesterol y trigliceridos" },
-    { id: "Ecocardiograma",   label: "Ecocardiograma",       desc: "Imagen del corazon" },
-    { id: "Radiografia torax",label: "Rx torax",             desc: "Radiografia de torax" },
-    { id: "Hemograma",        label: "Hemograma",            desc: "Conteo de celulas" },
-    { id: "Orina completa",   label: "Orina completa",       desc: "Analisis de orina" },
-  ];
+  const ESTUDIOS_POR_ESPECIALIDAD: Record<string, {id:string;label:string;desc:string;icono:string}[]> = {
+    "Cardiologia": [
+      { id: "ECG",              label: "ECG",              desc: "Electrocardiograma 12 derivaciones", icono: "💓" },
+      { id: "Ecocardiograma",   label: "Ecocardiograma",   desc: "Imagen ecografica del corazon",      icono: "🫀" },
+      { id: "Holter",           label: "Holter 24h",       desc: "Monitoreo cardiaco continuo",        icono: "📊" },
+      { id: "Perfil lipidico",  label: "Perfil lipidico",  desc: "Colesterol LDL HDL trigliceridos",   icono: "🧬" },
+      { id: "Troponinas",       label: "Troponinas",       desc: "Marcadores dano miocardico",         icono: "🧪" },
+      { id: "BNP",              label: "BNP/NT-proBNP",    desc: "Marcador insuficiencia cardiaca",    icono: "🔬" },
+      { id: "Radiografia torax",label: "Rx torax",         desc: "Radiografia posteroanterior",        icono: "🩻" },
+      { id: "Ergometria",       label: "Ergometria",       desc: "Prueba de esfuerzo cardiaco",        icono: "🏃" },
+    ],
+    "Neurologia": [
+      { id: "EEG",              label: "EEG",              desc: "Electroencefalograma",               icono: "🧠" },
+      { id: "RM cerebral",      label: "RM cerebral",      desc: "Resonancia magnetica cerebral",      icono: "🧲" },
+      { id: "TAC cerebral",     label: "TAC cerebral",     desc: "Tomografia axial computarizada",     icono: "💡" },
+      { id: "Puncion lumbar",   label: "Puncion lumbar",   desc: "Analisis liquido cefalorraquideo",   icono: "🩺" },
+      { id: "VCN",              label: "Velocidad cond.",  desc: "Velocidad conduccion nerviosa",      icono: "⚡" },
+      { id: "Potenciales evocados", label: "Pot. evocados",desc: "Respuesta electrica cerebral",      icono: "📡" },
+      { id: "Doppler transcraneal", label: "Doppler TC",   desc: "Flujo sanguineo cerebral",           icono: "🔊" },
+      { id: "Hemograma",        label: "Hemograma",        desc: "Conteo celulas sanguineas",          icono: "🩸" },
+    ],
+    "Gastroenterologia": [
+      { id: "Endoscopia",       label: "Endoscopia",       desc: "Visualizacion tracto digestivo alto",icono: "🔭" },
+      { id: "Colonoscopia",     label: "Colonoscopia",     desc: "Visualizacion colon completo",       icono: "🔬" },
+      { id: "Eco abdominal",    label: "Eco abdominal",    desc: "Imagen organos abdominales",         icono: "📡" },
+      { id: "H. pylori",        label: "H. pylori",        desc: "Test aliento o biopsia",             icono: "🧫" },
+      { id: "Transaminasas",    label: "Transaminasas",    desc: "Funcion hepatica AST ALT",           icono: "🧪" },
+      { id: "Amilasa lipasa",   label: "Amilasa/lipasa",   desc: "Enzimas pancreaticas",               icono: "🔬" },
+      { id: "Coprocultivo",     label: "Coprocultivo",     desc: "Cultivo materia fecal",              icono: "🧫" },
+      { id: "Calprotectina",    label: "Calprotectina",    desc: "Marcador inflamacion intestinal",    icono: "🧬" },
+    ],
+    "Traumatologia": [
+      { id: "Rx articular",     label: "Rx articular",     desc: "Radiografia articulacion afectada",  icono: "🩻" },
+      { id: "RM articular",     label: "RM articular",     desc: "Resonancia magnetica articular",     icono: "🧲" },
+      { id: "TAC oseo",         label: "TAC oseo",         desc: "Tomografia tejido oseo",             icono: "💡" },
+      { id: "Densitometria",    label: "Densitometria",    desc: "Densidad mineral osea",              icono: "📊" },
+      { id: "EMG",              label: "EMG",              desc: "Electromiografia muscular",          icono: "⚡" },
+      { id: "Artroscopia",      label: "Artroscopia dx",   desc: "Visualizacion intraarticular",       icono: "🔭" },
+      { id: "PCR VSG",          label: "PCR y VSG",        desc: "Marcadores inflamacion",             icono: "🧪" },
+      { id: "Acido urico",      label: "Acido urico",      desc: "Nivel acido urico serico",           icono: "🔬" },
+    ],
+    "Otorrinolaringologia": [
+      { id: "Audiometria",      label: "Audiometria",      desc: "Evaluacion capacidad auditiva",      icono: "👂" },
+      { id: "Impedanciometria", label: "Impedanciometria", desc: "Funcion oido medio",                 icono: "📊" },
+      { id: "TAC senos",        label: "TAC senos",        desc: "Tomografia senos paranasales",       icono: "💡" },
+      { id: "Nasofibroscopia",  label: "Nasofibroscopia",  desc: "Visualizacion via aerea superior",   icono: "🔭" },
+      { id: "Cultivo fauces",   label: "Cultivo fauces",   desc: "Identificacion agente infeccioso",   icono: "🧫" },
+      { id: "Rinomanometria",   label: "Rinomanometria",   desc: "Medicion flujo nasal",               icono: "🌬️" },
+      { id: "Potenc. auditivos",label: "Pot. auditivos",   desc: "Respuesta tronco cerebral auditiva", icono: "⚡" },
+      { id: "Laringoscopia",    label: "Laringoscopia",    desc: "Visualizacion laringe y cuerdas",    icono: "🔬" },
+    ],
+  };
+  const esp = doctorEspecialidad || (appointment as any).especialidad || "Cardiologia";
+  const ESTUDIOS = ESTUDIOS_POR_ESPECIALIDAD[esp] ?? ESTUDIOS_POR_ESPECIALIDAD["Cardiologia"];
   function set<K extends keyof ConsultaForm>(k: K, v: ConsultaForm[K]) { onChange({ ...form, [k]: v }); }
   function toggleEstudio(e: string) {
     set("estudiosSolicitados", form.estudiosSolicitados.includes(e)
