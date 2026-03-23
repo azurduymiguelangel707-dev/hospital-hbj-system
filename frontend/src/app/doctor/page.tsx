@@ -103,6 +103,7 @@ export default function DoctorDashboard() {
     } catch (e) { console.error(e); }
     finally { setLoadingDetail(false); }
   }
+  async function handleStart(id: string) {
     await updateAppointmentStatus(id, 'EN_CONSULTA');
     loadAppointments();
   }
@@ -185,39 +186,38 @@ export default function DoctorDashboard() {
         </aside>
 
         {/* Main */}
+        {/* Main */}
         <main className="flex-1 overflow-y-auto p-6">
 
-          {/* AGENDA */}
-          {activePanel === 'agenda' && (
+          {activePanel === "agenda" && (
             <AgendaPanel appointments={appointments} selectedId={selectedAppt?.id} loading={loading}
-              onSelect={(a) => { selectPatient(a); setActivePanel('ficha'); }}
+              onSelect={(a) => { selectPatient(a); setActivePanel("ficha"); }}
               onStart={handleStart}
-              onComplete={() => setActivePanel('consulta')} />
+              onComplete={() => setActivePanel("consulta")} />
           )}
 
-          {/* FICHA */}
-          {activePanel === 'ficha' && (
+          {activePanel === "ficha" && (
             <FichaPanel detail={patientDetail} loading={loadingDetail} vitalsHistory={vitalsHistory}
-              onIniciarConsulta={() => setActivePanel('consulta')}
-              onVerDocumentos={() => setActivePanel('documentos')} />
+              onIniciarConsulta={() => setActivePanel("consulta")}
+              onVerDocumentos={() => setActivePanel("documentos")} />
           )}
 
-          {/* CONSULTA */}
-          {activePanel === 'consulta' && selectedAppt && (
+          {activePanel === "consulta" && selectedAppt && (
             <ConsultaPanel appointment={selectedAppt} patientDetail={patientDetail}
               form={consultaForm} onChange={setConsultaForm}
               onComplete={handleComplete}
-              onAdjuntarDocs={() => setActivePanel('documentos')} />
+              doctorNombre={doctor.nombre}
+              doctorEspecialidad={doctor.especialidad}
+              onAdjuntarDocs={() => setActivePanel("documentos")} />
           )}
-          {activePanel === 'consulta' && !selectedAppt && (
+          {activePanel === "consulta" && !selectedAppt && (
             <div className="text-center py-16 text-gray-400">
               <Activity size={40} className="mx-auto mb-3 opacity-30" />
               <p className="text-sm">Selecciona un paciente desde la agenda primero</p>
             </div>
           )}
 
-          {/* DOCUMENTOS */}
-          {activePanel === 'documentos' && patientDetail && (
+          {activePanel === "documentos" && patientDetail && (
             <DocumentsPanel
               patientId={patientDetail.id} patientName={patientDetail.nombre}
               historialNumero={patientDetail.historialNumero}
@@ -226,21 +226,19 @@ export default function DoctorDashboard() {
               onDocUploaded={(d) => setDocuments(prev => [d, ...prev])}
               onDocDeleted={(id) => setDocuments(prev => prev.filter(d => d.id !== id))} />
           )}
-          {activePanel === 'documentos' && !patientDetail && (
+          {activePanel === "documentos" && !patientDetail && (
             <div className="text-center py-16 text-gray-400">
               <FileText size={40} className="mx-auto mb-3 opacity-30" />
               <p className="text-sm">Selecciona un paciente desde la agenda primero</p>
             </div>
           )}
 
-          {/* SEGUIMIENTO */}
-          {activePanel === 'seguimiento' && (
+          {activePanel === "seguimiento" && (
             <SeguimientoPanel followUps={followUps}
               onRefresh={() => getFollowUpPatients(doctor.id).then(setFollowUps).catch(() => {})} />
           )}
 
-          {/* REPORTE */}
-          {activePanel === 'reporte' && (
+          {activePanel === "reporte" && (
             <ReportePanel report={weeklyReport} weekOffset={weekOffset}
               onWeekChange={(o: number) => { setWeekOffset(o); getWeeklyReport(doctor.id, o).then(setWeeklyReport).catch(() => {}); }} />
           )}
@@ -740,10 +738,11 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
   );
 }
 
-function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete, onAdjuntarDocs }: {
+function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete, onAdjuntarDocs, doctorNombre = '', doctorEspecialidad = '' }: {
   appointment: AppointmentWithPatient; patientDetail: PatientDetail | null;
   form: ConsultaForm; onChange: (f: ConsultaForm) => void;
   onComplete: () => void; onAdjuntarDocs: () => void;
+  doctorNombre?: string; doctorEspecialidad?: string;
 }) {
   const [newMed, setNewMed] = useState({ medicamento: "", dosis: "", duracion: "" });
   const [showMedForm, setShowMedForm] = useState(false);
@@ -803,6 +802,9 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
             <div className="flex gap-2 flex-shrink-0">
               <button onClick={onAdjuntarDocs} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5">
                 <FileText size={12} /> Adjuntar docs
+              </button>
+              <button onClick={() => imprimirOrdenMedica({ form, patientDetail, appointment, doctorNombre, doctorEspecialidad })} className="px-3 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5">
+                Imprimir orden
               </button>
               <button onClick={onComplete}
                 className={"px-3 py-2 text-xs font-semibold rounded-lg transition flex items-center gap-1.5 " + (form.diagnostico ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-100 text-gray-400 cursor-not-allowed")}
