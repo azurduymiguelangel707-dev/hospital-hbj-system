@@ -103,7 +103,7 @@ export default function SuperAdminPage() {
           </div>
           <div>
             <p className="text-sm font-semibold text-white">Hospital Boliviano Japones</p>
-            <p className="text-xs text-red-400 font-medium">Centro de Gobierno del Sistema - SUPERADMIN</p>
+            <p className="text-xs text-red-400 font-medium">Centro de Gobierno del Sistema - Direccion Central de Tecnologia y GestionN</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
