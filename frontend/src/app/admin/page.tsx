@@ -113,7 +113,7 @@ export default function AdminDashboard() {
           </div>
           <div>
             <p className='text-sm font-semibold text-gray-800'>Hospital Boliviano Japones</p>
-            <p className='text-xs text-gray-500'>Panel Administrativo</p>
+            <p className='text-xs text-gray-500'>Control de Atencion Medica</p>
           </div>
         </div>
         <div className='flex items-center gap-3'>
