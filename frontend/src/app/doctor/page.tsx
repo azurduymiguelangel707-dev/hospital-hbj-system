@@ -428,6 +428,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
   vitalsHistory?: any[];
 }) {
   const [expandedRecord, setExpandedRecord] = useState<string | null>(null);
+  const [serieActiva, setSerieActiva] = useState<string>("PA");
   if (loading) return <div className="text-center py-16 text-gray-400">Cargando ficha...</div>;
   if (!detail) return (
     <div className="text-center py-16 text-gray-400">
@@ -556,7 +557,6 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
             Temp: Number(v.temperatura)           || null,
             FR:   Number(v.frecuenciaRespiratoria)|| null,
           }));
-          const [serieActiva, setSerieActiva] = React.useState<string>("PA");
           const series: Record<string, { lines: {key:string;color:string;label:string}[]; min:number; max:number; minNorm:number; maxNorm:number; unidad:string }> = {
             PA:   { lines: [{key:"PAS",color:"#ef4444",label:"Sistolica"},{key:"PAD",color:"#f97316",label:"Diastolica"}], min:60, max:180, minNorm:90, maxNorm:140, unidad:"mmHg" },
             FC:   { lines: [{key:"FC", color:"#6366f1",label:"Pulso"}],  min:40, max:140, minNorm:60, maxNorm:100, unidad:"lpm" },
