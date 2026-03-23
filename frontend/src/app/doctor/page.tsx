@@ -23,21 +23,22 @@ import { imprimirOrdenMedica } from './components/OrdenMedica';
 type Panel = 'agenda' | 'ficha' | 'consulta' | 'documentos' | 'seguimiento' | 'reporte';
 
 function useDoctorSession() {
-  // Lectura sincrona - evita el problema de render vacio
-  const init = (() => {
+  const getSession = () => {
+    if (typeof window === "undefined") return { id: "", nombre: "Dr.", especialidad: "Medicina General" };
     try {
-      const u = JSON.parse(localStorage.getItem('user_data') ?? '{}');
-      const id = u.doctorId ?? u.doctor_id ?? u.id ?? '';
-      const nombre = u.nombre ?? u.first_name ?? 'Dr.';
-      const apellido = u.apellido ?? u.last_name ?? '';
+      const u = JSON.parse(localStorage.getItem("user_data") ?? "{}");
+      const id = u.doctorId ?? u.doctor_id ?? u.id ?? "";
+      const nombre = u.nombre ?? u.first_name ?? "Dr.";
+      const apellido = u.apellido ?? u.last_name ?? "";
       return {
         id,
-        nombre: nombre ? `Dr. ${nombre} ${apellido}`.trim() : 'Dr.',
-        especialidad: u.especialidad ?? u.specialty ?? 'Medicina General',
+        nombre: nombre ? `Dr. ${nombre} ${apellido}`.trim() : "Dr.",
+        especialidad: u.especialidad ?? u.specialty ?? "Medicina General",
       };
-    } catch { return { id: '', nombre: 'Dr.', especialidad: 'Medicina General' }; }
-  })();
-  const [session] = useState(init);
+    } catch { return { id: "", nombre: "Dr.", especialidad: "Medicina General" }; }
+  };
+  const [session, setSession] = useState(getSession);
+  useEffect(() => { setSession(getSession()); }, []);
   return session;
 }
 
