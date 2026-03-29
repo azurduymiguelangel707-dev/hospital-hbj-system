@@ -140,7 +140,7 @@ export default function DoctorDashboard() {
       <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div suppressHydrationWarning className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-semibold text-blue-700">
-            {doctor.nombre.split(' ').filter(Boolean).slice(1,3).map(w => w[0]).join('')}
+            <span suppressHydrationWarning>{typeof window !== 'undefined' ? doctor.nombre.split(' ').filter(Boolean).slice(1,3).map((w: string) => w[0]).join('') : ''}</span>
           </div>
           <div>
           <p suppressHydrationWarning className="text-sm font-semibold text-gray-800">{doctor.nombre}</p>
