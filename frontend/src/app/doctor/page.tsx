@@ -139,11 +139,11 @@ export default function DoctorDashboard() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-semibold text-blue-700">
+          <div suppressHydrationWarning className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-semibold text-blue-700">
             {doctor.nombre.split(' ').filter(Boolean).slice(1,3).map(w => w[0]).join('')}
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-800">{doctor.nombre}</p>
+          <p suppressHydrationWarning className="text-sm font-semibold text-gray-800">{doctor.nombre}</p>
             <p className="text-xs text-gray-500" suppressHydrationWarning>
               {doctor.especialidad} - {new Date(new Date().toLocaleString('en-US', { timeZone: 'America/La_Paz' })).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
             </p>
