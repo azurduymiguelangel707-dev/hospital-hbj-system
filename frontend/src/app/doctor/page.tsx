@@ -1,5 +1,5 @@
 'use client';
-﻿// src/app/dashboard/doctor/page.tsx
+ï»¿// src/app/dashboard/doctor/page.tsx
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -139,7 +139,7 @@ export default function DoctorDashboard() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-semibold text-blue-700">
+          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-semibold text-blue-700" suppressHydrationWarning>
             {doctor.nombre.split(' ').filter(Boolean).slice(1,3).map(w => w[0]).join('')}
           </div>
           <div>
@@ -312,9 +312,9 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
             placeholder="Buscar paciente por nombre o motivo..."
             className="w-full border border-gray-200 rounded-lg pl-8 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
           />
-          <span className="absolute left-2.5 top-2.5 text-gray-300 text-sm">🔍</span>
+          <span className="absolute left-2.5 top-2.5 text-gray-300 text-sm">ðŸ”</span>
           {search && (
-            <button onClick={() => setSearch("")} className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-600 text-xs px-1">✕</button>
+            <button onClick={() => setSearch("")} className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-600 text-xs px-1">âœ•</button>
           )}
         </div>
         {/* Lista */}
@@ -380,7 +380,7 @@ function AgendaPanel({ appointments, selectedId, loading, onSelect, onStart, onC
             <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
               <Clock size={11} />
               <span>{next.appointmentTime?.substring(0,5)}</span>
-              {next.patient?.edad && <span>· {next.patient.edad} anos</span>}
+              {next.patient?.edad && <span>Â· {next.patient.edad} anos</span>}
             </div>
             <button
               onClick={() => onSelect(next)}
@@ -448,12 +448,12 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
   const vs = detail.vitalSigns;
   const paVal = Number(String(vs?.presionArterial ?? "").split("/")[0]) || 0;
   const signos = vs ? [
-    { nombre: "Presion arterial", icono: "🫀", val: paVal,                       unidad: "mmHg", min: 90,  max: 140, extra: vs.presionArterial },
-    { nombre: "Pulso",            icono: "💓", val: Number(vs.frecuenciaCardiaca)||0, unidad: "lpm",  min: 60,  max: 100 },
-    { nombre: "Oxigeno en sangre",icono: "🫁", val: Number(vs.saturacionOxigeno)||0, unidad: "%",    min: 95,  max: 100 },
-    { nombre: "Temperatura",      icono: "🌡️", val: Number(vs.temperatura)||0,       unidad: "°C",   min: 36,  max: 37.5 },
-    { nombre: "Respiracion",      icono: "🌬️", val: Number(vs.frecuenciaRespiratoria)||0, unidad: "rpm", min: 12, max: 20 },
-    { nombre: "Peso",             icono: "⚖️", val: Number(vs.peso)||0,               unidad: "kg",   min: 40,  max: 120 },
+    { nombre: "Presion arterial", icono: "ðŸ«€", val: paVal,                       unidad: "mmHg", min: 90,  max: 140, extra: vs.presionArterial },
+    { nombre: "Pulso",            icono: "ðŸ’“", val: Number(vs.frecuenciaCardiaca)||0, unidad: "lpm",  min: 60,  max: 100 },
+    { nombre: "Oxigeno en sangre",icono: "ðŸ«", val: Number(vs.saturacionOxigeno)||0, unidad: "%",    min: 95,  max: 100 },
+    { nombre: "Temperatura",      icono: "ðŸŒ¡ï¸", val: Number(vs.temperatura)||0,       unidad: "Â°C",   min: 36,  max: 37.5 },
+    { nombre: "Respiracion",      icono: "ðŸŒ¬ï¸", val: Number(vs.frecuenciaRespiratoria)||0, unidad: "rpm", min: 12, max: 20 },
+    { nombre: "Peso",             icono: "âš–ï¸", val: Number(vs.peso)||0,               unidad: "kg",   min: 40,  max: 120 },
   ] : [];
 
   const alertColor: Record<string,string> = { danger: "#ef4444", warning: "#f59e0b", info: "#3b82f6" };
@@ -482,7 +482,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
                     { label: detail.genero,          color: "#6b7280" },
                     { label: detail.tipoSangre,      color: "#ef4444" },
                     detail.ci ? { label: "CI: " + detail.ci, color: "#6b7280" } : null,
-                    detail.telefono ? { label: "📞 " + detail.telefono, color: "#10b981" } : null,
+                    detail.telefono ? { label: "ðŸ“ž " + detail.telefono, color: "#10b981" } : null,
                   ].filter((x): x is {label: string; color: string} => x !== null && x !== undefined).map((chip, i) => (
                     <span key={i} className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ color: chip.color, backgroundColor: chip.color + "15", border: "1px solid " + chip.color + "30" }}>
                       {chip.label}
@@ -531,14 +531,14 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
                       <span className="text-xs px-1.5 py-0.5 rounded-full font-medium" style={{ color: st.color, backgroundColor: st.color + "20" }}>{st.label}</span>
                     </div>
                     <div className="flex items-baseline gap-1 mb-1">
-                      <span className="text-xl font-bold" style={{ color: st.color }}>{s.extra ?? (s.val || "—")}</span>
+                      <span className="text-xl font-bold" style={{ color: st.color }}>{s.extra ?? (s.val || "â€”")}</span>
                       <span className="text-xs text-gray-400">{s.unidad}</span>
                     </div>
                     <div className="relative h-1.5 rounded-full bg-gray-200 overflow-hidden">
                       <div className="absolute h-1.5 bg-emerald-200 rounded-full" style={{ left: "20%", width: "45%" }} />
                       {s.val > 0 && <div className="absolute h-1.5 w-2 rounded-full" style={{ left: "calc(" + pct + "% - 4px)", backgroundColor: st.color }} />}
                     </div>
-                    <div className="text-xs text-gray-300 mt-0.5">rango: {s.min}–{s.max} {s.unidad}</div>
+                    <div className="text-xs text-gray-300 mt-0.5">rango: {s.min}â€“{s.max} {s.unidad}</div>
                   </div>
                 );
               })}
@@ -562,7 +562,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
             PA:   { lines: [{key:"PAS",color:"#ef4444",label:"Sistolica"},{key:"PAD",color:"#f97316",label:"Diastolica"}], min:60, max:180, minNorm:90, maxNorm:140, unidad:"mmHg" },
             FC:   { lines: [{key:"FC", color:"#6366f1",label:"Pulso"}],  min:40, max:140, minNorm:60, maxNorm:100, unidad:"lpm" },
             SpO2: { lines: [{key:"SpO2",color:"#0ea5e9",label:"SpO2"}],  min:85, max:100, minNorm:95, maxNorm:100, unidad:"%" },
-            Temp: { lines: [{key:"Temp",color:"#f59e0b",label:"Temperatura"}], min:35, max:40, minNorm:36, maxNorm:37.5, unidad:"°C" },
+            Temp: { lines: [{key:"Temp",color:"#f59e0b",label:"Temperatura"}], min:35, max:40, minNorm:36, maxNorm:37.5, unidad:"Â°C" },
             FR:   { lines: [{key:"FR",  color:"#8b5cf6",label:"Respiracion"}], min:8,  max:30, minNorm:12, maxNorm:20, unidad:"rpm" },
           };
           const cfg = series[serieActiva];
@@ -571,7 +571,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Evolucion de signos vitales</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{vitalsHistory.length} registros — banda verde = rango normal</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{vitalsHistory.length} registros â€” banda verde = rango normal</p>
                 </div>
                 <div className="flex gap-1 flex-wrap justify-end">
                   {Object.keys(series).map(k => (
@@ -646,7 +646,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
                           {r.docsCount} doc(s)
                         </button>
                       ) : null}
-                      <span className="text-gray-300 text-xs">{expandedRecord === r.id ? "▲" : "▼"}</span>
+                      <span className="text-gray-300 text-xs">{expandedRecord === r.id ? "â–²" : "â–¼"}</span>
                     </div>
                   </div>
                 </div>
@@ -670,7 +670,7 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
           <div className="p-3 space-y-2">
             {(detail.alerts ?? []).length === 0 ? (
               <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 rounded-lg">
-                <span className="text-base">✅</span>
+                <span className="text-base">âœ…</span>
                 <span className="text-xs text-emerald-700 font-medium">Paciente sin alertas activas</span>
               </div>
             ) : (
@@ -693,10 +693,10 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
             <div className="p-3 space-y-2">
               {(detail.activeMedications ?? []).map((m, i) => (
                 <div key={i} className="flex items-start gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
-                  <span className="text-base">💊</span>
+                  <span className="text-base">ðŸ’Š</span>
                   <div>
                     <p className="text-xs font-semibold text-blue-800">{m.nombre}</p>
-                    <p className="text-xs text-blue-600">{m.dosis} · {m.frecuencia}</p>
+                    <p className="text-xs text-blue-600">{m.dosis} Â· {m.frecuencia}</p>
                   </div>
                 </div>
               ))}
@@ -713,10 +713,10 @@ function FichaPanel({ detail, loading, onIniciarConsulta, onVerDocumentos, vital
             <div className="p-3 space-y-2">
               {(detail.upcomingControls ?? []).map((u, i) => (
                 <div key={i} className="flex items-start gap-2 px-3 py-2 bg-amber-50 rounded-lg border border-amber-100">
-                  <span className="text-base">📅</span>
+                  <span className="text-base">ðŸ“…</span>
                   <div>
                     <p className="text-xs font-semibold text-amber-800">{u.titulo}</p>
-                    <p className="text-xs text-amber-600">{u.tipo} · {new Date(u.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                    <p className="text-xs text-amber-600">{u.tipo} Â· {new Date(u.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })}</p>
                   </div>
                 </div>
               ))}
@@ -750,54 +750,54 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
   const alergia = patientDetail?.alerts?.find(a => a.tipo === "danger");
   const ESTUDIOS_POR_ESPECIALIDAD: Record<string, {id:string;label:string;desc:string;icono:string}[]> = {
     "Cardiologia": [
-      { id: "ECG",              label: "ECG",              desc: "Electrocardiograma 12 derivaciones", icono: "💓" },
-      { id: "Ecocardiograma",   label: "Ecocardiograma",   desc: "Imagen ecografica del corazon",      icono: "🫀" },
-      { id: "Holter",           label: "Holter 24h",       desc: "Monitoreo cardiaco continuo",        icono: "📊" },
-      { id: "Perfil lipidico",  label: "Perfil lipidico",  desc: "Colesterol LDL HDL trigliceridos",   icono: "🧬" },
-      { id: "Troponinas",       label: "Troponinas",       desc: "Marcadores dano miocardico",         icono: "🧪" },
-      { id: "BNP",              label: "BNP/NT-proBNP",    desc: "Marcador insuficiencia cardiaca",    icono: "🔬" },
-      { id: "Radiografia torax",label: "Rx torax",         desc: "Radiografia posteroanterior",        icono: "🩻" },
-      { id: "Ergometria",       label: "Ergometria",       desc: "Prueba de esfuerzo cardiaco",        icono: "🏃" },
+      { id: "ECG",              label: "ECG",              desc: "Electrocardiograma 12 derivaciones", icono: "ðŸ’“" },
+      { id: "Ecocardiograma",   label: "Ecocardiograma",   desc: "Imagen ecografica del corazon",      icono: "ðŸ«€" },
+      { id: "Holter",           label: "Holter 24h",       desc: "Monitoreo cardiaco continuo",        icono: "ðŸ“Š" },
+      { id: "Perfil lipidico",  label: "Perfil lipidico",  desc: "Colesterol LDL HDL trigliceridos",   icono: "ðŸ§¬" },
+      { id: "Troponinas",       label: "Troponinas",       desc: "Marcadores dano miocardico",         icono: "ðŸ§ª" },
+      { id: "BNP",              label: "BNP/NT-proBNP",    desc: "Marcador insuficiencia cardiaca",    icono: "ðŸ”¬" },
+      { id: "Radiografia torax",label: "Rx torax",         desc: "Radiografia posteroanterior",        icono: "ðŸ©»" },
+      { id: "Ergometria",       label: "Ergometria",       desc: "Prueba de esfuerzo cardiaco",        icono: "ðŸƒ" },
     ],
     "Neurologia": [
-      { id: "EEG",              label: "EEG",              desc: "Electroencefalograma",               icono: "🧠" },
-      { id: "RM cerebral",      label: "RM cerebral",      desc: "Resonancia magnetica cerebral",      icono: "🧲" },
-      { id: "TAC cerebral",     label: "TAC cerebral",     desc: "Tomografia axial computarizada",     icono: "💡" },
-      { id: "Puncion lumbar",   label: "Puncion lumbar",   desc: "Analisis liquido cefalorraquideo",   icono: "🩺" },
-      { id: "VCN",              label: "Velocidad cond.",  desc: "Velocidad conduccion nerviosa",      icono: "⚡" },
-      { id: "Potenciales evocados", label: "Pot. evocados",desc: "Respuesta electrica cerebral",      icono: "📡" },
-      { id: "Doppler transcraneal", label: "Doppler TC",   desc: "Flujo sanguineo cerebral",           icono: "🔊" },
-      { id: "Hemograma",        label: "Hemograma",        desc: "Conteo celulas sanguineas",          icono: "🩸" },
+      { id: "EEG",              label: "EEG",              desc: "Electroencefalograma",               icono: "ðŸ§ " },
+      { id: "RM cerebral",      label: "RM cerebral",      desc: "Resonancia magnetica cerebral",      icono: "ðŸ§²" },
+      { id: "TAC cerebral",     label: "TAC cerebral",     desc: "Tomografia axial computarizada",     icono: "ðŸ’¡" },
+      { id: "Puncion lumbar",   label: "Puncion lumbar",   desc: "Analisis liquido cefalorraquideo",   icono: "ðŸ©º" },
+      { id: "VCN",              label: "Velocidad cond.",  desc: "Velocidad conduccion nerviosa",      icono: "âš¡" },
+      { id: "Potenciales evocados", label: "Pot. evocados",desc: "Respuesta electrica cerebral",      icono: "ðŸ“¡" },
+      { id: "Doppler transcraneal", label: "Doppler TC",   desc: "Flujo sanguineo cerebral",           icono: "ðŸ”Š" },
+      { id: "Hemograma",        label: "Hemograma",        desc: "Conteo celulas sanguineas",          icono: "ðŸ©¸" },
     ],
     "Gastroenterologia": [
-      { id: "Endoscopia",       label: "Endoscopia",       desc: "Visualizacion tracto digestivo alto",icono: "🔭" },
-      { id: "Colonoscopia",     label: "Colonoscopia",     desc: "Visualizacion colon completo",       icono: "🔬" },
-      { id: "Eco abdominal",    label: "Eco abdominal",    desc: "Imagen organos abdominales",         icono: "📡" },
-      { id: "H. pylori",        label: "H. pylori",        desc: "Test aliento o biopsia",             icono: "🧫" },
-      { id: "Transaminasas",    label: "Transaminasas",    desc: "Funcion hepatica AST ALT",           icono: "🧪" },
-      { id: "Amilasa lipasa",   label: "Amilasa/lipasa",   desc: "Enzimas pancreaticas",               icono: "🔬" },
-      { id: "Coprocultivo",     label: "Coprocultivo",     desc: "Cultivo materia fecal",              icono: "🧫" },
-      { id: "Calprotectina",    label: "Calprotectina",    desc: "Marcador inflamacion intestinal",    icono: "🧬" },
+      { id: "Endoscopia",       label: "Endoscopia",       desc: "Visualizacion tracto digestivo alto",icono: "ðŸ”­" },
+      { id: "Colonoscopia",     label: "Colonoscopia",     desc: "Visualizacion colon completo",       icono: "ðŸ”¬" },
+      { id: "Eco abdominal",    label: "Eco abdominal",    desc: "Imagen organos abdominales",         icono: "ðŸ“¡" },
+      { id: "H. pylori",        label: "H. pylori",        desc: "Test aliento o biopsia",             icono: "ðŸ§«" },
+      { id: "Transaminasas",    label: "Transaminasas",    desc: "Funcion hepatica AST ALT",           icono: "ðŸ§ª" },
+      { id: "Amilasa lipasa",   label: "Amilasa/lipasa",   desc: "Enzimas pancreaticas",               icono: "ðŸ”¬" },
+      { id: "Coprocultivo",     label: "Coprocultivo",     desc: "Cultivo materia fecal",              icono: "ðŸ§«" },
+      { id: "Calprotectina",    label: "Calprotectina",    desc: "Marcador inflamacion intestinal",    icono: "ðŸ§¬" },
     ],
     "Traumatologia": [
-      { id: "Rx articular",     label: "Rx articular",     desc: "Radiografia articulacion afectada",  icono: "🩻" },
-      { id: "RM articular",     label: "RM articular",     desc: "Resonancia magnetica articular",     icono: "🧲" },
-      { id: "TAC oseo",         label: "TAC oseo",         desc: "Tomografia tejido oseo",             icono: "💡" },
-      { id: "Densitometria",    label: "Densitometria",    desc: "Densidad mineral osea",              icono: "📊" },
-      { id: "EMG",              label: "EMG",              desc: "Electromiografia muscular",          icono: "⚡" },
-      { id: "Artroscopia",      label: "Artroscopia dx",   desc: "Visualizacion intraarticular",       icono: "🔭" },
-      { id: "PCR VSG",          label: "PCR y VSG",        desc: "Marcadores inflamacion",             icono: "🧪" },
-      { id: "Acido urico",      label: "Acido urico",      desc: "Nivel acido urico serico",           icono: "🔬" },
+      { id: "Rx articular",     label: "Rx articular",     desc: "Radiografia articulacion afectada",  icono: "ðŸ©»" },
+      { id: "RM articular",     label: "RM articular",     desc: "Resonancia magnetica articular",     icono: "ðŸ§²" },
+      { id: "TAC oseo",         label: "TAC oseo",         desc: "Tomografia tejido oseo",             icono: "ðŸ’¡" },
+      { id: "Densitometria",    label: "Densitometria",    desc: "Densidad mineral osea",              icono: "ðŸ“Š" },
+      { id: "EMG",              label: "EMG",              desc: "Electromiografia muscular",          icono: "âš¡" },
+      { id: "Artroscopia",      label: "Artroscopia dx",   desc: "Visualizacion intraarticular",       icono: "ðŸ”­" },
+      { id: "PCR VSG",          label: "PCR y VSG",        desc: "Marcadores inflamacion",             icono: "ðŸ§ª" },
+      { id: "Acido urico",      label: "Acido urico",      desc: "Nivel acido urico serico",           icono: "ðŸ”¬" },
     ],
     "Otorrinolaringologia": [
-      { id: "Audiometria",      label: "Audiometria",      desc: "Evaluacion capacidad auditiva",      icono: "👂" },
-      { id: "Impedanciometria", label: "Impedanciometria", desc: "Funcion oido medio",                 icono: "📊" },
-      { id: "TAC senos",        label: "TAC senos",        desc: "Tomografia senos paranasales",       icono: "💡" },
-      { id: "Nasofibroscopia",  label: "Nasofibroscopia",  desc: "Visualizacion via aerea superior",   icono: "🔭" },
-      { id: "Cultivo fauces",   label: "Cultivo fauces",   desc: "Identificacion agente infeccioso",   icono: "🧫" },
-      { id: "Rinomanometria",   label: "Rinomanometria",   desc: "Medicion flujo nasal",               icono: "🌬️" },
-      { id: "Potenc. auditivos",label: "Pot. auditivos",   desc: "Respuesta tronco cerebral auditiva", icono: "⚡" },
-      { id: "Laringoscopia",    label: "Laringoscopia",    desc: "Visualizacion laringe y cuerdas",    icono: "🔬" },
+      { id: "Audiometria",      label: "Audiometria",      desc: "Evaluacion capacidad auditiva",      icono: "ðŸ‘‚" },
+      { id: "Impedanciometria", label: "Impedanciometria", desc: "Funcion oido medio",                 icono: "ðŸ“Š" },
+      { id: "TAC senos",        label: "TAC senos",        desc: "Tomografia senos paranasales",       icono: "ðŸ’¡" },
+      { id: "Nasofibroscopia",  label: "Nasofibroscopia",  desc: "Visualizacion via aerea superior",   icono: "ðŸ”­" },
+      { id: "Cultivo fauces",   label: "Cultivo fauces",   desc: "Identificacion agente infeccioso",   icono: "ðŸ§«" },
+      { id: "Rinomanometria",   label: "Rinomanometria",   desc: "Medicion flujo nasal",               icono: "ðŸŒ¬ï¸" },
+      { id: "Potenc. auditivos",label: "Pot. auditivos",   desc: "Respuesta tronco cerebral auditiva", icono: "âš¡" },
+      { id: "Laringoscopia",    label: "Laringoscopia",    desc: "Visualizacion laringe y cuerdas",    icono: "ðŸ”¬" },
     ],
   };
   const esp = doctorEspecialidad || (appointment as any).especialidad || "Cardiologia";
@@ -835,7 +835,7 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
               </h2>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-gray-400 font-mono">{(appointment.appointmentTime ?? "--:--").substring(0,5)}</span>
-                <span className="text-xs text-gray-300">·</span>
+                <span className="text-xs text-gray-300">Â·</span>
                 <span className="text-xs text-gray-500">{appointment.reason}</span>
                 {alergia && (
                   <span className="flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
@@ -871,7 +871,7 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
             <div className="flex gap-3 mt-1.5">
               {[["Motivo", form.motivoConsulta], ["Diagnostico", form.diagnostico], ["Tratamiento", form.tratamiento]].map(([label, val], i) => (
                 <span key={i} className={"flex items-center gap-1 text-xs " + (val ? "text-emerald-600" : "text-gray-300")}>
-                  <span>{val ? "✓" : "○"}</span> {label}
+                  <span>{val ? "âœ“" : "â—‹"}</span> {label}
                 </span>
               ))}
             </div>
@@ -966,14 +966,14 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
               {form.prescripciones.map((p, i) => (
                 <div key={i} className="flex items-center justify-between bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-base">💊</span>
+                    <span className="text-base">ðŸ’Š</span>
                     <div>
                       <p className="text-xs font-semibold text-blue-800">{p.medicamento}</p>
-                      <p className="text-xs text-blue-500">{p.dosis} · {p.duracion}</p>
+                      <p className="text-xs text-blue-500">{p.dosis} Â· {p.duracion}</p>
                     </div>
                   </div>
                   <button onClick={() => removeMed(i)} className="text-red-400 hover:text-red-600 text-xs px-2 py-1 hover:bg-red-50 rounded transition">
-                    ✕
+                    âœ•
                   </button>
                 </div>
               ))}
@@ -993,7 +993,7 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
           />
           {form.fechaControl && (
             <p className="text-xs text-emerald-600 mt-1.5 flex items-center gap-1">
-              <span>📅</span>
+              <span>ðŸ“…</span>
               Control agendado: {new Date(form.fechaControl).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}
             </p>
           )}
@@ -1015,7 +1015,7 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
                   className={"w-full flex items-center justify-between px-3 py-2 rounded-lg border text-xs transition " + (selected ? "bg-blue-50 border-blue-200 text-blue-700" : "bg-gray-50 border-gray-100 text-gray-600 hover:border-gray-200")}
                 >
                   <div className="flex items-center gap-2 text-left">
-                    <span>{selected ? "✓" : "○"}</span>
+                    <span>{selected ? "âœ“" : "â—‹"}</span>
                     <div>
                       <div className="font-semibold">{e.label}</div>
                       <div className="text-xs opacity-60">{e.desc}</div>
@@ -1035,7 +1035,7 @@ function ConsultaPanel({ appointment, patientDetail, form, onChange, onComplete,
               {[
                 { label: "Presion arterial", val: patientDetail.vitalSigns.presionArterial, unidad: "mmHg" },
                 { label: "Pulso",            val: patientDetail.vitalSigns.frecuenciaCardiaca, unidad: "lpm" },
-                { label: "Temperatura",      val: patientDetail.vitalSigns.temperatura, unidad: "°C" },
+                { label: "Temperatura",      val: patientDetail.vitalSigns.temperatura, unidad: "Â°C" },
                 { label: "Oxigeno",          val: patientDetail.vitalSigns.saturacionOxigeno, unidad: "%" },
               ].filter(s => s.val).map((s, i) => (
                 <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-gray-50 rounded-lg">
@@ -1098,10 +1098,10 @@ function SeguimientoPanel({ followUps, onRefresh }: { followUps: FollowUpPatient
           {/* Stats */}
           <div className="grid grid-cols-4 gap-2">
             {[
-              { label: "Total",       val: stats.total,    color: "#6b7280", bg: "#f9fafb", icono: "👥" },
-              { label: "Criticos",    val: stats.criticos, color: "#ef4444", bg: "#fef2f2", icono: "🚨" },
-              { label: "En atencion", val: stats.atencion, color: "#f59e0b", bg: "#fffbeb", icono: "⚠️" },
-              { label: "Docs nuevos", val: stats.conDocs,  color: "#3b82f6", bg: "#eff6ff", icono: "📄" },
+              { label: "Total",       val: stats.total,    color: "#6b7280", bg: "#f9fafb", icono: "ðŸ‘¥" },
+              { label: "Criticos",    val: stats.criticos, color: "#ef4444", bg: "#fef2f2", icono: "ðŸš¨" },
+              { label: "En atencion", val: stats.atencion, color: "#f59e0b", bg: "#fffbeb", icono: "âš ï¸" },
+              { label: "Docs nuevos", val: stats.conDocs,  color: "#3b82f6", bg: "#eff6ff", icono: "ðŸ“„" },
             ].map((s, i) => (
               <div key={i} className="rounded-lg p-2.5 text-center" style={{ backgroundColor: s.bg }}>
                 <div className="text-base">{s.icono}</div>
@@ -1140,7 +1140,7 @@ function SeguimientoPanel({ followUps, onRefresh }: { followUps: FollowUpPatient
         {/* Lista pacientes */}
         {filtered.length === 0 ? (
           <div className="text-center py-16 border-2 border-dashed border-gray-100 rounded-xl text-gray-300">
-            <div className="text-4xl mb-2">✅</div>
+            <div className="text-4xl mb-2">âœ…</div>
             <p className="text-sm font-medium text-gray-400">
               {followUps.length === 0 ? "Sin pacientes pendientes de seguimiento" : "Sin resultados para esta busqueda"}
             </p>
@@ -1165,11 +1165,11 @@ function SeguimientoPanel({ followUps, onRefresh }: { followUps: FollowUpPatient
                         </div>
                         <p className="text-sm font-semibold text-gray-800">{f.nombre}</p>
                         <span className={"px-2 py-0.5 rounded-full text-xs font-semibold " + (f.severidad === "danger" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700")}>
-                          {f.severidad === "danger" ? "🚨 Critico" : "⚠️ Atencion"}
+                          {f.severidad === "danger" ? "ðŸš¨ Critico" : "âš ï¸ Atencion"}
                         </span>
                         {f.tieneDocsNuevos && (
                           <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                            📄 Docs nuevos
+                            ðŸ“„ Docs nuevos
                           </span>
                         )}
                       </div>
@@ -1196,7 +1196,7 @@ function SeguimientoPanel({ followUps, onRefresh }: { followUps: FollowUpPatient
                     <p className="text-xs text-gray-400 mt-1">
                       {(f.diasVencido ?? 0) === 0 ? "Control pendiente" :
                        (f.diasVencido ?? 0) <= 3 ? "Requiere atencion pronto" :
-                       (f.diasVencido ?? 0) <= 7 ? "Control vencido" : "Control muy vencido — prioridad alta"}
+                       (f.diasVencido ?? 0) <= 7 ? "Control vencido" : "Control muy vencido â€” prioridad alta"}
                     </p>
                   </div>
                 </div>
@@ -1250,7 +1250,7 @@ function SeguimientoPanel({ followUps, onRefresh }: { followUps: FollowUpPatient
         {/* Info panel vacio */}
         {followUps.length === 0 && (
           <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-4 text-center">
-            <div className="text-3xl mb-2">✅</div>
+            <div className="text-3xl mb-2">âœ…</div>
             <p className="text-xs font-semibold text-emerald-700">Sin pendientes</p>
             <p className="text-xs text-emerald-500 mt-1">Todos los pacientes estan al dia con sus controles</p>
           </div>
@@ -1307,10 +1307,10 @@ function ReportePanel({ report, weekOffset, onWeekChange }: any) {
   ].filter(d => d.value > 0);
 
   const kpis = [
-    { label: "Total consultas",      val: report.totalConsultas ?? 0,        color: "#3b82f6", bg: "#eff6ff", icono: "🩺" },
-    { label: "Pacientes criticos",   val: report.pacientesCriticosCount ?? 0,color: "#ef4444", bg: "#fef2f2", icono: "🚨" },
-    { label: "Controles pendientes", val: report.controlesPendientes ?? 0,   color: "#f59e0b", bg: "#fffbeb", icono: "📅" },
-    { label: "Documentos subidos",   val: report.docsTotal ?? 0,             color: "#10b981", bg: "#f0fdf4", icono: "📄" },
+    { label: "Total consultas",      val: report.totalConsultas ?? 0,        color: "#3b82f6", bg: "#eff6ff", icono: "ðŸ©º" },
+    { label: "Pacientes criticos",   val: report.pacientesCriticosCount ?? 0,color: "#ef4444", bg: "#fef2f2", icono: "ðŸš¨" },
+    { label: "Controles pendientes", val: report.controlesPendientes ?? 0,   color: "#f59e0b", bg: "#fffbeb", icono: "ðŸ“…" },
+    { label: "Documentos subidos",   val: report.docsTotal ?? 0,             color: "#10b981", bg: "#f0fdf4", icono: "ðŸ“„" },
   ];
 
   return (
@@ -1428,7 +1428,7 @@ function ReportePanel({ report, weekOffset, onWeekChange }: any) {
           <p className="text-xs text-gray-400 mb-3">Casos que requieren seguimiento prioritario</p>
           {(report.pacientesCriticos ?? []).length === 0 ? (
             <div className="text-center py-8">
-              <div className="text-3xl mb-2">✅</div>
+              <div className="text-3xl mb-2">âœ…</div>
               <p className="text-xs text-gray-400">Sin pacientes criticos esta semana</p>
             </div>
           ) : (

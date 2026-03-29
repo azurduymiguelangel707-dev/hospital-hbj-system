@@ -1,0 +1,61 @@
+﻿import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { PatientsService } from './patients.service';
+import { Patient } from './entities/patient.entity';
+
+@Controller('patients')
+export class PatientsController {
+  constructor(private readonly patientsService: PatientsService) {}
+
+  @Get()
+  findAll(): Promise<Patient[]> {
+    return this.patientsService.findAll();
+  }
+
+  @Get('reports/specialties')
+  getSpecialtiesReport() {
+    return this.patientsService.getSpecialtiesReport();
+  }
+
+  @Get('buscar')
+  async buscar(@Query('ci') ci?: string, @Query('historial') historial?: string) {
+    if (ci) return this.patientsService.findByCI(ci);
+    if (historial) return this.patientsService.findByHistorial(historial);
+    return null;
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<Patient> {
+    return this.patientsService.findOne(id);
+  }
+
+  @Get(':id/vitals/latest')
+  getLatestVitals(@Param('id') id: string) {
+    return this.patientsService.getLatestVitals(id);
+  }
+
+  @Get(':id/vitals/history')
+  getVitalsHistory(@Param('id') id: string) {
+    return this.patientsService.getVitalsHistory(id);
+  }
+
+  @Get(':id/appointments/full')
+  getAppointmentsFull(@Param('id') id: string) {
+    return this.patientsService.getAppointmentsFull(id);
+  }
+
+  @Get(':id/summary')
+  getSummary(@Param('id') id: string) {
+    return this.patientsService.getSummary(id);
+  }
+
+  @Post()
+  create(@Body() data: Partial<Patient>): Promise<Patient> {
+    return this.patientsService.create(data);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() data: Partial<Patient>): Promise<Patient> {
+    return this.patientsService.update(id, data);
+  }
+
+  @Patch(':id/push-token')

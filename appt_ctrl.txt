@@ -1,0 +1,61 @@
+﻿// backend/src/modules/appointments/appointments.controller.ts
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query } from '@nestjs/common';
+import { AppointmentsService } from './appointments.service';
+import { ResetService } from './reset.service';
+
+@Controller('appointments')
+export class AppointmentsController {
+  constructor(
+    private readonly appointmentsService: AppointmentsService,
+    private readonly resetService: ResetService,
+  ) {}
+
+  @Get()
+  findAll(@Query('doctorId') doctorId?: string, @Query('fecha') fecha?: string) {
+    return this.appointmentsService.findAll(doctorId, fecha);
+  }
+
+  @Get('stats')
+  getStats() {
+    return this.appointmentsService.getStats();
+  }
+
+  
+  @Get('slots')
+  async getSlots(
+    @Query('fecha') fecha: string,
+    @Query('especialidad') especialidad: string,
+    @Query('turno') turno: string,
+  ) {
+    return this.appointmentsService.getAvailableSlots(fecha, especialidad, turno);
+  }
+
+  @Post('agendar')
+  async agendar(@Body() body: {
+    patientId: string;
+    doctorId: string;
+    fecha: string;
+    especialidad: string;
+    turno: string;
+    reason?: string;
+  }) {
+    return this.appointmentsService.createWithFicha(body);
+  }
+@Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.appointmentsService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() data: any) {
+    return this.appointmentsService.create(data);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() data: any) {
+    return this.appointmentsService.update(id, data);
+  }
+
+  @Patch(':id/status')
+  updateStatus(@Param('id') id: string, @Body('status') status: string) {
+    return this.appointmentsService.updateStatus(id, status);

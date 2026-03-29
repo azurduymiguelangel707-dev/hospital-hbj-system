@@ -1,0 +1,141 @@
+﻿// src/app/enfermeria/page.tsx
+'use client';
+import { useRouter } from 'next/navigation';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Activity, Heart, Thermometer, Wind, Weight,
+  AlertTriangle, CheckCircle, Clock, RefreshCw, User
+} from 'lucide-react';
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+function getToken() {
+  return typeof window !== 'undefined' ? (localStorage.getItem('auth_token') ?? '') : '';
+}
+
+function authFetch(url: string, options: RequestInit = {}) {
+  return fetch(`${API}${url}`, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) },
+  });
+}
+
+type FlowStatus = 'waiting_vitals' | 'ready' | 'in_progress' | 'completed';
+
+interface Appointment {
+  id: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  status: string;
+  flowStatus: FlowStatus;
+  reason: string;
+  isUrgent: boolean;
+  patient?: { id: string; nombre: string; edad: number; ci: string; condicionesCronicas?: string[] };
+  doctor?: { user?: { first_name: string; last_name: string }; specialty?: string };
+  vitalSigns?: VitalSigns;
+}
+
+interface VitalSigns {
+  presionArterial: string;
+  frecuenciaCardiaca: number | string;
+  frecuenciaRespiratoria: number | string;
+  temperatura: number | string;
+  peso: number | string;
+  saturacionOxigeno: number | string;
+}
+
+const EMPTY_VITALS: VitalSigns = {
+  presionArterial: '',
+  frecuenciaCardiaca: '',
+  frecuenciaRespiratoria: '',
+  temperatura: '',
+  peso: '',
+  saturacionOxigeno: '',
+};
+
+function paStatus(val: string): 'ok' | 'warn' | 'danger' | 'neutral' {
+  if (!val) return 'neutral';
+  const sys = parseInt(val.split('/')[0]);
+  if (sys >= 160) return 'danger';
+  if (sys >= 140) return 'warn';
+  return 'ok';
+}
+
+function numStatus(val: number | string, low: number, high: number): 'ok' | 'warn' | 'danger' | 'neutral' {
+  if (val === '' || val === undefined) return 'neutral';
+  const n = Number(val);
+  if (n > high * 1.1 || n < low * 0.9) return 'danger';
+  if (n > high || n < low) return 'warn';
+  return 'ok';
+}
+
+const STATUS_CLASS = { ok: 'text-green-600', warn: 'text-amber-600', danger: 'text-red-600', neutral: 'text-gray-400' };
+const STATUS_BG = { ok: 'bg-green-50 border-green-200', warn: 'bg-amber-50 border-amber-200', danger: 'bg-red-50 border-red-200', neutral: 'bg-gray-50 border-gray-200' };
+
+function FlowBadge({ status }: { status: FlowStatus }) {
+  const cfg = {
+    waiting_vitals: { label: 'Esperando vitales', cls: 'bg-amber-100 text-amber-800' },
+    ready:          { label: 'Listo p/ consulta', cls: 'bg-green-100 text-green-800' },
+    in_progress:    { label: 'En consulta',        cls: 'bg-blue-100 text-blue-800' },
+    completed:      { label: 'Completado',          cls: 'bg-gray-100 text-gray-600' },
+  }[status];
+  return <span className={`px-2 py-1 rounded-full text-xs font-semibold ${cfg.cls}`}>{cfg.label}</span>;
+}
+
+export default function EnfermeriaDashboard() {
+  const router = useRouter();
+  const handleLogout = () => { localStorage.clear(); router.push('/login'); };
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [selected, setSelected] = useState<Appointment | null>(null);
+  const [vitals, setVitals] = useState<VitalSigns>(EMPTY_VITALS);
+  const [saving, setSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'pending' | 'done'>('pending');
+  const [mainTab, setMainTab] = useState<'pacientes'|'historial'|'reportes'>('pacientes');
+  const [search, setSearch] = useState('');
+  const [vitalsHistory, setVitalsHistory] = useState<any[]>([]);
+  const [enfermeraInfo, setEnfermeraInfo] = useState({ nombre: "Enfermeria", especialidad: "", fechaHoy: "" });
+  useEffect(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem("user_data") ?? "{}");
+      const firstName = u.nombre ?? u.firstName ?? u.first_name ?? "";
+      const lastName  = u.apellido ?? u.lastName ?? u.last_name ?? "";
+      const fullName  = [firstName, lastName].filter(Boolean).join(" ");
+      const email = u.email ?? "";
+      const espMap: Record<string,string> = { "ENF-CAR": "Cardiologia", "ENF-TRA": "Traumatologia", "ENF-NEU": "Neurologia", "ENF-OTO": "Otorrinolaringologia", "ENF-GAS": "Gastroenterologia" };
+      const prefix = Object.keys(espMap).find(k => email.startsWith(k));
+      const ahora = new Date(new Date().toLocaleString("en-US", { timeZone: "America/La_Paz" }));
+      const fechaHoy = ahora.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      setEnfermeraInfo({ nombre: fullName ? `Enf. ${fullName}` : "Enfermeria", especialidad: prefix ? espMap[prefix] : "", fechaHoy });
+    } catch {}
+  }, []);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Obtener especialidad de la enfermera logueada
+      let enfermeraEsp = "";
+      try {
+        const userData = JSON.parse(localStorage.getItem("user_data") ?? "{}");
+        const email = userData.email ?? "";
+        const espMap: Record<string, string> = {
+          "ENF-CAR": "Cardiologia",
+          "ENF-TRA": "Traumatologia",
+          "ENF-NEU": "Neurologia",
+          "ENF-OTO": "Otorrinolaringologia",
+          "ENF-GAS": "Gastroenterologia",
+        };
+        const prefix = Object.keys(espMap).find(k => email.startsWith(k));
+        if (prefix) enfermeraEsp = espMap[prefix];
+      } catch {}
+      const res = await authFetch("/api/appointments");
+      const all: any[] = await res.json();
+      const today = new Date().toISOString().split("T")[0];
+      const todayAppts = all
+        .filter(a => (a.appointmentDate ?? "").split("T")[0] === today)
+        .filter(a => {
+          if (!enfermeraEsp) return true;
+          const esp = a.doctor?.specialty ?? a.especialidad ?? a.doctor?.especialidad ?? "";
