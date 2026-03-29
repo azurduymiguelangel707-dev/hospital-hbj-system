@@ -56,6 +56,8 @@ export default function DoctorDashboard() {
   const router = useRouter();
   const handleLogout = () => { localStorage.clear(); router.push('/login'); };
   const [activePanel, setActivePanel] = useState<Panel>('agenda');
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const [appointments, setAppointments] = useState<AppointmentWithPatient[]>([]);
   const [selectedAppt, setSelectedAppt] = useState<AppointmentWithPatient | null>(null);
   const [patientDetail, setPatientDetail] = useState<PatientDetail | null>(null);
@@ -140,10 +142,10 @@ export default function DoctorDashboard() {
       <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div suppressHydrationWarning className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-semibold text-blue-700">
-            <span suppressHydrationWarning>{typeof window !== 'undefined' ? doctor.nombre.split(' ').filter(Boolean).slice(1,3).map((w: string) => w[0]).join('') : ''}</span>
+            {mounted ? doctor.nombre.split(' ').filter(Boolean).slice(1,3).map((w: string) => w[0]).join('') : ''}
           </div>
           <div>
-          <p suppressHydrationWarning className="text-sm font-semibold text-gray-800">{doctor.nombre}</p>
+          <p className='text-sm font-semibold text-gray-800' suppressHydrationWarning>{mounted ? doctor.nombre : 'Dr.'}</p>
             <p className="text-xs text-gray-500" suppressHydrationWarning>
               {doctor.especialidad} - {new Date(new Date().toLocaleString('en-US', { timeZone: 'America/La_Paz' })).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
             </p>
