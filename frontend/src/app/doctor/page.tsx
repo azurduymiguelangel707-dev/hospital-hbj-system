@@ -37,7 +37,7 @@ function useDoctorSession() {
       };
     } catch { return { id: "", nombre: "Dr.", especialidad: "Medicina General" }; }
   };
-  const [session, setSession] = useState(getSession);
+  const [session, setSession] = useState({ id: '', nombre: 'Dr.', especialidad: 'Medicina General' });
   useEffect(() => { setSession(getSession()); }, []);
   return session;
 }
