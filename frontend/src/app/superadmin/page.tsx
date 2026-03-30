@@ -68,6 +68,13 @@ export default function SuperAdminPage() {
     finally { setLoading(false); }
   }, []);
 
+  const loadUsers = useCallback(async () => {
+    try {
+      const allUsers = await authFetch('/api/superadmin/users').then(r => r.json()).catch(() => []);
+      setUsers(Array.isArray(allUsers) ? allUsers : []);
+    } catch {}
+  }, []);
+
   useEffect(() => { loadAll(); }, [loadAll]);
 
   // Redirect si no es superadmin
@@ -345,7 +352,7 @@ export default function SuperAdminPage() {
                 <p className="text-sm text-gray-500">{users.length} usuarios en el sistema — acceso completo</p>
               </div>
           <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
-                <GlobalUserManager users={users} onRefresh={loadAll} />
+                <GlobalUserManager users={users} onRefresh={loadUsers} />
               </div>
             </div>
           )}
