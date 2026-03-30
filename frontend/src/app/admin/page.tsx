@@ -168,7 +168,7 @@ export default function AdminDashboard() {
         </aside>
 
         {/* Main */}
-        <main className='flex-1 overflow-auto flex flex-col'>
+        <main className='flex-1 flex flex-col min-h-0'>
 
           {/* DASHBOARD */}
           {activePanel === 'dashboard' && (
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
 
           {/* REGISTRO */}
           {activePanel === 'registro' && (
-              <div className='space-y-5 overflow-y-auto pb-20 flex-1 h-0'>
+              <div className='flex-1 min-h-0 overflow-y-auto p-6 flex flex-col gap-5 pb-20'>
               <div>
                 <h2 className='text-xl font-bold text-gray-800'>
                   {registroStep === 'registro' ? 'Registro de paciente' : 'Agendamiento de cita'}
