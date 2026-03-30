@@ -168,7 +168,7 @@ export default function AdminDashboard() {
         </aside>
 
         {/* Main */}
-        <main className='flex-1 overflow-hidden flex flex-col'>
+        <main className='flex-1 overflow-auto flex flex-col'>
 
           {/* DASHBOARD */}
           {activePanel === 'dashboard' && (
