@@ -212,7 +212,7 @@ export default function AdminDashboard() {
 
           {/* REGISTRO */}
           {activePanel === 'registro' && (
-            <div className='space-y-5'>
+              <div className='space-y-5 overflow-y-auto pb-10'>
               <div>
                 <h2 className='text-xl font-bold text-gray-800'>
                   {registroStep === 'registro' ? 'Registro de paciente' : 'Agendamiento de cita'}
