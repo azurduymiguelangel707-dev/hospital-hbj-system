@@ -196,7 +196,7 @@ export default function AdminDashboard() {
               </div>
               {dashTab === 'citas' && (
                 <div className='bg-white border border-gray-200 rounded-xl p-5'>
-                  <h3 className='text-sm font-semibold text-gray-700 mb-4'>Monitor de citas — hoy</h3>
+                  <h3 className='text-sm font-semibold text-gray-700 mb-4'>Monitor de citas â€” hoy</h3>
                   <AppointmentMonitor appointments={appointments} onRefresh={loadAll} />
                 </div>
               )}
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
 
           {/* REGISTRO */}
           {activePanel === 'registro' && (
-              <div className='space-y-5 overflow-y-auto pb-10'>
+              <div className='space-y-5 overflow-y-auto pb-20 flex-1 h-0'>
               <div>
                 <h2 className='text-xl font-bold text-gray-800'>
                   {registroStep === 'registro' ? 'Registro de paciente' : 'Agendamiento de cita'}
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
                   {[{ step: 'registro', num: 1, label: 'Registrar paciente' },{ step: 'agendamiento', num: 2, label: 'Agendar cita' }].map(({ step, num, label }) => (
                     <div key={step} className='flex items-center gap-2'>
                       <div className={'w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ' + (registroStep === step ? 'bg-blue-600 text-white' : registroStep === 'agendamiento' && step === 'registro' ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-500')}>
-                        {registroStep === 'agendamiento' && step === 'registro' ? '✓' : num}
+                        {registroStep === 'agendamiento' && step === 'registro' ? 'âœ“' : num}
                       </div>
                       <span className={'text-xs ' + (registroStep === step ? 'text-blue-600 font-medium' : 'text-gray-400')}>{label}</span>
                       {step === 'registro' && <div className='w-8 h-px bg-gray-300 mx-1' />}
