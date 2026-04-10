@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditLog } from './entities/audit-log.entity';
@@ -75,6 +75,7 @@ export class AuditService {
       nonce++;
     }
 
+        console.log(`[AUDIT] Bloque minado. Hash: ${hash} Nonce: ${nonce} Dificultad: ${difficulty}`);
     return { hash, nonce };
   }
 
@@ -177,3 +178,4 @@ export class AuditService {
     return { data, total };
   }
 }
+
