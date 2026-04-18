@@ -322,7 +322,7 @@ export default function SuperAdminPage() {
                         {blockchainCount === 0 ? (
                           <p className='text-xs text-gray-400 text-center py-4'>Sin bloques</p>
                         ) : (
-                          [...Array(Math.min(8, blockchainCount))].map((_: any, i: number) => (
+                          [...Array(Math.min(8, Number(blockchainCount) || 0))].map((_: any, i: number) => (
                             <div key={i} className='flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg'>
                               <div className='flex items-center gap-2'>
                                 <div className='w-1.5 h-1.5 rounded-full bg-emerald-500' />
