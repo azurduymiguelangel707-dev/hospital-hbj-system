@@ -35,8 +35,7 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
   const [createForm, setCreateForm] = useState({ firstName: '', lastName: '', role: 'MEDICO', email: '', password: '' });
   const [creating, setCreating] = useState(false);
 
-  const filtered = users
-    .filter(u => u && u.role)
+  const filtered = safeUsers
     .filter(u => {
       const matchSearch = search === '' || `${u.first_name} ${u.last_name} ${u.email} ${u.codigo ?? ''}`.toLowerCase().includes(search.toLowerCase());
       const matchRole   = filterRole === '' || u.role === filterRole;
