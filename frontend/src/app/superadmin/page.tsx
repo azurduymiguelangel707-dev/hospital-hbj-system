@@ -386,6 +386,18 @@ export default function SuperAdminPage() {
           )}
 
           {/* SISTEMA */}
+          {activePanel === 'snis' && (
+          <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="mb-4 flex-shrink-0">
+                <h2 className="text-xl font-semibold text-gray-800">SNIS - Registro Diario de Consulta Externa</h2>
+                <p className="text-sm text-gray-500">Medicina, Control Prenatal y Puerperio</p>
+              </div>
+          <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
+                <SNISPanel />
+              </div>
+            </div>
+          )}
+
           {activePanel === 'backup' && (
             <BackupPanel />
           )}
