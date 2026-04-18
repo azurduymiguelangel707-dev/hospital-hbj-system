@@ -106,6 +106,7 @@ export default function SuperAdminPage() {
   const patientsCount = dbStats.find(d => d.table === 'patients')?.count ?? 0;
 
   const [dashTab, setDashTab] = useState<'resumen'|'servicios'>('resumen');
+const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className="flex flex-col h-screen bg-gray-950 overflow-hidden">
       {/* Top bar â€”Â dark theme para distinguir del admin */}
@@ -140,8 +141,11 @@ export default function SuperAdminPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar dark */}
-        <aside className="w-48 bg-blue-600 flex flex-col py-4 px-2 flex-shrink-0 overflow-y-auto">
-          <p className="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-3">Modulos</p>
+        <aside
+  onMouseEnter={() => setSidebarOpen(true)}
+  onMouseLeave={() => setSidebarOpen(false)}
+  className={`${sidebarOpen ? 'w-48' : 'w-14'} bg-blue-600 flex flex-col py-4 px-2 flex-shrink-0 overflow-y-auto transition-all duration-300`}>
+          {sidebarOpen && <p className="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-3">Modulos</p>}
           {PANELS.map(({ key, label, icon: Icon, desc }, idx) => {
   const iconColors = [
     { active: 'text-blue-400',   bg: 'bg-blue-500/20',   dot: '#60a5fa' },
@@ -155,14 +159,14 @@ export default function SuperAdminPage() {
             <button key={key} onClick={() => setActivePanel(key)}
               className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all text-left w-full ${activePanel === key ? 'bg-white text-blue-600' : 'text-white hover:bg-blue-500'}`}>
                <div className={'w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ' + (activePanel === key ? 'bg-blue-100' : 'bg-blue-500')}><Icon size={15} className={activePanel === key ? 'text-blue-600' : 'text-white'} /></div>
-              <div>
-                <p className="text-xs font-medium leading-tight">{label}</p>
-                <p className="text-xs text-blue-200 leading-tight">{desc}</p>
-              </div>
+              {sidebarOpen && <div>
+  <p className="text-xs font-medium leading-tight">{label}</p>
+  <p className="text-xs text-blue-200 leading-tight">{desc}</p>
+</div>}
             </button>
         );})}
 
-          <div className="mt-auto pt-4 border-t border-blue-500 px-2 space-y-3">
+          {sidebarOpen && <div className="mt-auto pt-4 border-t border-blue-500 px-2 space-y-3">
             <div>
               <p className="text-xs text-blue-200 mb-1">Bloques blockchain</p>
               <p className="text-xl font-semibold text-red-400">{blockchainCount}</p>
@@ -171,8 +175,8 @@ export default function SuperAdminPage() {
               <p className="text-xs text-blue-200 mb-1">Pacientes registrados</p>
               <p className="text-xl font-semibold text-gray-300">{patientsCount}</p>
             </div>
-          </div>
-        </aside>
+          </div>}
+          </aside>
 
         {/* Main content â€”Â light */}
         <main className="flex-1 overflow-hidden bg-gray-50 p-6 flex flex-col">
