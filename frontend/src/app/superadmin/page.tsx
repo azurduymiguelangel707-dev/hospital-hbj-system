@@ -140,8 +140,8 @@ export default function SuperAdminPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar dark */}
-        <aside className="w-52 bg-gray-900 border-r border-gray-800 flex flex-col py-4 px-3 flex-shrink-0">
-          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider px-3 mb-3">Modulos</p>
+        <aside className="w-48 bg-blue-600 flex flex-col py-4 px-2 flex-shrink-0 overflow-y-auto">
+          <p className="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-3">Modulos</p>
           {PANELS.map(({ key, label, icon: Icon, desc }, idx) => {
   const iconColors = [
     { active: 'text-blue-400',   bg: 'bg-blue-500/20',   dot: '#60a5fa' },
@@ -153,22 +153,22 @@ export default function SuperAdminPage() {
   ][idx] ?? { active: 'text-red-400', bg: 'bg-red-500/20', dot: '#f87171' };
   return (
             <button key={key} onClick={() => setActivePanel(key)}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all text-left w-full ${activePanel === key ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'}`}>
-              <div className={'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ' + (activePanel === key ? iconColors.bg : 'bg-gray-800')}><Icon size={18} className={activePanel === key ? iconColors.active : 'text-gray-500'} /></div>
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all text-left w-full ${activePanel === key ? 'bg-white text-blue-600' : 'text-white hover:bg-blue-500'}`}>
+               <div className={'w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ' + (activePanel === key ? 'bg-blue-100' : 'bg-blue-500')}><Icon size={15} className={activePanel === key ? 'text-blue-600' : 'text-white'} /></div>
               <div>
                 <p className="text-xs font-medium leading-tight">{label}</p>
-                <p className="text-xs text-gray-600 leading-tight">{desc}</p>
+                <p className="text-xs text-blue-200 leading-tight">{desc}</p>
               </div>
             </button>
         );})}
 
-          <div className="mt-auto pt-4 border-t border-gray-800 px-2 space-y-3">
+          <div className="mt-auto pt-4 border-t border-blue-500 px-2 space-y-3">
             <div>
-              <p className="text-xs text-gray-600 mb-1">Bloques blockchain</p>
+              <p className="text-xs text-blue-200 mb-1">Bloques blockchain</p>
               <p className="text-xl font-semibold text-red-400">{blockchainCount}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-600 mb-1">Pacientes registrados</p>
+              <p className="text-xs text-blue-200 mb-1">Pacientes registrados</p>
               <p className="text-xl font-semibold text-gray-300">{patientsCount}</p>
             </div>
           </div>
