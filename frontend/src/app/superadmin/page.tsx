@@ -412,7 +412,39 @@ export default function SuperAdminPage() {
               </div>
             </div>
           )}
-
+{activePanel === 'snis' && (
+            <div className="flex-1 overflow-hidden flex flex-col">
+              <div className="mb-4 flex-shrink-0">
+                <h2 className="text-xl font-semibold text-gray-800">SNIS - Registro Diario de Consulta Externa</h2>
+                <p className="text-sm text-gray-500">Medicina, Control Prenatal y Puerperio</p>
+              </div>
+              <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
+                <SNISPanel />
+              </div>
+            </div>
+          )}
+          {activePanel === 'sialpai' && (
+            <div className="flex-1 overflow-hidden flex flex-col">
+              <div className="mb-4 flex-shrink-0">
+                <h2 className="text-xl font-semibold text-gray-800">SIAL PAI - Registro de Vacunacion</h2>
+                <p className="text-sm text-gray-500">Programa Ampliado de Inmunizacion</p>
+              </div>
+              <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
+                <SIALPAIPanel />
+              </div>
+            </div>
+          )}
+          {activePanel === 'soaps' && (
+            <div className="flex-1 overflow-hidden flex flex-col">
+              <div className="mb-4 flex-shrink-0">
+                <h2 className="text-xl font-semibold text-gray-800">SOAPS - Atencion Primer Nivel</h2>
+                <p className="text-sm text-gray-500">Sistema de Organizacion y Atencion en Primer Nivel de Salud</p>
+              </div>
+              <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
+                <SOAPSPanel />
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>
