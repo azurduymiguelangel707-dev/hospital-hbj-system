@@ -253,12 +253,13 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
   <select
     defaultValue={modalUser.role}
     onChange={async e => {
-      e.stopPropagation();
-      const newRoleVal = e.target.value;
-      await authFetch(`/api/superadmin/users/${modalUser.id}/role`, { method: 'PATCH', body: JSON.stringify({ role: newRoleVal }) });
-      setModalUser(null);
-      setTimeout(() => onRefresh(), 300);
-    }}
+  e.stopPropagation();
+  const newRoleVal = e.target.value;
+  const userId = modalUser!.id;
+  await authFetch(`/api/superadmin/users/${userId}/role`, { method: 'PATCH', body: JSON.stringify({ role: newRoleVal }) });
+  setModalUser(null);
+  setTimeout(() => onRefresh(), 300);
+}}
     className="text-xs text-blue-700 font-medium bg-transparent border-none outline-none cursor-pointer">
     {ALL_ROLES.map(r => <option key={r} value={r}>{ROLE_CFG[r]?.label ?? r}</option>)}
   </select>
