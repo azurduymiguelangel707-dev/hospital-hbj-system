@@ -248,8 +248,21 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1">
-                          <button onClick={e => { e.stopPropagation(); setEditRole({ id: u.id, current: u.role }); setNewRole(u.role); }}
-                            title="Cambiar rol" className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-400 transition"><Shield size={13} /></button>
+                          <div className="flex flex-col items-center gap-1.5 px-3 py-3 bg-blue-50 rounded-xl">
+  <Shield size={16} className="text-blue-700" />
+  <select
+    defaultValue={modalUser.role}
+    onChange={async e => {
+      e.stopPropagation();
+      const newRoleVal = e.target.value;
+      await authFetch(`/api/superadmin/users/${modalUser.id}/role`, { method: 'PATCH', body: JSON.stringify({ role: newRoleVal }) });
+      setModalUser(null);
+      setTimeout(() => onRefresh(), 300);
+    }}
+    className="text-xs text-blue-700 font-medium bg-transparent border-none outline-none cursor-pointer">
+    {ALL_ROLES.map(r => <option key={r} value={r}>{ROLE_CFG[r]?.label ?? r}</option>)}
+  </select>
+</div>
                           <button onClick={e => { e.stopPropagation(); handleToggle(u.id); }} disabled={loading === u.id}
                             title={u.is_active ? 'Desactivar' : 'Activar'}
                             className={`p-1.5 rounded-lg transition ${u.is_active ? 'hover:bg-red-50 text-red-400' : 'hover:bg-emerald-50 text-emerald-500'}`}>
