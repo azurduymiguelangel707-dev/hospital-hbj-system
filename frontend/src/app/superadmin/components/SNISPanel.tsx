@@ -9,10 +9,10 @@ const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 const TIPOS_PACIENTE = ['SUS','SEG','PRI','OTR'];
 const DIAGNOSTICOS_COMUNES = [
   'E11 Diabetes Mellitus Tipo 2',
-  'I10 HipertensiÃ³n Arterial SistÃ©mica',
-  'J06 InfecciÃ³n Respiratoria Aguda',
+  'I10 Hipertension Arterial Sistemica',
+  'J06 Infeccion Respiratoria Aguda',
   'K29 Gastritis',
-  'N39 InfecciÃ³n de Tracto Urinario',
+  'N39 Infeccion de Tracto Urinario',
   'B02 Herpes Zoster',
   'M54 Gonalgia',
   'L27 Dermatitis Medicamentosa',
@@ -43,7 +43,7 @@ interface FilaRegistro {
   repetidas: boolean;
   controlPrenatal: boolean;
   h48PostParto: boolean;
-  // DetecciÃ³n
+  // Deteccion
   diabetesMellitus: boolean;
   hipertensionArterial: boolean;
   itsVihSida: boolean;
@@ -100,17 +100,17 @@ export function SNISPanel() {
       ['REGISTRO DIARIO DE CONSULTA EXTERNA - MEDICINA, CONTROL PRENATAL Y PUERPERIO'],
       ['ESTABLECIMIENTO: HOSPITAL MUNICIPAL MODELO BOLIVIANO JAPONES'],
       [`FECHA: ${fecha.dia}/${fecha.mes}/${fecha.anio}`, `HORARIO: ${horarioInicio} a ${horarioFin}`],
-      [`MÃ‰DICO: ${medico}`, `NÂ° MATRÃCULA: ${nMatricula}`],
+      [`MEDICO: ${medico}`, `N° MATRICULA: ${nMatricula}`],
       [],
-      ['NÂ° HC','NÂ° ASEGURADO','APELLIDO PATERNO, MATERNO Y NOMBRES','TIPO PAC','EDAD M','EDAD F','PESO (Kg.)','TALLA (cm.)','CONS. N','CONS. R','DESNUT. MOD','DESNUT. GRAVE','SOBREPESO','NORMAL','AREAS DEL MES','CON MES','REPETIDAS','CONTROL PRENATAL','48H POST PARTO','DIABETES','HIPERTENSIÃ“N','ITS-VIH-SIDA','EXAM. MAMA','PAP','TUBERCULOSIS','REFERENCIA','CONTRARREF.','CIE 10','DIAGNÃ“STICO'],
+      ['N° HC','N° ASEGURADO','APELLIDO PATERNO, MATERNO Y NOMBRES','TIPO PAC','EDAD M','EDAD F','PESO (Kg.)','TALLA (cm.)','CONS. N','CONS. R','DESNUT. MOD','DESNUT. GRAVE','SOBREPESO','NORMAL','AREAS DEL MES','CON MES','REPETIDAS','CONTROL PRENATAL','48H POST PARTO','DIABETES','HIPERTENSION','ITS-VIH-SIDA','EXAM. MAMA','PAP','TUBERCULOSIS','REFERENCIA','CONTRARREF.','CIE 10','DIAGNOSTICO'],
       ...filas.map((f,i) => [
         i+1, f.nHC, f.nAsegurado, f.apellidoNombre, f.tipoPaciente,
         f.edadM, f.edadF, f.peso, f.talla,
-        f.consultaN?'âœ“':'', f.consultaR?'âœ“':'',
-        f.desnutricionModerada?'âœ“':'', f.desnutricionGrave?'âœ“':'', f.sobrepeso?'âœ“':'', f.normal?'âœ“':'',
-        f.areasDelMes?'âœ“':'', f.conMes?'âœ“':'', f.repetidas?'âœ“':'', f.controlPrenatal?'âœ“':'', f.h48PostParto?'âœ“':'',
-        f.diabetesMellitus?'âœ“':'', f.hipertensionArterial?'âœ“':'', f.itsVihSida?'âœ“':'', f.examMama?'âœ“':'', f.pap?'âœ“':'', f.tuberculosis?'âœ“':'',
-        f.referencia?'âœ“':'', f.contrarreferencia?'âœ“':'',
+        f.consultaN?'✓':'', f.consultaR?'✓':'',
+        f.desnutricionModerada?'✓':'', f.desnutricionGrave?'✓':'', f.sobrepeso?'✓':'', f.normal?'✓':'',
+        f.areasDelMes?'✓':'', f.conMes?'✓':'', f.repetidas?'✓':'', f.controlPrenatal?'✓':'', f.h48PostParto?'✓':'',
+        f.diabetesMellitus?'✓':'', f.hipertensionArterial?'✓':'', f.itsVihSida?'✓':'', f.examMama?'✓':'', f.pap?'✓':'', f.tuberculosis?'✓':'',
+        f.referencia?'✓':'', f.contrarreferencia?'✓':'',
         f.cie10, f.diagnostico
       ])
     ];
@@ -142,7 +142,7 @@ export function SNISPanel() {
           <div className="flex-1">
             <h2 className="text-base font-bold text-gray-800 uppercase tracking-wide">Registro Diario de Consulta Externa</h2>
             <p className="text-xs font-semibold text-gray-600 uppercase">Medicina, Control Prenatal y Puerperio</p>
-            <p className="text-xs text-gray-500 mt-0.5">Hospital Municipal Modelo Boliviano JaponÃ©s</p>
+            <p className="text-xs text-gray-500 mt-0.5">Hospital Municipal Modelo Boliviano Japones</p>
           </div>
           {/* Acciones */}
           <div className="flex gap-2 flex-shrink-0">
@@ -183,13 +183,13 @@ export function SNISPanel() {
             </div>
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Nombre del MÃ©dico</label>
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Nombre del Medico</label>
             <input value={medico} onChange={e => setMedico(e.target.value)} placeholder="Dr. Nombre Apellido"
               className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">NÂ° MatrÃ­cula</label>
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">N° Matricula</label>
               <input value={nMatricula} onChange={e => setNMatricula(e.target.value)} placeholder="000000"
                 className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500" />
             </div>
@@ -206,14 +206,14 @@ export function SNISPanel() {
         </div>
       </div>
 
-      {/* KPIs rÃ¡pidos */}
+      {/* KPIs rapidos */}
       <div className="grid grid-cols-5 gap-2 mb-3 flex-shrink-0">
         {[
           { label: 'Consultas Nuevas', val: totalNuevas, color: '#3b82f6', bg: '#eff6ff' },
           { label: 'Repetidas', val: totalRepetidas, color: '#8b5cf6', bg: '#f5f3ff' },
           { label: 'Embarazadas', val: totalEmbarazadas, color: '#ec4899', bg: '#fdf2f8' },
           { label: 'Diabetes', val: totalDiabetes, color: '#f59e0b', bg: '#fffbeb' },
-          { label: 'HipertensiÃ³n', val: totalHTA, color: '#ef4444', bg: '#fef2f2' },
+          { label: 'Hipertension', val: totalHTA, color: '#ef4444', bg: '#fef2f2' },
         ].map((k,i) => (
           <div key={i} className="rounded-xl p-3 text-center border" style={{ backgroundColor: k.bg, borderColor: k.color+'30' }}>
             <div className="text-2xl font-bold" style={{ color: k.color }}>{k.val}</div>
@@ -229,8 +229,8 @@ export function SNISPanel() {
             <thead className="sticky top-0 z-10">
               <tr className="bg-blue-800 text-white">
                 <th className="border border-blue-700 px-1 py-1.5 text-center w-6" rowSpan={2}>#</th>
-                <th className="border border-blue-700 px-1 py-1.5 text-center w-16" rowSpan={2}>NÂ° HC</th>
-                <th className="border border-blue-700 px-1 py-1.5 text-center w-20" rowSpan={2}>NÂ° Asegurado</th>
+                <th className="border border-blue-700 px-1 py-1.5 text-center w-16" rowSpan={2}>N° HC</th>
+                <th className="border border-blue-700 px-1 py-1.5 text-center w-20" rowSpan={2}>N° Asegurado</th>
                 <th className="border border-blue-700 px-1 py-1.5 text-center w-48" rowSpan={2}>Apellido Paterno, Materno y Nombres</th>
                 <th className="border border-blue-700 px-1 py-1.5 text-center w-12" rowSpan={2}>Tipo Pac.</th>
                 <th className="border border-blue-700 px-1 py-1.5 text-center" colSpan={2}>Edad</th>
@@ -239,10 +239,10 @@ export function SNISPanel() {
                 <th className="border border-blue-700 px-1 py-1.5 text-center" colSpan={2}>Consulta</th>
                 <th className="border border-blue-700 px-1 py-1.5 text-center" colSpan={4}>Estado Nutricional (IMC)</th>
                 <th className="border border-blue-700 px-1 py-1.5 text-center" colSpan={5}>Mujer Embarazada / Control Prenatal</th>
-                <th className="border border-blue-700 px-1 py-1.5 text-center" colSpan={6}>DetecciÃ³n de Enfermedades</th>
+                <th className="border border-blue-700 px-1 py-1.5 text-center" colSpan={6}>Deteccion de Enfermedades</th>
                 <th className="border border-blue-700 px-1 py-1.5 text-center" colSpan={2}>Referencia</th>
                 <th className="border border-blue-700 px-1 py-1.5 text-center w-16" rowSpan={2}>CIE 10</th>
-                <th className="border border-blue-700 px-1 py-1.5 text-center w-48" rowSpan={2}>DiagnÃ³stico</th>
+                <th className="border border-blue-700 px-1 py-1.5 text-center w-48" rowSpan={2}>Diagnostico</th>
                 <th className="border border-blue-700 px-1 py-1.5 text-center w-10" rowSpan={2}>Acc.</th>
               </tr>
               <tr className="bg-blue-700 text-white">
@@ -254,7 +254,7 @@ export function SNISPanel() {
                 <th className="border border-blue-600 px-1 py-1 text-center w-12">Desnut. Grave</th>
                 <th className="border border-blue-600 px-1 py-1 text-center w-12">Sobrepeso</th>
                 <th className="border border-blue-600 px-1 py-1 text-center w-10">Normal</th>
-                <th className="border border-blue-600 px-1 py-1 text-center w-12">Ãreas del Mes</th>
+                <th className="border border-blue-600 px-1 py-1 text-center w-12">Areas del Mes</th>
                 <th className="border border-blue-600 px-1 py-1 text-center w-10">Con Mes</th>
                 <th className="border border-blue-600 px-1 py-1 text-center w-14">Repetidas</th>
                 <th className="border border-blue-600 px-1 py-1 text-center w-14">Control Prenatal</th>
@@ -328,7 +328,7 @@ export function SNISPanel() {
                         className="w-3 h-3 accent-pink-500 cursor-pointer" />
                     </td>
                   ))}
-                  {/* DetecciÃ³n Enfermedades */}
+                  {/* Deteccion Enfermedades */}
                   {(['diabetesMellitus','hipertensionArterial','itsVihSida','examMama','pap','tuberculosis'] as const).map(campo => (
                     <td key={campo} className="border border-gray-200 px-0.5 py-0.5 text-center">
                       <input type="checkbox" checked={f[campo] as boolean} onChange={e => actualizarFila(f.id,campo,e.target.checked)}
@@ -347,16 +347,16 @@ export function SNISPanel() {
                     <input value={f.cie10} onChange={e => actualizarFila(f.id,'cie10',e.target.value)}
                       className="w-full px-1 py-0.5 text-xs focus:outline-none focus:bg-blue-50 rounded text-center font-mono" placeholder="E11" />
                   </td>
-                  {/* DiagnÃ³stico */}
+                  {/* Diagnostico */}
                   <td className="border border-gray-200 px-0.5 py-0.5">
                     <input value={f.diagnostico} onChange={e => actualizarFila(f.id,'diagnostico',e.target.value)}
                       list={`diag-${f.id}`}
-                      className="w-full px-1 py-0.5 text-xs focus:outline-none focus:bg-blue-50 rounded" placeholder="DiagnÃ³stico" />
+                      className="w-full px-1 py-0.5 text-xs focus:outline-none focus:bg-blue-50 rounded" placeholder="Diagnostico" />
                     <datalist id={`diag-${f.id}`}>
                       {DIAGNOSTICOS_COMUNES.map(d => <option key={d} value={d} />)}
                     </datalist>
                   </td>
-                  {/* AcciÃ³n */}
+                  {/* Accion */}
                   <td className="border border-gray-200 px-0.5 py-0.5 text-center">
                     <button onClick={() => eliminarFila(f.id)} className="p-0.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition">
                       <Trash2 size={11} />
@@ -395,7 +395,7 @@ export function SNISPanel() {
         </div>
       </div>
 
-      {/* BotÃ³n agregar fila */}
+      {/* Boton agregar fila */}
       <div className="flex justify-between items-center mt-3 flex-shrink-0">
         <button onClick={agregarFila}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition">
@@ -424,4 +424,3 @@ export function SNISPanel() {
     </div>
   );
 }
-
