@@ -19,7 +19,7 @@ function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });
 }
 
-type Panel = 'dashboard' | 'usuarios' | 'blockchain' | 'reportes' | 'sistema' | 'backup' | 'snis';
+type Panel = 'dashboard' | 'usuarios' | 'blockchain' | 'reportes' | 'sistema' | 'backup' | 'snis' | 'sialpai' | 'soaps';
 
 const PANELS: { key: Panel; label: string; icon: any; desc: string }[] = [
   { key: 'dashboard',  label: 'Resumen ejecutivo', icon: IconDashboard,   desc: 'Vision general del sistema' },
@@ -29,6 +29,8 @@ const PANELS: { key: Panel; label: string; icon: any; desc: string }[] = [
   { key: 'sistema',    label: 'Sistema',           icon: IconSistema,     desc: 'Monitor' },
   { key: 'backup',     label: 'Backup',            icon: IconDatabase,    desc: 'Respaldo y recuperacion' },
   { key: 'snis',      label: 'SNIS',              icon: IconDatabase,    desc: 'Consulta Externa' },
+  { key: 'sialpai',    label: 'SIAL PAI',          icon: IconDatabase,    desc: 'Vacunacion' },
+  { key: 'soaps',      label: 'SOAPS',             icon: IconDatabase,    desc: 'Primer Nivel' },
 ];
 
 function useSession() {
