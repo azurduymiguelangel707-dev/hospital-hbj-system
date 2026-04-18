@@ -36,6 +36,7 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
   const [creating, setCreating] = useState(false);
 
   const filtered = users
+    .filter(u => u && u.role)
     .filter(u => {
       const matchSearch = search === '' || `${u.first_name} ${u.last_name} ${u.email} ${u.codigo ?? ''}`.toLowerCase().includes(search.toLowerCase());
       const matchRole   = filterRole === '' || u.role === filterRole;
