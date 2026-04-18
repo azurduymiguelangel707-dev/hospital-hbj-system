@@ -10,6 +10,8 @@ import { BlockchainViewer } from './components/BlockchainViewer';
 import { SystemMonitor } from './components/SystemMonitor';
 import { BackupPanel } from './components/BackupPanel';
 import { SNISPanel } from './components/SNISPanel';
+import { SIALPAIPanel } from './components/SIALPAIPanel';
+import { SOAPSPanel } from './components/SOAPSPanel';
 import { ReportesPanel } from './components/ReportesPanel';
 import { CerrarDiaButton } from '../admin/components/CerrarDiaButton';
 
