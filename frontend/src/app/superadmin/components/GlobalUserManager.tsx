@@ -48,8 +48,9 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
+  const safeUsers = users.filter(u => u && u.role);
   const statsByRole = ALL_ROLES.map(r => ({
-    role: r, count: users.filter(u => u.role === r).length, active: users.filter(u => u.role === r && u.is_active).length,
+    role: r, count: safeUsers.filter(u => u.role === r).length, active: safeUsers.filter(u => u.role === r && u.is_active).length,
   })).filter(s => s.count > 0);
 
   async function handleToggle(id: string) {
