@@ -80,9 +80,9 @@ export function SIALPAIPanel() {
       ['REGISTRO DIARIO DE VACUNACION - SIAL PAI'],
       ['ESTABLECIMIENTO: HOSPITAL MUNICIPAL MODELO BOLIVIANO JAPONES'],
       [`FECHA: ${fecha.dia}/${fecha.mes}/${fecha.anio}`, `HORARIO: ${horarioInicio} a ${horarioFin}`],
-      [`RESPONSABLE: ${responsable}`, `NÂ° MATRICULA: ${nMatricula}`],
+      [`RESPONSABLE: ${responsable}`, `Num. MATRICULA: ${nMatricula}`],
       [],
-      ['NÂ° HC','NÂ° ASEGURADO','APELLIDO Y NOMBRES','TIPO PAC','EDAD M','EDAD F','PESO','TALLA','BCG','HB','PENTAVALENTE','IPV','OPV','ROTAVIRUS','NEUMOCOCO','SPR','DPT','INFLUENZA','FA','HEPATITIS A','TOXOIDE','COVID-19','DOSIS 1','DOSIS 2','DOSIS 3','DOSIS R','ALERTA EPID.','TIPO ALERTA','ESAVI','DESC. ESAVI','OBSERVACION'],
+      ['Num. HC','Num. ASEGURADO','APELLIDO Y NOMBRES','TIPO PAC','EDAD M','EDAD F','PESO','TALLA','BCG','HB','PENTAVALENTE','IPV','OPV','ROTAVIRUS','NEUMOCOCO','SPR','DPT','INFLUENZA','FA','HEPATITIS A','TOXOIDE','COVID-19','DOSIS 1','DOSIS 2','DOSIS 3','DOSIS R','ALERTA EPID.','TIPO ALERTA','ESAVI','DESC. ESAVI','OBSERVACION'],
       ...filas.map((f,i) => [
         i+1, f.nHC, f.nAsegurado, f.apellidoNombre, f.tipoPaciente,
         f.edadM, f.edadF, f.peso, f.talla,
@@ -158,7 +158,7 @@ export function SIALPAIPanel() {
               className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-green-500" />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">NÂ° Matricula</label>
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Num. Matricula</label>
             <input value={nMatricula} onChange={e => setNMatricula(e.target.value)} placeholder="000000"
               className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-green-500" />
           </div>
@@ -187,8 +187,8 @@ export function SIALPAIPanel() {
             <thead className="sticky top-0 z-10">
               <tr className="bg-green-800 text-white">
                 <th className="border border-green-700 px-1 py-1.5 text-center w-6" rowSpan={2}>#</th>
-                <th className="border border-green-700 px-1 py-1.5 text-center w-16" rowSpan={2}>NÂ° HC</th>
-                <th className="border border-green-700 px-1 py-1.5 text-center w-20" rowSpan={2}>NÂ° Asegurado</th>
+                <th className="border border-green-700 px-1 py-1.5 text-center w-16" rowSpan={2}>Num. HC</th>
+                <th className="border border-green-700 px-1 py-1.5 text-center w-20" rowSpan={2}>Num. Asegurado</th>
                 <th className="border border-green-700 px-1 py-1.5 text-center w-48" rowSpan={2}>Apellido y Nombres</th>
                 <th className="border border-green-700 px-1 py-1.5 text-center w-12" rowSpan={2}>Tipo</th>
                 <th className="border border-green-700 px-1 py-1.5 text-center" colSpan={2}>Edad</th>
@@ -338,4 +338,3 @@ export function SIALPAIPanel() {
     </div>
   );
 }
-
