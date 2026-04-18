@@ -9,6 +9,7 @@ import { GlobalUserManager } from './components/GlobalUserManager';
 import { BlockchainViewer } from './components/BlockchainViewer';
 import { SystemMonitor } from './components/SystemMonitor';
 import { BackupPanel } from './components/BackupPanel';
+import { SNISPanel } from './components/SNISPanel';
 import { ReportesPanel } from './components/ReportesPanel';
 import { CerrarDiaButton } from '../admin/components/CerrarDiaButton';
 
@@ -18,7 +19,7 @@ function authFetch(url: string, options: RequestInit = {}) {
   return fetch(`${API}${url}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}`, ...(options.headers ?? {}) } });
 }
 
-type Panel = 'dashboard' | 'usuarios' | 'blockchain' | 'reportes' | 'sistema' | 'backup';
+type Panel = 'dashboard' | 'usuarios' | 'blockchain' | 'reportes' | 'sistema' | 'backup' | 'snis';
 
 const PANELS: { key: Panel; label: string; icon: any; desc: string }[] = [
   { key: 'dashboard',  label: 'Resumen ejecutivo', icon: IconDashboard,   desc: 'Vision general del sistema' },
@@ -27,6 +28,7 @@ const PANELS: { key: Panel; label: string; icon: any; desc: string }[] = [
   { key: 'reportes',   label: 'Reportes',          icon: IconReportes,    desc: 'Estadisticas' },
   { key: 'sistema',    label: 'Sistema',           icon: IconSistema,     desc: 'Monitor' },
   { key: 'backup',     label: 'Backup',            icon: IconDatabase,    desc: 'Respaldo y recuperacion' },
+  { key: 'snis',      label: 'SNIS',              icon: IconDatabase,    desc: 'Consulta Externa' },
 ];
 
 function useSession() {
