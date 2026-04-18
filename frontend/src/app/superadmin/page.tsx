@@ -102,7 +102,7 @@ export default function SuperAdminPage() {
   const [dashTab, setDashTab] = useState<'resumen'|'servicios'>('resumen');
   return (
     <div className="flex flex-col h-screen bg-gray-950 overflow-hidden">
-      {/* Top bar — dark theme para distinguir del admin */}
+      {/* Top bar â€”Â dark theme para distinguir del admin */}
       <div className="flex items-center justify-between px-6 py-3 bg-gray-900 border-b border-gray-800 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center">
@@ -168,7 +168,7 @@ export default function SuperAdminPage() {
           </div>
         </aside>
 
-        {/* Main content — light */}
+        {/* Main content â€”Â light */}
         <main className="flex-1 overflow-hidden bg-gray-50 p-6 flex flex-col">
 
           {/* DASHBOARD */}
@@ -335,7 +335,7 @@ export default function SuperAdminPage() {
                       </div>
                       <button onClick={() => setActivePanel('blockchain')}
                         className='mt-3 w-full py-2 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition border border-blue-100'>
-                        Ver todos los bloques →
+                        Ver todos los bloques ->
                       </button>
                     </div>
                   </div>
@@ -349,7 +349,7 @@ export default function SuperAdminPage() {
           <div className="flex-1 overflow-auto">
           <div className="mb-4 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-gray-800">Gestion global de usuarios</h2>
-                <p className="text-sm text-gray-500">{users.length} usuarios en el sistema — acceso completo</p>
+                <p className="text-sm text-gray-500">{users.length} usuarios en el sistema - acceso completo</p>
               </div>
           <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
                 <GlobalUserManager users={users} onRefresh={loadUsers} />
@@ -362,7 +362,7 @@ export default function SuperAdminPage() {
           <div className="flex-1 overflow-auto">
           <div className="mb-4 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-gray-800">Blockchain Audit Log</h2>
-                <p className="text-sm text-gray-500">{blockchainCount} bloques registrados — SHA-256 CryptoJS</p>
+                <p className="text-sm text-gray-500">{blockchainCount} bloques registrados - SHA-256 CryptoJS</p>
               </div>
           <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
                 <BlockchainViewer />
@@ -404,3 +404,5 @@ export default function SuperAdminPage() {
     </div>
   );
 }
+
+
