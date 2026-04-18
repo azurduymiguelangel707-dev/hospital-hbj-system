@@ -224,7 +224,7 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
                       <td className="px-4 py-3">
                         {editRole?.id === u.id ? (
                           <div className="flex items-center gap-1">
-                            <select value={newRole || u.role} onChange={e => setNewRole(e.target.value)}
+                            <select value={newRole || u.role} onChange={async e => { setNewRole(e.target.value); await authFetch(`/api/superadmin/users/${u.id}/role`, { method: 'PATCH', body: JSON.stringify({ role: e.target.value }) }); setEditRole(null); setNewRole(''); setTimeout(() => onRefresh(), 300); }}
                               className="border border-gray-200 rounded-lg px-2 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-400">
                               {ALL_ROLES.map(r => <option key={r} value={r}>{ROLE_CFG[r]?.label ?? r}</option>)}
                             </select>
@@ -433,5 +433,4 @@ export function GlobalUserManager({ users, onRefresh }: Props) {
     </div>
   );
 }
-
 
