@@ -12,22 +12,24 @@ import { VitalSignsModule } from './modules/vital-signs/vital-signs.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { SeedController } from './seed.controller';
+import { User } from './modules/users/entities/user.entity';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
-  type: 'postgres',
-  host: process.env.DATABASE_HOST || 'postgres',
-  port: parseInt(process.env.DATABASE_PORT) || 5432,
-  username: process.env.DATABASE_USER || 'hospital_admin',
-  password: process.env.DATABASE_PASSWORD || 'hospital_secure_2024',
-  database: process.env.DATABASE_NAME || 'hospital_db',
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  synchronize: true,
-  logging: false,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-}),
+      type: 'postgres',
+      host: process.env.DATABASE_HOST || 'postgres',
+      port: parseInt(process.env.DATABASE_PORT) || 5432,
+      username: process.env.DATABASE_USER || 'hospital_admin',
+      password: process.env.DATABASE_PASSWORD || 'hospital_secure_2024',
+      database: process.env.DATABASE_NAME || 'hospital_db',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+      logging: false,
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    }),
+    TypeOrmModule.forFeature([User]),
     AuthModule,
     UsersModule,
     AuditModule,
@@ -43,5 +45,3 @@ import { SeedController } from './seed.controller';
   providers: [],
 })
 export class AppModule {}
-
-

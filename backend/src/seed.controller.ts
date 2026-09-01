@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './modules/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { User } from './modules/users/entities/user.entity';
 
 @Controller('seed')
 export class SeedController {
@@ -23,11 +23,18 @@ export class SeedController {
       const exists = await this.userRepo.findOne({ where: { email: u.email } });
       if (!exists) {
         const hash = await bcrypt.hash(u.password, 10);
-        const user = this.userRepo.create({ email: u.email, first_name: u.first_name, last_name: u.last_name, role: u.role as any, is_active: true, password_hash: hash });
+        const user = this.userRepo.create({
+          email: u.email,
+          first_name: u.first_name,
+          last_name: u.last_name,
+          role: u.role as any,
+          is_active: true,
+          password_hash: hash,
+        });
         await this.userRepo.save(user);
         created.push(u.email);
       }
     }
-    return { ok: true, created };
+    return { ok: true, created, message: 'Seed completado' };
   }
 }
