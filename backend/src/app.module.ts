@@ -11,6 +11,7 @@ import { SuperAdminModule } from './modules/superadmin/superadmin.module';
 import { VitalSignsModule } from './modules/vital-signs/vital-signs.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { SeedController } from './seed.controller';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { AuditModule } from './modules/audit/audit.module';
     VitalSignsModule,
     SuperAdminModule,
   ],
-  controllers: [],
+  controllers: [SeedController],
   providers: [],
 })
 export class AppModule {}
