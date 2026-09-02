@@ -1,4 +1,4 @@
-// src/app/superadmin/page.tsx
+﻿// src/app/superadmin/page.tsx
 'use client';
 import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
@@ -349,7 +349,7 @@ export default function SuperAdminPage() {
           <div className="flex-1 overflow-auto">
           <div className="mb-4 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-gray-800">Gestion global de usuarios</h2>
-                <p className="text-sm text-gray-500">{users.length} usuarios en el sistema ÔÇö┬Ø acceso completo</p>
+                <p className="text-sm text-gray-500">{users.length} usuarios en el sistema - acceso completo</p>
               </div>
           <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-5">
                 <GlobalUserManager users={users} onRefresh={loadUsers} />
